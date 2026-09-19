@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import tome1Cover from '../assets/images/tome1-cover.jpg'
+import tome2Cover from '../assets/images/tome2-cover.jpg'
 
 const ETSY_URL = 'https://www.etsy.com/shop/3wmService'
 
@@ -30,7 +31,7 @@ export default function Boutique() {
           </Reveal>
 
           <Reveal className="book-card" delay={0.1}>
-            <div className="book-cover-placeholder">Kali Linux &amp; Méthodologie Pentest — Tome 2</div>
+            <img src={tome2Cover} alt="Couverture — Kali Linux & Méthodologie Pentest" />
             <div>
               <span className="book-tag">Tome 2 — Intermédiaire</span>
               <h2 className="mt-0">Kali Linux &amp; Méthodologie Pentest</h2>
