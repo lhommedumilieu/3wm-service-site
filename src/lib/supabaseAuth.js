@@ -95,9 +95,12 @@ export async function signOut() {
   clearSession()
 }
 
-export async function requestPasswordReset(email) {
+export async function requestPasswordReset(email, redirectTo) {
   requireConfig()
-  const res = await fetch(authUrl('/recover'), {
+  const url = redirectTo
+    ? `${authUrl('/recover')}?redirect_to=${encodeURIComponent(redirectTo)}`
+    : authUrl('/recover')
+  const res = await fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -106,6 +109,23 @@ export async function requestPasswordReset(email) {
     body: JSON.stringify({ email }),
   })
   await parseAuthResponse(res)
+}
+
+// Définit un nouveau mot de passe à partir du jeton temporaire reçu par email
+// (lien "mot de passe oublié"). accessToken vient du lien de réinitialisation,
+// pas de la session normale.
+export async function updatePasswordWithToken(accessToken, newPassword) {
+  requireConfig()
+  const res = await fetch(authUrl('/user'), {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ password: newPassword }),
+  })
+  return parseAuthResponse(res)
 }
 
 export async function getCurrentUser() {
