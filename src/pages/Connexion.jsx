@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import PasswordField from '../components/PasswordField.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 export default function Connexion() {
   const { signIn, isConfigured } = useAuth()
@@ -10,6 +11,8 @@ export default function Connexion() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  useDocumentMeta('Connexion', 'Connectez-vous à votre espace membre 3WM Service.', '/connexion')
 
   if (!isConfigured) {
     return (

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 export default function MotDePasseOublie() {
   const { requestPasswordReset, isConfigured } = useAuth()
@@ -8,6 +9,8 @@ export default function MotDePasseOublie() {
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  useDocumentMeta('Mot de passe oublié', 'Recevez un lien par email pour choisir un nouveau mot de passe.', '/mot-de-passe-oublie')
 
   if (!isConfigured) {
     return (

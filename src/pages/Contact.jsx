@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 function encode(data) {
   return Object.keys(data)
@@ -9,6 +10,12 @@ function encode(data) {
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', sujet: 'Dépannage Windows', message: '', 'bot-field': '' })
   const [status, setStatus] = useState('idle') // idle | sending | sent | error
+
+  useDocumentMeta(
+    'Contact',
+    "Contactez 3WM Service pour un dépannage Windows à distance ou une question sur les ebooks Linux & cybersécurité. Réponse par e-mail dans les meilleurs délais.",
+    '/contact'
+  )
 
   function handleChange(e) {
     const { name, value } = e.target

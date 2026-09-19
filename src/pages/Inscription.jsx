@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import PasswordField from '../components/PasswordField.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 export default function Inscription() {
   const { signUp, isConfigured } = useAuth()
@@ -11,6 +12,8 @@ export default function Inscription() {
   const [error, setError] = useState('')
   const [done, setDone] = useState(false)
   const [loading, setLoading] = useState(false)
+
+  useDocumentMeta('Créer un compte', "Créez votre compte 3WM Service pour accéder à l'espace membre et commenter le blog.", '/inscription')
 
   if (!isConfigured) {
     return (

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import PasswordField from '../components/PasswordField.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 // Le lien reçu par email redirige ici avec un jeton temporaire dans le
 // fragment d'URL, ex : /reinitialiser-mot-de-passe#access_token=...&type=recovery
@@ -30,6 +31,8 @@ export default function ReinitialiserMotDePasse() {
     setToken(readRecoveryToken())
     setCheckedToken(true)
   }, [])
+
+  useDocumentMeta('Réinitialiser le mot de passe', 'Choisissez un nouveau mot de passe pour votre compte 3WM Service.', '/reinitialiser-mot-de-passe')
 
   if (!isConfigured) {
     return (

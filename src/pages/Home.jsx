@@ -2,10 +2,17 @@ import { Link } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import Reveal from '../components/Reveal.jsx'
 import PcHealthCard from '../components/PcHealthCard.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 const NetworkBackground = lazy(() => import('../components/NetworkBackground.jsx'))
 
 export default function Home() {
+  useDocumentMeta(
+    null,
+    "Dépannage Windows à distance basé sur le consentement, ebooks pour apprendre Linux et la cybersécurité, blog de tutoriels pratiques. Devis gratuit.",
+    '/'
+  )
+
   return (
     <>
       <section className="hero">

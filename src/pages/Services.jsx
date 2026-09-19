@@ -1,7 +1,14 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 export default function Services() {
+  useDocumentMeta(
+    'Dépannage Windows à distance',
+    "Formules de dépannage Windows à distance dès 29 € : PC lent, virus, Windows Update bloqué, imprimante, Wi-Fi. Session basée sur le consentement explicite.",
+    '/services'
+  )
+
   return (
     <>
       <div className="page-header">

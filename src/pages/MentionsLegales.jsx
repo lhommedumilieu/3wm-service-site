@@ -1,4 +1,12 @@
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
+
 export default function MentionsLegales() {
+  useDocumentMeta(
+    'Mentions légales',
+    "Mentions légales de 3WM Service : identité de l'entreprise, hébergement, propriété intellectuelle et traitement des données personnelles (RGPD).",
+    '/mentions-legales'
+  )
+
   const rows = [
     ["Identité de l'entreprise", '3WM Service'],
     ["Adresse de l'entreprise", 'Entreprise individuelle — adresse postale communiquée sur demande'],

@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 export default function NotFound() {
+  useDocumentMeta('Page introuvable', "Cette page n'existe pas ou a été déplacée.", undefined)
+
   return (
     <section className="hero">
       <div className="container center">

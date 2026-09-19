@@ -2,10 +2,17 @@ import { useParams } from 'react-router-dom'
 import { getBlogPost } from '../data/blogPosts.jsx'
 import NotFound from './NotFound.jsx'
 import Comments from '../components/Comments.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 export default function BlogPost() {
   const { slug } = useParams()
   const post = getBlogPost(slug)
+
+  useDocumentMeta(
+    post ? post.title : null,
+    post ? post.excerpt : null,
+    post ? `/blog/${post.slug}` : undefined
+  )
 
   if (!post) return <NotFound />
 

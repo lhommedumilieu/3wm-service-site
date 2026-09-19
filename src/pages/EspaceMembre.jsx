@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 const TIPS = [
   {
@@ -102,6 +103,8 @@ function OutilsEtAstuces() {
 export default function EspaceMembre() {
   const { user, loading, isConfigured, signOut } = useAuth()
   const [tab, setTab] = useState('compte')
+
+  useDocumentMeta('Espace membre', 'Votre espace membre 3WM Service.', '/espace-membre')
 
   if (!isConfigured) {
     return (

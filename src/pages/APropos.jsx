@@ -1,7 +1,14 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 export default function APropos() {
+  useDocumentMeta(
+    'À propos',
+    "3WM Service, c'est L'Homme-du-Milieu : dépannage Windows à distance, ebooks Linux & cybersécurité et blog de tutoriels, avec une approche basée sur le consentement et la transparence.",
+    '/a-propos'
+  )
+
   return (
     <>
       <div className="page-header">

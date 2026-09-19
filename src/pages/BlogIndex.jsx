@@ -1,8 +1,15 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import { blogPosts } from '../data/blogPosts.jsx'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 export default function BlogIndex() {
+  useDocumentMeta(
+    'Blog & tutoriels',
+    "Tutoriels pratiques sur Windows, Linux et la cybersécurité, écrits sans jargon inutile par 3WM Service.",
+    '/blog'
+  )
+
   return (
     <>
       <div className="page-header">

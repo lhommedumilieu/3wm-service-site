@@ -2,10 +2,17 @@ import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import tome1Cover from '../assets/images/tome1-cover.jpg'
 import tome2Cover from '../assets/images/tome2-cover.jpg'
+import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 const ETSY_URL = 'https://www.etsy.com/shop/3wmService'
 
 export default function Boutique() {
+  useDocumentMeta(
+    'Ebooks Linux & cybersécurité',
+    "Deux ebooks pour apprendre Linux et la cybersécurité : Tome 1 — Linux pour débutants (14,99 €) et Tome 2 — Kali Linux & Méthodologie Pentest (19,90 €). PDF en français et en anglais.",
+    '/boutique'
+  )
+
   return (
     <>
       <div className="page-header">
