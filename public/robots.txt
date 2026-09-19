@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://3-wm.net/sitemap.xml
