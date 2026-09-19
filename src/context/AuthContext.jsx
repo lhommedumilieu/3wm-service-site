@@ -1,5 +1,13 @@
 import { createContext, useContext, useEffect, useState, useCallback } from 'react'
-import { getSession, getCurrentUser, signIn, signUp, signOut } from '../lib/supabaseAuth.js'
+import {
+  getSession,
+  getCurrentUser,
+  signIn,
+  signUp,
+  signOut,
+  requestPasswordReset,
+  updatePasswordWithToken,
+} from '../lib/supabaseAuth.js'
 import { isSupabaseConfigured } from '../lib/config.js'
 
 const AuthContext = createContext(null)
@@ -45,6 +53,12 @@ export function AuthProvider({ children }) {
     signOut: async () => {
       await signOut()
       setUser(null)
+    },
+    requestPasswordReset: async (email, redirectTo) => {
+      await requestPasswordReset(email, redirectTo)
+    },
+    updatePasswordWithToken: async (accessToken, newPassword) => {
+      return updatePasswordWithToken(accessToken, newPassword)
     },
   }
 
