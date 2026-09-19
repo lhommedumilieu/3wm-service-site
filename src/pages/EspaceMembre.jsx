@@ -52,6 +52,32 @@ function OutilsEtAstuces() {
         </ol>
       </div>
 
+      <div className="card" style={{ marginTop: 24 }}>
+        <h3 className="mt-0">Diagnostic-PC.exe — analyse automatique</h3>
+        <p>
+          Un outil signé 3WM Service qui analyse votre PC en lecture seule (antivirus, mises à jour,
+          espace disque, démarrage...) et calcule un score de santé sur 100. Il ne modifie rien sur
+          votre machine — c'est un diagnostic, pas une réparation.
+        </p>
+        <p>
+          <a href="/downloads/Diagnostic-PC.exe" className="btn btn-primary" download>
+            Télécharger Diagnostic-PC.exe
+          </a>
+        </p>
+
+        <h4 style={{ marginTop: 28, marginBottom: 12 }}>Comment l'utiliser</h4>
+        <ol className="small" style={{ paddingLeft: 20, display: 'grid', gap: 10 }}>
+          <li>Téléchargez le fichier ci-dessus, puis double-cliquez dessus pour le lancer.</li>
+          <li>Une fenêtre demande de confirmer le lancement du diagnostic : c'est le moment de vérifier que le client est d'accord.</li>
+          <li>L'analyse se déroule automatiquement (antivirus, mises à jour, disque, démarrage, mémoire...).</li>
+          <li>Un rapport texte horodaté est enregistré sur le Bureau, avec le score de santé final.</li>
+        </ol>
+        <p className="small" style={{ marginTop: 12 }}>
+          Windows peut afficher un avertissement SmartScreen la première fois (outil peu téléchargé) :
+          cliquez sur « Informations complémentaires » puis « Exécuter quand même ».
+        </p>
+      </div>
+
       <h3 style={{ marginTop: 40, marginBottom: 16 }}>Astuces avant une session</h3>
       <div className="grid grid-2">
         {TIPS.map((tip) => (
