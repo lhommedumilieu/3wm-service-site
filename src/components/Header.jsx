@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { useState } from 'react'
+import { useAuth } from '../context/AuthContext.jsx'
 
 const links = [
   { to: '/', label: 'Accueil', end: true },
@@ -12,6 +13,11 @@ const links = [
 
 export default function Header() {
   const [open, setOpen] = useState(false)
+  const { user, isConfigured } = useAuth()
+
+  const accountLink = isConfigured
+    ? (user ? { to: '/espace-membre', label: 'Espace membre' } : { to: '/connexion', label: 'Connexion' })
+    : null
 
   return (
     <header className="site-header">
@@ -42,6 +48,17 @@ export default function Header() {
                 </NavLink>
               </li>
             ))}
+            {accountLink && (
+              <li>
+                <NavLink
+                  to={accountLink.to}
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                >
+                  {accountLink.label}
+                </NavLink>
+              </li>
+            )}
           </ul>
         </nav>
       </div>
