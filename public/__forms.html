@@ -1,0 +1,21 @@
+<!-- Ce fichier n'est jamais affiché : il permet uniquement à Netlify de
+     détecter le formulaire "contact" au moment du déploiement, car le
+     vrai formulaire (dans contact.jsx) est généré par JavaScript et
+     n'est donc pas visible par l'analyseur statique de Netlify. -->
+<!DOCTYPE html>
+<html>
+  <body>
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <select name="sujet">
+        <option>Dépannage Windows</option>
+        <option>Question sur un ebook</option>
+        <option>Autre</option>
+      </select>
+      <textarea name="message"></textarea>
+      <input type="text" name="bot-field" />
+    </form>
+  </body>
+</html>
+
