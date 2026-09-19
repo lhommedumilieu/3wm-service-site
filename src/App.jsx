@@ -10,6 +10,8 @@ import BlogIndex from './pages/BlogIndex.jsx'
 import BlogPost from './pages/BlogPost.jsx'
 import Connexion from './pages/Connexion.jsx'
 import Inscription from './pages/Inscription.jsx'
+import MotDePasseOublie from './pages/MotDePasseOublie.jsx'
+import ReinitialiserMotDePasse from './pages/ReinitialiserMotDePasse.jsx'
 import EspaceMembre from './pages/EspaceMembre.jsx'
 import APropos from './pages/APropos.jsx'
 import Contact from './pages/Contact.jsx'
@@ -39,6 +41,8 @@ export default function App() {
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/connexion" element={<Connexion />} />
           <Route path="/inscription" element={<Inscription />} />
+          <Route path="/mot-de-passe-oublie" element={<MotDePasseOublie />} />
+          <Route path="/reinitialiser-mot-de-passe" element={<ReinitialiserMotDePasse />} />
           <Route path="/espace-membre" element={<EspaceMembre />} />
           <Route path="/a-propos" element={<APropos />} />
           <Route path="/contact" element={<Contact />} />
