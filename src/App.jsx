@@ -6,8 +6,7 @@ import Home from './pages/Home.jsx'
 import Services from './pages/Services.jsx'
 import Boutique from './pages/Boutique.jsx'
 import BlogIndex from './pages/BlogIndex.jsx'
-import BlogPostTerminal from './pages/BlogPostTerminal.jsx'
-import BlogPostSecurite from './pages/BlogPostSecurite.jsx'
+import BlogPost from './pages/BlogPost.jsx'
 import APropos from './pages/APropos.jsx'
 import Contact from './pages/Contact.jsx'
 import MentionsLegales from './pages/MentionsLegales.jsx'
@@ -32,8 +31,7 @@ export default function App() {
           <Route path="/services" element={<Services />} />
           <Route path="/boutique" element={<Boutique />} />
           <Route path="/blog" element={<BlogIndex />} />
-          <Route path="/blog/premiers-pas-terminal-linux" element={<BlogPostTerminal />} />
-          <Route path="/blog/5-reflexes-cybersecurite-quotidien" element={<BlogPostSecurite />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/a-propos" element={<APropos />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
