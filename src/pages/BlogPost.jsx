@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { getBlogPost } from '../data/blogPosts.jsx'
 import NotFound from './NotFound.jsx'
+import Comments from '../components/Comments.jsx'
 
 export default function BlogPost() {
   const { slug } = useParams()
@@ -21,6 +22,7 @@ export default function BlogPost() {
         <div className="container">
           <article className="post-body" style={{ maxWidth: 720, margin: '0 auto' }}>
             <post.Body />
+            <Comments slug={post.slug} />
           </article>
         </div>
       </section>
