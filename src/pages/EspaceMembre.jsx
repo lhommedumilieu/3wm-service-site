@@ -53,11 +53,14 @@ function OutilsEtAstuces() {
       </div>
 
       <div className="card" style={{ marginTop: 24 }}>
-        <h3 className="mt-0">Diagnostic-PC.exe — analyse automatique</h3>
+        <h3 className="mt-0">Diagnostic-PC.exe — analyse + corrections</h3>
         <p>
-          Un outil signé 3WM Service qui analyse votre PC en lecture seule (antivirus, mises à jour,
-          espace disque, démarrage...) et calcule un score de santé sur 100. Il ne modifie rien sur
-          votre machine — c'est un diagnostic, pas une réparation.
+          Un outil signé 3WM Service qui analyse votre PC (antivirus, mises à jour, espace disque,
+          démarrage...) et calcule un score de santé sur 100. S'il trouve des problèmes corrigeables
+          (antivirus désactivé, mises à jour en attente, disque encombré...), il peut ensuite les
+          réparer — mais chaque correction vous est demandée individuellement, et rien n'est fait sans
+          votre accord explicite à chaque fois. L'outil ne redémarre jamais votre ordinateur tout seul :
+          si un redémarrage est nécessaire, il vous le signale, à vous de le faire quand vous voulez.
         </p>
         <p>
           <a href="/downloads/Diagnostic-PC.exe" className="btn btn-primary" download>
@@ -69,9 +72,14 @@ function OutilsEtAstuces() {
         <ol className="small" style={{ paddingLeft: 20, display: 'grid', gap: 10 }}>
           <li>Téléchargez le fichier ci-dessus, puis double-cliquez dessus pour le lancer.</li>
           <li>Une fenêtre demande de confirmer le lancement du diagnostic : c'est le moment de vérifier que le client est d'accord.</li>
-          <li>L'analyse se déroule automatiquement (antivirus, mises à jour, disque, démarrage, mémoire...).</li>
-          <li>Un rapport texte horodaté est enregistré sur le Bureau, avec le score de santé final.</li>
+          <li>L'analyse se déroule automatiquement (antivirus, mises à jour, disque, démarrage, mémoire...) et affiche un score de santé.</li>
+          <li>Si des problèmes corrigeables sont trouvés, l'outil les propose un par un : « Voulez-vous corriger : ... ? (O/N) ». Chaque correction se fait uniquement après un « oui » pour cette correction précise.</li>
+          <li>Un rapport texte horodaté est enregistré sur le Bureau, avec le score final et le détail des corrections acceptées ou refusées.</li>
         </ol>
+        <p className="small" style={{ marginTop: 12 }}>
+          Certaines corrections (mises à jour, nettoyage complet) nécessitent que l'outil soit lancé en
+          tant qu'administrateur pour fonctionner pleinement.
+        </p>
         <p className="small" style={{ marginTop: 12 }}>
           Windows peut afficher un avertissement SmartScreen la première fois (outil peu téléchargé) :
           cliquez sur « Informations complémentaires » puis « Exécuter quand même ».
