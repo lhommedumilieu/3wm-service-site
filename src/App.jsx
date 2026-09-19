@@ -1,22 +1,26 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, lazy, Suspense } from 'react'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import TawkChat from './components/TawkChat.jsx'
-import Home from './pages/Home.jsx'
-import Services from './pages/Services.jsx'
-import Boutique from './pages/Boutique.jsx'
-import BlogIndex from './pages/BlogIndex.jsx'
-import BlogPost from './pages/BlogPost.jsx'
-import Connexion from './pages/Connexion.jsx'
-import Inscription from './pages/Inscription.jsx'
-import MotDePasseOublie from './pages/MotDePasseOublie.jsx'
-import ReinitialiserMotDePasse from './pages/ReinitialiserMotDePasse.jsx'
-import EspaceMembre from './pages/EspaceMembre.jsx'
-import APropos from './pages/APropos.jsx'
-import Contact from './pages/Contact.jsx'
-import MentionsLegales from './pages/MentionsLegales.jsx'
-import NotFound from './pages/NotFound.jsx'
+
+// Chaque page (et ce qu'elle importe, ex. GSAP via Reveal) n'est chargée
+// que lorsque sa route est visitée, au lieu d'alourdir le bundle initial
+// de toutes les pages en même temps.
+const Home = lazy(() => import('./pages/Home.jsx'))
+const Services = lazy(() => import('./pages/Services.jsx'))
+const Boutique = lazy(() => import('./pages/Boutique.jsx'))
+const BlogIndex = lazy(() => import('./pages/BlogIndex.jsx'))
+const BlogPost = lazy(() => import('./pages/BlogPost.jsx'))
+const Connexion = lazy(() => import('./pages/Connexion.jsx'))
+const Inscription = lazy(() => import('./pages/Inscription.jsx'))
+const MotDePasseOublie = lazy(() => import('./pages/MotDePasseOublie.jsx'))
+const ReinitialiserMotDePasse = lazy(() => import('./pages/ReinitialiserMotDePasse.jsx'))
+const EspaceMembre = lazy(() => import('./pages/EspaceMembre.jsx'))
+const APropos = lazy(() => import('./pages/APropos.jsx'))
+const Contact = lazy(() => import('./pages/Contact.jsx'))
+const MentionsLegales = lazy(() => import('./pages/MentionsLegales.jsx'))
+const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -33,22 +37,24 @@ export default function App() {
       <TawkChat />
       <Header />
       <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/boutique" element={<Boutique />} />
-          <Route path="/blog" element={<BlogIndex />} />
-          <Route path="/blog/:slug" element={<BlogPost />} />
-          <Route path="/connexion" element={<Connexion />} />
-          <Route path="/inscription" element={<Inscription />} />
-          <Route path="/mot-de-passe-oublie" element={<MotDePasseOublie />} />
-          <Route path="/reinitialiser-mot-de-passe" element={<ReinitialiserMotDePasse />} />
-          <Route path="/espace-membre" element={<EspaceMembre />} />
-          <Route path="/a-propos" element={<APropos />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/mentions-legales" element={<MentionsLegales />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/boutique" element={<Boutique />} />
+            <Route path="/blog" element={<BlogIndex />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/connexion" element={<Connexion />} />
+            <Route path="/inscription" element={<Inscription />} />
+            <Route path="/mot-de-passe-oublie" element={<MotDePasseOublie />} />
+            <Route path="/reinitialiser-mot-de-passe" element={<ReinitialiserMotDePasse />} />
+            <Route path="/espace-membre" element={<EspaceMembre />} />
+            <Route path="/a-propos" element={<APropos />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
       <Footer />
     </>
