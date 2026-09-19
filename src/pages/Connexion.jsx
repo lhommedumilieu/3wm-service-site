@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import PasswordField from '../components/PasswordField.jsx'
 
 export default function Connexion() {
   const { signIn, isConfigured } = useAuth()
@@ -46,12 +47,22 @@ export default function Connexion() {
       </div>
       <section>
         <div className="container">
-          <form onSubmit={handleSubmit} className="card" style={{ maxWidth: 420, margin: '0 auto' }}>
+          <form onSubmit={handleSubmit} className="contact-form card" style={{ maxWidth: 420, margin: '0 auto' }}>
             <label htmlFor="email">Adresse email</label>
             <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
 
-            <label htmlFor="password" style={{ marginTop: 16 }}>Mot de passe</label>
-            <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+            <PasswordField
+              id="password"
+              label="Mot de passe"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              style={{ marginTop: 16 }}
+            />
+
+            <p className="small" style={{ marginTop: 10, marginBottom: 0, textAlign: 'right' }}>
+              <Link to="/mot-de-passe-oublie">Mot de passe oublié ?</Link>
+            </p>
 
             {error && <p style={{ color: '#e5484d', marginTop: 12 }}>{error}</p>}
 
