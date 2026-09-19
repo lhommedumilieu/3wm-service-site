@@ -73,7 +73,7 @@ export default function Boutique() {
       <section>
         <div className="container">
           <Reveal className="book-card" style={{ marginBottom: 32 }}>
-            <img src={tome1Cover} alt="Couverture — Linux pour débutants, fondamentaux cybersécurité" />
+            <img src={tome1Cover} alt="Couverture — Linux pour débutants, fondamentaux cybersécurité" width="400" height="400" />
             <div>
               <span className="book-tag">Tome 1 — Débutant</span>
               <h2 className="mt-0">Linux pour débutants — Fondamentaux cybersécurité</h2>
@@ -85,7 +85,7 @@ export default function Boutique() {
           </Reveal>
 
           <Reveal className="book-card" delay={0.1}>
-            <img src={tome2Cover} alt="Couverture — Kali Linux & Méthodologie Pentest" />
+            <img src={tome2Cover} alt="Couverture — Kali Linux & Méthodologie Pentest" width="400" height="400" loading="lazy" />
             <div>
               <span className="book-tag">Tome 2 — Intermédiaire</span>
               <h2 className="mt-0">Kali Linux &amp; Méthodologie Pentest</h2>
