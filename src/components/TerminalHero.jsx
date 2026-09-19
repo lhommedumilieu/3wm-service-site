@@ -76,10 +76,14 @@ export default function TerminalHero() {
   return (
     <div className="term-window">
       <div className="term-titlebar">
-        <span className="term-dot red"></span>
-        <span className="term-dot yellow"></span>
-        <span className="term-dot green"></span>
-        <span className="term-path">Assistance à distance — 3WM Service</span>
+        <div className="term-tab">
+          <span className="term-path">Assistance à distance — 3WM Service</span>
+        </div>
+        <div className="term-caption" aria-hidden="true">
+          <span className="term-cap-btn">─</span>
+          <span className="term-cap-btn">▢</span>
+          <span className="term-cap-btn close">✕</span>
+        </div>
       </div>
       <div className="term-body" ref={bodyRef}></div>
     </div>
