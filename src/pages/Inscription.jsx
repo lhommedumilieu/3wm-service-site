@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
+import PasswordField from '../components/PasswordField.jsx'
 
 export default function Inscription() {
   const { signUp, isConfigured } = useAuth()
@@ -61,15 +62,29 @@ export default function Inscription() {
               <p>Un email de confirmation vient de vous être envoyé. Cliquez sur le lien qu'il contient pour activer votre compte, puis revenez vous <Link to="/connexion">connecter</Link>.</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="card" style={{ maxWidth: 420, margin: '0 auto' }}>
+            <form onSubmit={handleSubmit} className="contact-form card" style={{ maxWidth: 420, margin: '0 auto' }}>
               <label htmlFor="email">Adresse email</label>
               <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
 
-              <label htmlFor="password" style={{ marginTop: 16 }}>Mot de passe (8 caractères minimum)</label>
-              <input id="password" type="password" required minLength={8} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" />
+              <PasswordField
+                id="password"
+                label="Mot de passe (8 caractères minimum)"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+                minLength={8}
+                style={{ marginTop: 16 }}
+              />
 
-              <label htmlFor="confirm" style={{ marginTop: 16 }}>Confirmer le mot de passe</label>
-              <input id="confirm" type="password" required minLength={8} value={confirm} onChange={(e) => setConfirm(e.target.value)} autoComplete="new-password" />
+              <PasswordField
+                id="confirm"
+                label="Confirmer le mot de passe"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                autoComplete="new-password"
+                minLength={8}
+                style={{ marginTop: 16 }}
+              />
 
               {error && <p style={{ color: '#e5484d', marginTop: 12 }}>{error}</p>}
 
