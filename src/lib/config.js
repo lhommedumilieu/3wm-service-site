@@ -7,8 +7,8 @@
 // Tawk.to : Administration → Canaux de chat → Propriété du site.
 // Le code d'intégration Tawk.to ressemble à :
 //   https://embed.tawk.to/<TAWK_PROPERTY_ID>/<TAWK_WIDGET_ID>
-export const TAWK_PROPERTY_ID = ''
-export const TAWK_WIDGET_ID = ''
+export const TAWK_PROPERTY_ID = '6aae74b8208490345262755b'
+export const TAWK_WIDGET_ID = '1k2snfsfk'
 
 // Supabase : Project Settings → API.
 export const SUPABASE_URL = 'https://dnpnxgnlilnwnhhnibti.supabase.co'
