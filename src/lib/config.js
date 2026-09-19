@@ -11,8 +11,8 @@ export const TAWK_PROPERTY_ID = ''
 export const TAWK_WIDGET_ID = ''
 
 // Supabase : Project Settings → API.
-export const SUPABASE_URL = ''
-export const SUPABASE_ANON_KEY = ''
+export const SUPABASE_URL = 'https://dnpnxgnlilnwnhhnibti.supabase.co'
+export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRucG54Z25saWxud25oaG5pYnRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTI0NzgsImV4cCI6MjEwNTM4ODQ3OH0.ywpTWGlLGc5cvAYf__d-kwGSE3Sni27srVqtotP6Q2I'
 
 export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
 export const isTawkConfigured = Boolean(TAWK_PROPERTY_ID && TAWK_WIDGET_ID)
