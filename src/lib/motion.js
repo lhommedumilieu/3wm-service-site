@@ -18,4 +18,3 @@ export function prefersReducedMotion() {
 }
 
 export { gsap, ScrollTrigger }
-
