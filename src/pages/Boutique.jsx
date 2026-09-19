@@ -6,11 +6,58 @@ import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 const ETSY_URL = 'https://www.etsy.com/shop/3wmService'
 
+function absoluteUrl(path) {
+  if (typeof window === 'undefined') return path
+  try {
+    return new URL(path, window.location.origin).href
+  } catch {
+    return path
+  }
+}
+
 export default function Boutique() {
+  const structuredData = [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: 'Linux pour débutants — Fondamentaux cybersécurité',
+      description:
+        'Le point de départ idéal pour découvrir Linux et poser de vraies bases en cybersécurité, sans jargon inutile. Installation, ligne de commande, sécurité de base.',
+      image: absoluteUrl(tome1Cover),
+      brand: { '@type': 'Brand', name: '3WM Service' },
+      author: { '@type': 'Person', name: "L'Homme-du-Milieu" },
+      offers: {
+        '@type': 'Offer',
+        url: ETSY_URL,
+        price: '14.99',
+        priceCurrency: 'EUR',
+        availability: 'https://schema.org/InStock',
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: 'Kali Linux & Méthodologie Pentest',
+      description:
+        'La suite avancée du Tome 1 : découverte de Kali Linux, méthodologie de pentest étape par étape (reconnaissance, scan, exploitation, reporting) et bonnes pratiques éthiques.',
+      image: absoluteUrl(tome2Cover),
+      brand: { '@type': 'Brand', name: '3WM Service' },
+      author: { '@type': 'Person', name: "L'Homme-du-Milieu" },
+      offers: {
+        '@type': 'Offer',
+        url: ETSY_URL,
+        price: '19.90',
+        priceCurrency: 'EUR',
+        availability: 'https://schema.org/InStock',
+      },
+    },
+  ]
+
   useDocumentMeta(
     'Ebooks Linux & cybersécurité',
     "Deux ebooks pour apprendre Linux et la cybersécurité : Tome 1 — Linux pour débutants (14,99 €) et Tome 2 — Kali Linux & Méthodologie Pentest (19,90 €). PDF en français et en anglais.",
-    '/boutique'
+    '/boutique',
+    structuredData
   )
 
   return (

@@ -2,11 +2,31 @@ import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
+const STRUCTURED_DATA = {
+  '@context': 'https://schema.org',
+  '@type': 'Service',
+  serviceType: 'Dépannage informatique à distance',
+  provider: {
+    '@type': 'ProfessionalService',
+    name: '3WM Service',
+    url: 'https://3-wm.net/',
+    email: 'service@3-wm.net',
+  },
+  areaServed: 'FR',
+  offers: [
+    { '@type': 'Offer', name: 'Dépannage ponctuel', price: '29', priceCurrency: 'EUR', description: '1 problème identifié' },
+    { '@type': 'Offer', name: 'Dépannage approfondi', price: '49', priceCurrency: 'EUR', description: 'Plusieurs problèmes traités dans la même session' },
+    { '@type': 'Offer', name: 'Forfait mensuel', price: '19', priceCurrency: 'EUR', description: 'Assistance illimitée, par mois' },
+    { '@type': 'Offer', name: 'Pack entreprise', price: '79', priceCurrency: 'EUR', description: 'Plusieurs postes Windows à suivre' },
+  ],
+}
+
 export default function Services() {
   useDocumentMeta(
     'Dépannage Windows à distance',
     "Formules de dépannage Windows à distance dès 29 € : PC lent, virus, Windows Update bloqué, imprimante, Wi-Fi. Session basée sur le consentement explicite.",
-    '/services'
+    '/services',
+    STRUCTURED_DATA
   )
 
   return (

@@ -6,11 +6,25 @@ import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 const NetworkBackground = lazy(() => import('../components/NetworkBackground.jsx'))
 
+const STRUCTURED_DATA = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: '3WM Service',
+  url: 'https://3-wm.net/',
+  email: 'service@3-wm.net',
+  description:
+    "Dépannage Windows à distance basé sur le consentement, ebooks pour apprendre Linux et la cybersécurité, blog de tutoriels pratiques.",
+  areaServed: 'FR',
+  priceRange: '€€',
+  sameAs: ['https://www.etsy.com/shop/3wmService'],
+}
+
 export default function Home() {
   useDocumentMeta(
     null,
     "Dépannage Windows à distance basé sur le consentement, ebooks pour apprendre Linux et la cybersécurité, blog de tutoriels pratiques. Devis gratuit.",
-    '/'
+    '/',
+    STRUCTURED_DATA
   )
 
   return (
