@@ -554,3 +554,46 @@ article.post-body h2 { margin-top: 44px; font-size: 1.35rem; }
   }
   nav.main-nav.open ul { flex-direction: column; gap: 18px; }
 }
+
+/* --- Auth / member forms & comments --- */
+.card form,
+form.card,
+form.auth-form {
+  display: grid;
+  gap: 4px;
+}
+.card form label,
+form.card label,
+form.auth-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.88rem;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+.card form input,
+.card form textarea,
+form.card input,
+form.card textarea,
+form.auth-form input,
+form.auth-form textarea {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+}
+.card form input:focus,
+.card form textarea:focus,
+form.card input:focus,
+form.card textarea:focus,
+form.auth-form input:focus,
+form.auth-form textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+}
