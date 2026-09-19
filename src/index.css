@@ -780,3 +780,31 @@ form.auth-form textarea:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
 }
+/* --- Champ mot de passe (bouton afficher/masquer) --- */
+.password-field {
+  position: relative;
+}
+.password-field input {
+  width: 100%;
+  padding-right: 44px;
+}
+.password-toggle {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.password-toggle:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.password-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
