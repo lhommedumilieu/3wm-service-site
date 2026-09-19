@@ -304,6 +304,7 @@ nav.main-nav a.active::after {
 .btn-outline:active { transform: translateY(0); }
 
 .btn-row { display: flex; gap: 16px; flex-wrap: wrap; }
+
 /* --- Hero --- */
 .hero {
   padding: 84px 0 96px;
@@ -402,6 +403,97 @@ nav.main-nav a.active::after {
 }
 @keyframes blink { 50% { opacity: 0; } }
 
+/* Carte de diagnostic PC en page d'accueil (remplace le terminal) */
+.health-body {
+  padding: 28px 24px 26px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  min-height: 230px;
+}
+.health-gauge {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  flex: none;
+}
+.health-gauge svg { transform: rotate(-90deg); }
+.health-gauge-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 10;
+}
+.health-gauge-value {
+  fill: none;
+  stroke: var(--ok);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.health-gauge-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.health-score {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+}
+.health-score-suffix {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  margin-top: 2px;
+}
+.health-score-caption {
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+.health-checks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.health-checks li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.health-check-icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  padding: 3px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ok) 18%, transparent);
+  color: var(--ok);
+  box-sizing: border-box;
+}
+.health-check-label {
+  font-size: 0.86rem;
+  color: var(--ink-muted);
+}
+.health-check-value {
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  color: var(--ink);
+  font-weight: 500;
+  text-align: right;
+}
+
 /* --- Sections --- */
 section { padding: 72px 0; position: relative; }
 section.alt { background: var(--surface-alt); }
@@ -443,6 +535,7 @@ p.section-sub { color: var(--ink-muted); margin: 0 auto 44px; max-width: 560px; 
 .card .price small { font-size: 0.85rem; color: var(--ink-muted); font-weight: 400; }
 
 .icon { width: 38px; height: 38px; color: var(--accent); }
+
 /* --- Cartes ebook --- */
 .book-card {
   display: grid;
@@ -552,6 +645,7 @@ form.contact-form textarea:focus {
   border-radius: var(--radius-md);
   padding: 40px 28px;
 }
+
 /* --- Footer --- */
 footer.site-footer {
   border-top: 1px solid var(--border);
