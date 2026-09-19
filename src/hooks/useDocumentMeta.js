@@ -25,14 +25,32 @@ function setCanonical(url) {
   link.setAttribute('href', url)
 }
 
+function setStructuredData(data) {
+  const script = document.getElementById('page-structured-data')
+  if (!data) {
+    if (script) script.remove()
+    return
+  }
+  const tag = script || document.createElement('script')
+  tag.type = 'application/ld+json'
+  tag.id = 'page-structured-data'
+  tag.textContent = JSON.stringify(data)
+  if (!script) document.head.appendChild(tag)
+}
+
 /**
- * Met à jour le <title> et les balises meta (description, Open Graph,
- * Twitter Card) de la page courante. Aucune dépendance externe : lit/écrit
- * directement le <head> via useEffect, ce qui suffit pour une SPA servie
- * statiquement (le HTML initial garde son propre titre/description par
- * défaut pour les robots qui n'exécutent pas le JS).
+ * Met à jour le <title>, les balises meta (description, Open Graph,
+ * Twitter Card) et les données structurées Schema.org (JSON-LD) de la page
+ * courante. Aucune dépendance externe : lit/écrit directement le <head> via
+ * useEffect, ce qui suffit pour une SPA servie statiquement (le HTML initial
+ * garde son propre titre/description par défaut pour les robots qui
+ * n'exécutent pas le JS).
+ *
+ * `structuredData` est un objet Schema.org (avec @context/@type) ou un
+ * tableau de plusieurs objets — utile par exemple pour combiner un
+ * BlogPosting et un BreadcrumbList sur un même article.
  */
-export default function useDocumentMeta(title, description, path) {
+export default function useDocumentMeta(title, description, path, structuredData) {
   useEffect(() => {
     const fullTitle = title ? `${title} | ${SITE_NAME}` : DEFAULT_TITLE
     const finalDescription = description || DEFAULT_DESCRIPTION
@@ -53,9 +71,12 @@ export default function useDocumentMeta(title, description, path) {
       setMetaTag('property', 'og:url', url)
     }
 
+    setStructuredData(structuredData)
+
     return () => {
       document.title = DEFAULT_TITLE
+      setStructuredData(null)
     }
-  }, [title, description, path])
+  }, [title, description, path, structuredData])
 }
 
