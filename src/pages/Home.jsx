@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import Reveal from '../components/Reveal.jsx'
-import TerminalHero from '../components/TerminalHero.jsx'
+import PcHealthCard from '../components/PcHealthCard.jsx'
 
 const NetworkBackground = lazy(() => import('../components/NetworkBackground.jsx'))
 
@@ -26,7 +26,7 @@ export default function Home() {
               <Link to="/boutique" className="btn btn-outline">Découvrir les ebooks Linux</Link>
             </div>
           </div>
-          <TerminalHero />
+          <PcHealthCard />
         </div>
       </section>
 
