@@ -346,6 +346,10 @@ nav.main-nav a.active::after {
   gap: 56px;
   align-items: center;
 }
+.hero-grid-single {
+  grid-template-columns: 1fr;
+  max-width: 720px;
+}
 .hero h1 {
   font-size: clamp(2rem, 3.6vw, 2.9rem);
   margin-bottom: 20px;
@@ -356,53 +360,6 @@ nav.main-nav a.active::after {
   max-width: 46ch;
   margin: 0 0 32px;
 }
-
-/* Fenêtre de terminal décorative, façon Windows Terminal */
-.term-window {
-  background: color-mix(in srgb, #0B1220 90%, transparent);
-  backdrop-filter: blur(28px) saturate(180%);
-  -webkit-backdrop-filter: blur(28px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-flyout);
-}
-.term-titlebar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding-left: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-}
-.term-titlebar .term-tab {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 0;
-  border-bottom: 2px solid var(--accent);
-}
-.term-titlebar span.term-path {
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  color: #8AA0C4;
-}
-.term-caption { display: flex; align-items: stretch; height: 36px; }
-.term-cap-btn {
-  width: 44px;
-  border: none;
-  background: none;
-  color: #9AAAC6;
-  font-size: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: default;
-  transition: background 0.12s ease, color 0.12s ease;
-}
-.term-cap-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
-.term-cap-btn.close:hover { background: #E81123; color: #fff; }
 
 .term-body {
   padding: 22px 20px 26px;
@@ -424,96 +381,6 @@ nav.main-nav a.active::after {
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-/* Carte de diagnostic PC en page d'accueil (remplace le terminal) */
-.health-body {
-  padding: 28px 24px 26px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
-  min-height: 230px;
-}
-.health-gauge {
-  position: relative;
-  width: 128px;
-  height: 128px;
-  flex: none;
-}
-.health-gauge svg { transform: rotate(-90deg); }
-.health-gauge-track {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.08);
-  stroke-width: 10;
-}
-.health-gauge-value {
-  fill: none;
-  stroke: var(--ok);
-  stroke-width: 10;
-  stroke-linecap: round;
-}
-.health-gauge-label {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.health-score {
-  font-family: var(--font-display);
-  font-size: 2.1rem;
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1;
-}
-.health-score-suffix {
-  font-family: var(--font-display);
-  font-size: 0.8rem;
-  color: var(--ink-muted);
-  margin-top: 2px;
-}
-.health-score-caption {
-  font-size: 0.72rem;
-  color: var(--ink-muted);
-  margin-top: 6px;
-  letter-spacing: 0.02em;
-}
-.health-checks {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.health-checks li {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.health-check-icon {
-  width: 20px;
-  height: 20px;
-  flex: none;
-  padding: 3px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--ok) 18%, transparent);
-  color: var(--ok);
-  box-sizing: border-box;
-}
-.health-check-label {
-  font-size: 0.86rem;
-  color: var(--ink-muted);
-}
-.health-check-value {
-  margin-left: auto;
-  font-family: var(--font-display);
-  font-size: 0.82rem;
-  color: var(--ink);
-  font-weight: 500;
-  text-align: right;
-}
 
 /* --- Onglets (espace membre) --- */
 .member-tabs {
