@@ -86,7 +86,7 @@ export default function Comments({ slug }) {
             style={{ width: '100%', marginTop: 8 }}
             required
           />
-          {error && <p style={{ color: '#e5484d' }}>{error}</p>}
+          {error && <p role="alert" style={{ color: '#e5484d' }}>{error}</p>}
           <button type="submit" className="btn btn-primary" style={{ marginTop: 12 }} disabled={posting}>
             {posting ? 'Publication…' : 'Publier'}
           </button>

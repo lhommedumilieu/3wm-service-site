@@ -87,7 +87,7 @@ export default function PcHealthCard() {
       </div>
       <div className="health-body">
         <div className="health-gauge">
-          <svg viewBox="0 0 120 120" width="128" height="128">
+          <svg viewBox="0 0 120 120" width="128" height="128" aria-hidden="true">
             <circle cx="60" cy="60" r={RADIUS} className="health-gauge-track" />
             <circle
               ref={circleRef}
@@ -112,6 +112,7 @@ export default function PcHealthCard() {
             <li key={item.label} ref={(el) => (rowsRef.current[i] = el)}>
               <svg
                 className="health-check-icon"
+                aria-hidden="true"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"

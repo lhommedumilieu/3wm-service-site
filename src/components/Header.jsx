@@ -28,13 +28,14 @@ export default function Header() {
         </NavLink>
         <button
           className="nav-toggle"
-          aria-label="Ouvrir le menu"
+          aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
           aria-expanded={open}
+          aria-controls="main-nav"
           onClick={() => setOpen((v) => !v)}
         >
-          ☰
+          <span aria-hidden="true">☰</span>
         </button>
-        <nav className={`main-nav${open ? ' open' : ''}`}>
+        <nav id="main-nav" aria-label="Navigation principale" className={`main-nav${open ? ' open' : ''}`}>
           <ul>
             {links.map((l) => (
               <li key={l.to}>
