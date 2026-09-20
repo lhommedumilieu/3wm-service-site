@@ -122,6 +122,27 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   border-radius: 4px;
 }
 
+/* Lien d'évitement : invisible tant qu'il n'a pas le focus clavier,
+   permet de sauter directement au contenu principal sans repasser
+   par toute la navigation à chaque page. */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translateY(-120%);
+  background: var(--accent);
+  color: #06121c;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 0 0 8px 0;
+  z-index: 1000;
+  transition: transform 0.15s ease;
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+main:focus-visible { outline: none; }
+
 img { max-width: 100%; display: block; border-radius: var(--radius-md); }
 
 code {

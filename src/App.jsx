@@ -34,9 +34,10 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
+      <a href="#main-content" className="skip-link">Aller au contenu</a>
       <TawkChat />
       <Header />
-      <main>
+      <main id="main-content" tabIndex={-1}>
         <Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<Home />} />
