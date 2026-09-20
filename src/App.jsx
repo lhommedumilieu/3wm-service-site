@@ -3,6 +3,7 @@ import { useEffect, lazy, Suspense } from 'react'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import TawkChat from './components/TawkChat.jsx'
+import { trackPageView } from './lib/analytics.js'
 
 // Chaque page (et ce qu'elle importe, ex. GSAP via Reveal) n'est chargée
 // que lorsque sa route est visitée, au lieu d'alourdir le bundle initial
@@ -26,6 +27,7 @@ function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
     window.scrollTo(0, 0)
+    trackPageView(pathname)
   }, [pathname])
   return null
 }
