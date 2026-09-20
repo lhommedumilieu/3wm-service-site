@@ -54,6 +54,25 @@ function OutilsEtAstuces() {
       </div>
 
       <div className="card" style={{ marginTop: 24 }}>
+        <h3 className="mt-0">TeamViewer — alternative à AnyDesk</h3>
+        <p>
+          Une autre solution de prise en main à distance, tout aussi reconnue. Si AnyDesk ne
+          fonctionne pas correctement sur votre PC (pare-feu d'entreprise, antivirus restrictif...),
+          TeamViewer est une bonne alternative à proposer au technicien.
+        </p>
+        <p>
+          <a
+            href="https://www.teamviewer.com/fr/download/windows/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-outline"
+          >
+            Télécharger TeamViewer (site officiel)
+          </a>
+        </p>
+      </div>
+
+      <div className="card" style={{ marginTop: 24 }}>
         <h3 className="mt-0">Diagnostic-PC.exe — analyse + corrections</h3>
         <p>
           Un outil signé 3WM Service qui analyse votre PC (antivirus, mises à jour, espace disque,
@@ -85,6 +104,93 @@ function OutilsEtAstuces() {
           Windows peut afficher un avertissement SmartScreen la première fois (outil peu téléchargé) :
           cliquez sur « Informations complémentaires » puis « Exécuter quand même ».
         </p>
+      </div>
+
+      <h3 style={{ marginTop: 40, marginBottom: 16 }}>Logiciels utiles évoqués dans nos tutoriels</h3>
+      <p className="small" style={{ marginTop: -8, marginBottom: 16 }}>
+        Liens directs vers les sites officiels des éditeurs — aucun de ces programmes n'est hébergé par 3WM Service, pour garantir que vous téléchargez toujours la dernière version, saine, directement à la source.
+      </p>
+      <div className="grid grid-2">
+        <div className="card">
+          <h3 className="mt-0" style={{ fontSize: '1rem' }}>Rufus</h3>
+          <p className="small">Crée une clé USB bootable pour essayer ou installer un système, sans rien modifier sur votre PC. Évoqué dans notre <Link to="/blog/creer-cle-usb-bootable-linux">tuto clé USB bootable</Link>. Windows uniquement.</p>
+          <a href="https://rufus.ie" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8 }}>
+            Télécharger Rufus (site officiel)
+          </a>
+        </div>
+
+        <div className="card">
+          <h3 className="mt-0" style={{ fontSize: '1rem' }}>balenaEtcher</h3>
+          <p className="small">La même fonction que Rufus, mais disponible aussi sur macOS et Linux. Pratique si vous ne partez pas d'un PC Windows.</p>
+          <a href="https://etcher.balena.io" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8 }}>
+            Télécharger balenaEtcher (site officiel)
+          </a>
+        </div>
+
+        <div className="card">
+          <h3 className="mt-0" style={{ fontSize: '1rem' }}>CCleaner</h3>
+          <p className="small">Nettoie les fichiers temporaires, le cache et les entrées inutiles pour redonner de l'espace et de la fluidité à un PC Windows encombré.</p>
+          <a href="https://www.ccleaner.com/fr/ccleaner/download" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8 }}>
+            Télécharger CCleaner (site officiel)
+          </a>
+        </div>
+      </div>
+
+      <h3 style={{ marginTop: 40, marginBottom: 16 }}>Systèmes d'exploitation</h3>
+      <p className="small" style={{ marginTop: -8, marginBottom: 16 }}>
+        Là aussi, uniquement des liens vers les sources officielles de chaque éditeur ou distribution — jamais de fichier hébergé ou modifié par 3WM Service.
+      </p>
+      <div className="grid grid-2">
+        <div className="card">
+          <h3 className="mt-0" style={{ fontSize: '1rem' }}>Windows 11 / 10</h3>
+          <p className="small">L'outil de création de support d'installation officiel de Microsoft, pour réinstaller ou mettre à niveau Windows proprement.</p>
+          <a href="https://www.microsoft.com/fr-fr/software-download/windows11" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8 }}>
+            Télécharger Windows 11 (Microsoft)
+          </a>
+          <a href="https://www.microsoft.com/fr-fr/software-download/windows10" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8, marginLeft: 8 }}>
+            Télécharger Windows 10 (Microsoft)
+          </a>
+        </div>
+
+        <div className="card">
+          <h3 className="mt-0" style={{ fontSize: '1rem' }}>Ubuntu</h3>
+          <p className="small">La distribution Linux la plus répandue pour débuter, à utiliser avec Rufus ou balenaEtcher pour créer votre clé USB d'essai.</p>
+          <a href="https://ubuntu.com/download/desktop" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8 }}>
+            Télécharger Ubuntu (site officiel)
+          </a>
+        </div>
+
+        <div className="card">
+          <h3 className="mt-0" style={{ fontSize: '1rem' }}>Linux Mint</h3>
+          <p className="small">Une alternative à Ubuntu, souvent recommandée aux débutants venant de Windows pour son interface plus familière.</p>
+          <a href="https://linuxmint.com/download.php" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8 }}>
+            Télécharger Linux Mint (site officiel)
+          </a>
+        </div>
+
+        <div className="card">
+          <h3 className="mt-0" style={{ fontSize: '1rem' }}>Kali Linux</h3>
+          <p className="small">La distribution utilisée dans le <Link to="/boutique">Tome 2 — Kali Linux &amp; Méthodologie Pentest</Link>, dédiée aux tests d'intrusion et à la cybersécurité offensive.</p>
+          <a href="https://www.kali.org/get-kali/" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8 }}>
+            Télécharger Kali Linux (site officiel)
+          </a>
+        </div>
+
+        <div className="card">
+          <h3 className="mt-0" style={{ fontSize: '1rem' }}>Debian</h3>
+          <p className="small">Une distribution réputée pour sa stabilité, à la base de nombreuses autres (dont Ubuntu). Plutôt destinée à un usage déjà un peu plus averti.</p>
+          <a href="https://www.debian.org/distrib/" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8 }}>
+            Télécharger Debian (site officiel)
+          </a>
+        </div>
+
+        <div className="card">
+          <h3 className="mt-0" style={{ fontSize: '1rem' }}>Fedora</h3>
+          <p className="small">Une distribution moderne, sponsorisée par Red Hat, qui intègre rapidement les dernières nouveautés de l'écosystème Linux.</p>
+          <a href="https://fedoraproject.org/workstation/download" target="_blank" rel="noopener noreferrer" className="btn btn-outline" style={{ marginTop: 8 }}>
+            Télécharger Fedora (site officiel)
+          </a>
+        </div>
       </div>
 
       <h3 style={{ marginTop: 40, marginBottom: 16 }}>Astuces avant une session</h3>
