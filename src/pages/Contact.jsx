@@ -52,7 +52,7 @@ export default function Contact() {
         <div className="container">
           {status === 'sent' ? (
             <div className="form-success">
-              <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ width: 44, height: 44, margin: '0 auto 16px' }}>
+              <svg className="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" style={{ width: 44, height: 44, margin: '0 auto 16px' }}>
                 <circle cx="12" cy="12" r="9"></circle>
                 <path d="M8.5 12.5l2.3 2.3L16 10"></path>
               </svg>
@@ -97,7 +97,7 @@ export default function Contact() {
               </button>
 
               {status === 'error' && (
-                <p className="small" style={{ color: '#c0392b' }}>
+                <p className="small" role="alert" style={{ color: '#e5484d' }}>
                   Une erreur est survenue. Vous pouvez écrire directement à{' '}
                   <a href="mailto:service@3-wm.net">service@3-wm.net</a>.
                 </p>

@@ -66,7 +66,7 @@ export default function MotDePasseOublie() {
               <label htmlFor="email">Adresse email</label>
               <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
 
-              {error && <p style={{ color: '#e5484d', marginTop: 12 }}>{error}</p>}
+              {error && <p role="alert" style={{ color: '#e5484d', marginTop: 12 }}>{error}</p>}
 
               <button type="submit" className="btn btn-primary" style={{ marginTop: 20 }} disabled={loading}>
                 {loading ? 'Envoi…' : 'Envoyer le lien de réinitialisation'}

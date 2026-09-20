@@ -67,7 +67,7 @@ export default function Connexion() {
               <Link to="/mot-de-passe-oublie">Mot de passe oublié ?</Link>
             </p>
 
-            {error && <p style={{ color: '#e5484d', marginTop: 12 }}>{error}</p>}
+            {error && <p role="alert" style={{ color: '#e5484d', marginTop: 12 }}>{error}</p>}
 
             <button type="submit" className="btn btn-primary" style={{ marginTop: 20 }} disabled={loading}>
               {loading ? 'Connexion…' : 'Se connecter'}

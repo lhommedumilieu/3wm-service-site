@@ -59,7 +59,7 @@ export default function Home() {
           </Reveal>
           <div className="grid grid-3">
             <Reveal className="card" delay={0}>
-              <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="9"></circle>
                 <path d="M8.5 12.5l2.3 2.3L16 10"></path>
               </svg>
@@ -68,7 +68,7 @@ export default function Home() {
               <p><Link to="/services">Voir les formules →</Link></p>
             </Reveal>
             <Reveal className="card" delay={0.08}>
-              <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M2 4.5h6a4 4 0 014 4v13a3 3 0 00-3-3H2z"></path>
                 <path d="M22 4.5h-6a4 4 0 00-4 4v13a3 3 0 013-3h7z"></path>
               </svg>
@@ -77,7 +77,7 @@ export default function Home() {
               <p><Link to="/boutique">Voir les ebooks →</Link></p>
             </Reveal>
             <Reveal className="card" delay={0.16}>
-              <svg className="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <svg className="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M4 19.5V17l10-10 2.5 2.5-10 10H4z"></path>
                 <path d="M13.5 8L16 5.5 18.5 8 16 10.5z"></path>
               </svg>

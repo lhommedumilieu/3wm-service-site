@@ -117,7 +117,7 @@ export default function ReinitialiserMotDePasse() {
                 style={{ marginTop: 16 }}
               />
 
-              {error && <p style={{ color: '#e5484d', marginTop: 12 }}>{error}</p>}
+              {error && <p role="alert" style={{ color: '#e5484d', marginTop: 12 }}>{error}</p>}
 
               <button type="submit" className="btn btn-primary" style={{ marginTop: 20 }} disabled={loading}>
                 {loading ? 'Mise à jour…' : 'Mettre à jour le mot de passe'}
