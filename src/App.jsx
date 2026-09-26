@@ -2,7 +2,7 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect, lazy, Suspense } from 'react'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
-import TawkChat from './components/TawkChat.jsx'
+import AiChat from './components/AiChat.jsx'
 import { trackPageView } from './lib/analytics.js'
 
 // Chaque page (et ce qu'elle importe, ex. GSAP via Reveal) n'est chargée
@@ -38,7 +38,7 @@ export default function App() {
     <>
       <ScrollToTop />
       <a href="#main-content" className="skip-link">Aller au contenu</a>
-      <TawkChat />
+      <AiChat />
       <Header />
       <main id="main-content" tabIndex={-1}>
         <Suspense fallback={null}>
