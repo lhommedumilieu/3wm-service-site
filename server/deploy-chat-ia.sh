@@ -33,8 +33,9 @@ if [[ ! -f "$REPO_DIR/server/chat-proxy.js" ]]; then
   exit 1
 fi
 command -v node >/dev/null || { erreur "Node.js n'est pas installe sur cette machine"; exit 1; }
+NODE_BIN="$(command -v node)"
 ok "Depot trouve : $REPO_DIR"
-ok "Node.js : $(node --version)"
+ok "Node.js : $(node --version) ($NODE_BIN)"
 
 etape "2. Test de connexion a l'IA (ia-3wm)"
 if curl -fsS -m 5 "http://$IP_IA:11434/api/tags" >/dev/null 2>&1; then
@@ -44,6 +45,7 @@ else
 fi
 
 etape "3. Service systemd chat-ia"
+SERVICE_USER="$(logname 2>/dev/null || echo root)"
 cat > /etc/systemd/system/chat-ia.service <<EOF
 [Unit]
 Description=Chat IA 3WM Service (proxy vers Ollama)
@@ -51,12 +53,12 @@ After=network.target
 
 [Service]
 Type=simple
-User=$(logname 2>/dev/null || echo root)
+User=$SERVICE_USER
 WorkingDirectory=$REPO_DIR
 Environment=OLLAMA_HOST=http://$IP_IA:11434
 Environment=OLLAMA_MODEL=llama3.1:8b
 Environment=PORT=3001
-ExecStart=/usr/bin/env node $REPO_DIR/server/chat-proxy.js
+ExecStart=$NODE_BIN $REPO_DIR/server/chat-proxy.js
 Restart=on-failure
 RestartSec=5
 NoNewPrivileges=true
@@ -88,40 +90,35 @@ if [[ -z "$CONF" ]]; then
   echo "    }"
   echo ""
   echo "  Puis : sudo nginx -t && sudo systemctl reload nginx"
+elif grep -q "location /api/chat" "$CONF"; then
+  ok "La route /api/chat existe deja dans $CONF, rien a faire"
 else
   ok "Config nginx trouvee : $CONF"
-  if grep -q "location /api/chat" "$CONF"; then
-    ok "La route /api/chat existe deja dans $CONF, rien a faire"
+  cp "$CONF" "$CONF.bak-$(date +%Y%m%d-%H%M)"
+  TOTAL_LIGNES=$(wc -l < "$CONF")
+  head -n $((TOTAL_LIGNES - 1)) "$CONF" > "$CONF.new"
+  cat >> "$CONF.new" <<'BLOCK'
+    location /api/chat {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+BLOCK
+  tail -n 1 "$CONF" >> "$CONF.new"
+  mv "$CONF.new" "$CONF"
+  if grep -q "location /api/chat" "$CONF" && nginx -t >/dev/null 2>&1; then
+    systemctl reload nginx
+    ok "Route /api/chat ajoutee et nginx recharge (sauvegarde : $CONF.bak-*)"
   else
-    cp "$CONF" "$CONF.bak-$(date +%Y%m%d-%H%M)"
-    awk '
-      { lines[NR] = $0 }
-      END {
-        for (i = NR; i >= 1; i--) {
-          if (lines[i] ~ /}/ && !inserted) {
-            for (j = 1; j < i; j++) print lines[j]
-            print "    location /api/chat {"
-            print "        proxy_pass http://127.0.0.1:3001;"
-            print "        proxy_set_header Host $host;"
-            print "        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;"
-            print "    }"
-            print lines[i]
-            for (j = i+1; j <= NR; j++) print lines[j]
-            inserted = 1
-            next
-          }
-        }
-        if (!inserted) for (j = 1; j <= NR; j++) print lines[j]
-      }
-    ' "$CONF" > "$CONF.new" && mv "$CONF.new" "$CONF"
-    if nginx -t >/dev/null 2>&1; then
-      systemctl reload nginx
-      ok "Route /api/chat ajoutee et nginx recharge (sauvegarde : $CONF.bak-*)"
-    else
-      erreur "La config nginx generee est invalide, restauration de la sauvegarde"
-      cp "$CONF.bak-"* "$CONF" 2>/dev/null
-      echo "  Verifie manuellement avec : sudo nginx -t"
-    fi
+    erreur "L'ajout ou la config nginx generee est invalide, restauration de la sauvegarde"
+    cp "$CONF.bak-"* "$CONF" 2>/dev/null
+    echo "  Verifie manuellement avec : sudo nginx -t"
+    echo "  Et ajoute toi-meme ce bloc dans le 'server { ... }' du site :"
+    echo "    location /api/chat {"
+    echo "        proxy_pass http://127.0.0.1:3001;"
+    echo "        proxy_set_header Host \$host;"
+    echo "        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;"
+    echo "    }"
   fi
 fi
 
