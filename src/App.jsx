@@ -19,6 +19,7 @@ const MotDePasseOublie = lazy(() => import('./pages/MotDePasseOublie.jsx'))
 const ReinitialiserMotDePasse = lazy(() => import('./pages/ReinitialiserMotDePasse.jsx'))
 const EspaceMembre = lazy(() => import('./pages/EspaceMembre.jsx'))
 const APropos = lazy(() => import('./pages/APropos.jsx'))
+const Recommandations = lazy(() => import('./pages/Recommandations.jsx'))
 const Contact = lazy(() => import('./pages/Contact.jsx'))
 const MentionsLegales = lazy(() => import('./pages/MentionsLegales.jsx'))
 const NotFound = lazy(() => import('./pages/NotFound.jsx'))
@@ -53,6 +54,7 @@ export default function App() {
             <Route path="/reinitialiser-mot-de-passe" element={<ReinitialiserMotDePasse />} />
             <Route path="/espace-membre" element={<EspaceMembre />} />
             <Route path="/a-propos" element={<APropos />} />
+            <Route path="/recommandations" element={<Recommandations />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="*" element={<NotFound />} />
