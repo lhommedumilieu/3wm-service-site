@@ -696,3 +696,41 @@ form.auth-form textarea:focus {
 }
 .password-toggle:hover { color: var(--ink); background: color-mix(in srgb, var(--ink) 8%, transparent); }
 .password-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* --- Cartes partenaires (page Recommandations) --- */
+.partner-card {
+  position: relative;
+  padding-top: 20px;
+}
+.partner-badge {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  padding: 3px 12px;
+  margin-bottom: 12px;
+}
+.partner-points {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.partner-points li {
+  color: var(--ink-muted);
+  font-size: 0.92rem;
+  padding-left: 22px;
+  position: relative;
+}
+.partner-points li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  color: var(--ok);
+  font-weight: 700;
+}
