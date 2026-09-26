@@ -6,7 +6,7 @@
 // Lancement :  OLLAMA_HOST=http://<ip-ia-3wm>:11434 node chat-proxy.js
 // (voir chat-ia.service pour le lancement automatique au demarrage)
 
-const http = require('http')
+import http from 'http'
 
 const PORT = process.env.PORT || 3001
 const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://127.0.0.1:11434'
