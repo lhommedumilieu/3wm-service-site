@@ -45,7 +45,9 @@ else
 fi
 
 etape "3. Service systemd chat-ia"
-SERVICE_USER="$(logname 2>/dev/null || echo root)"
+# Note : node est installe via snap sur cette machine. Les binaires snap
+# ont besoin de changer de contexte de securite au lancement (snap-confine),
+# ce qui est bloque par NoNewPrivileges=true : on ne l'active donc pas ici.
 cat > /etc/systemd/system/chat-ia.service <<EOF
 [Unit]
 Description=Chat IA 3WM Service (proxy vers Ollama)
@@ -53,7 +55,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=$SERVICE_USER
+User=root
 WorkingDirectory=$REPO_DIR
 Environment=OLLAMA_HOST=http://$IP_IA:11434
 Environment=OLLAMA_MODEL=llama3.1:8b
@@ -61,8 +63,6 @@ Environment=PORT=3001
 ExecStart=$NODE_BIN $REPO_DIR/server/chat-proxy.js
 Restart=on-failure
 RestartSec=5
-NoNewPrivileges=true
-PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target
