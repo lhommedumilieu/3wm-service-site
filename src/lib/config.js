@@ -17,7 +17,7 @@ export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // Assistant IA (auto-hébergé, gratuit — voir dossier /server).
 // Chemin relatif : la requête part vers le même nom de domaine (3-wm.net),
 // nginx redirige ensuite vers le petit service qui interroge l'IA locale.
-export const CHAT_API_URL = '/api/chat'
+export const CHAT_API_URL = 'https://chat.3-wm.net/api/chat'
 
 export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
 export const isTawkConfigured = Boolean(TAWK_PROPERTY_ID && TAWK_WIDGET_ID)
