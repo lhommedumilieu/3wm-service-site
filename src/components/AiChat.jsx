@@ -32,24 +32,43 @@ export default function AiChat() {
     setLoading(true)
     setError(false)
 
+    // Message assistant vide qu'on remplit progressivement (streaming)
+    setMessages((m) => [...m, { role: 'assistant', content: '' }])
+
     try {
       const res = await fetch(CHAT_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: historique.slice(-10) }),
       })
-      if (!res.ok) throw new Error('reponse non ok')
-      const data = await res.json()
-      setMessages((m) => [...m, { role: 'assistant', content: data.reply }])
+      if (!res.ok || !res.body) throw new Error('reponse non ok')
+
+      const lecteur = res.body.getReader()
+      const decodeur = new TextDecoder()
+      let texteRecu = ''
+
+      while (true) {
+        const { done, value } = await lecteur.read()
+        if (done) break
+        texteRecu += decodeur.decode(value, { stream: true })
+        setMessages((m) => {
+          const copie = [...m]
+          copie[copie.length - 1] = { role: 'assistant', content: texteRecu }
+          return copie
+        })
+      }
+
+      if (!texteRecu.trim()) throw new Error('reponse vide')
     } catch {
       setError(true)
-      setMessages((m) => [
-        ...m,
-        {
+      setMessages((m) => {
+        const copie = [...m]
+        copie[copie.length - 1] = {
           role: 'assistant',
           content: "Désolé, je ne suis pas disponible pour le moment. Vous pouvez décrire votre besoin via la page Contact, je vous répondrai directement.",
-        },
-      ])
+        }
+        return copie
+      })
     } finally {
       setLoading(false)
     }
