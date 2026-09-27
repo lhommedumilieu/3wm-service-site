@@ -8,7 +8,7 @@ import { CHAT_API_URL } from '../lib/config.js'
 export default function AiChat() {
   const [open, setOpen] = useState(false)
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: "Bonjour ! Je suis l'assistant de 3WM Service. Posez-moi une question sur les dépannages, les tarifs ou les ebooks." },
+    { role: 'assistant', content: "Bonjour ! Je suis Cams, l'assistant de 3WM Service. Posez-moi une question sur les dépannages, les tarifs ou les ebooks." },
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -77,9 +77,15 @@ export default function AiChat() {
   return (
     <div className="ai-chat">
       {open && (
-        <div className="ai-chat-panel" role="dialog" aria-label="Assistant 3WM Service">
+        <div className="ai-chat-panel" role="dialog" aria-label="Cams - Assistant 3WM">
           <div className="ai-chat-header">
-            <span>Assistant 3WM Service</span>
+            <div className="ai-chat-header-info">
+              <span className="ai-chat-avatar">C</span>
+              <div className="ai-chat-header-text">
+                <span className="ai-chat-title">Cams</span>
+                <span className="ai-chat-subtitle">Assistant 3WM</span>
+              </div>
+            </div>
             <button
               type="button"
               className="ai-chat-close"
