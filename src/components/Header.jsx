@@ -1,6 +1,11 @@
 import { NavLink } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext.jsx'
+
+function getInitialTheme() {
+  if (typeof document === 'undefined') return 'dark'
+  return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
+}
 
 const links = [
   { to: '/', label: 'Accueil', end: true },
@@ -8,13 +13,24 @@ const links = [
   { to: '/boutique', label: 'Boutique' },
   { to: '/blog', label: 'Blog' },
   { to: '/a-propos', label: 'À propos' },
-  { to: '/recommandations', label: 'Recommandations' },
   { to: '/contact', label: 'Contact' },
 ]
 
 export default function Header() {
   const [open, setOpen] = useState(false)
+  const [theme, setTheme] = useState(getInitialTheme)
   const { user, isConfigured } = useAuth()
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    try {
+      localStorage.setItem('theme', theme)
+    } catch {
+      // stockage indisponible (navigation privée, etc.) : on continue sans persister
+    }
+  }, [theme])
+
+  const toggleTheme = () => setTheme((t) => (t === 'light' ? 'dark' : 'light'))
 
   const accountLink = isConfigured
     ? (user ? { to: '/espace-membre', label: 'Espace membre' } : { to: '/connexion', label: 'Connexion' })
@@ -27,6 +43,14 @@ export default function Header() {
           <span className="logo-mark" aria-hidden="true">&gt;_</span>
           3WM<span className="accent">Service</span>
         </NavLink>
+        <button
+          type="button"
+          className="theme-toggle"
+          aria-label={theme === 'light' ? 'Activer le mode sombre' : 'Activer le mode clair'}
+          onClick={toggleTheme}
+        >
+          <span aria-hidden="true">{theme === 'light' ? '🌙' : '☀️'}</span>
+        </button>
         <button
           className="nav-toggle"
           aria-label={open ? 'Fermer le menu' : 'Ouvrir le menu'}
