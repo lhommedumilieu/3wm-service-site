@@ -2,6 +2,17 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var theme = (stored === 'light' || stored === 'dark')
+            ? stored
+            : (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {}
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="google-site-verification" content="2Q6ttQR1H6q4mePpNVija8U3UFBGcyaJRyU5TrJrA-I" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
