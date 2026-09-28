@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import * as THREE from 'three'
 import { prefersReducedMotion } from '../lib/motion.js'
 
 /**
@@ -7,32 +6,39 @@ import { prefersReducedMotion } from '../lib/motion.js'
  * close enough to each other. Sits behind the hero copy as a decorative,
  * on-theme (cybersecurity / network) backdrop. Renders one static frame
  * instead of animating when the visitor prefers reduced motion.
+ *
+ * Dessiné en Canvas 2D natif (pas de dépendance externe) : l'effet ne
+ * nécessite ni WebGL ni moteur 3D — juste des points et des segments —
+ * donc plus besoin de Three.js ici, ce qui retire ~527 Ko du bundle.
  */
 export default function NetworkBackground({ nodeCount = 46 }) {
-  const mountRef = useRef(null)
+  const canvasRef = useRef(null)
 
   useEffect(() => {
-    const container = mountRef.current
-    if (!container) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
 
-    let width = container.clientWidth
-    let height = container.clientHeight
     const reduced = prefersReducedMotion()
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
 
     const accentColor = getComputedStyle(document.documentElement)
       .getPropertyValue('--accent')
       .trim() || '#0E7C86'
 
-    const scene = new THREE.Scene()
-    const camera = new THREE.OrthographicCamera(0, width, 0, height, 0.1, 100)
-    camera.position.z = 10
+    let width = canvas.clientWidth
+    let height = canvas.clientHeight
 
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
-    renderer.setSize(width, height)
-    container.appendChild(renderer.domElement)
+    function resizeCanvas() {
+      width = canvas.clientWidth
+      height = canvas.clientHeight
+      canvas.width = Math.max(1, Math.round(width * dpr))
+      canvas.height = Math.max(1, Math.round(height * dpr))
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+    }
+    resizeCanvas()
 
-    // Nodes
     const nodes = Array.from({ length: nodeCount }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
@@ -40,55 +46,36 @@ export default function NetworkBackground({ nodeCount = 46 }) {
       vy: (Math.random() - 0.5) * 0.18,
     }))
 
-    const color = new THREE.Color(accentColor)
+    let linkDistance = Math.max(width, height) * 0.11
 
-    const pointsGeometry = new THREE.BufferGeometry()
-    const pointsPositions = new Float32Array(nodeCount * 3)
-    pointsGeometry.setAttribute('position', new THREE.BufferAttribute(pointsPositions, 3))
-    const pointsMaterial = new THREE.PointsMaterial({ color, size: 3.2, transparent: true, opacity: 0.85 })
-    const points = new THREE.Points(pointsGeometry, pointsMaterial)
-    scene.add(points)
+    function draw() {
+      ctx.clearRect(0, 0, width, height)
 
-    const maxLines = nodeCount * 8
-    const lineGeometry = new THREE.BufferGeometry()
-    const linePositions = new Float32Array(maxLines * 2 * 3)
-    lineGeometry.setAttribute('position', new THREE.BufferAttribute(linePositions, 3))
-    const lineMaterial = new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.18 })
-    const lines = new THREE.LineSegments(lineGeometry, lineMaterial)
-    scene.add(lines)
-
-    const linkDistance = Math.max(width, height) * 0.11
-
-    function layout() {
-      const posAttr = pointsGeometry.attributes.position
+      ctx.strokeStyle = accentColor
+      ctx.lineWidth = 1
+      ctx.globalAlpha = 0.18
       for (let i = 0; i < nodeCount; i++) {
-        posAttr.array[i * 3] = nodes[i].x
-        posAttr.array[i * 3 + 1] = height - nodes[i].y
-        posAttr.array[i * 3 + 2] = 0
-      }
-      posAttr.needsUpdate = true
-
-      let segIndex = 0
-      const linePosArr = lineGeometry.attributes.position.array
-      for (let i = 0; i < nodeCount && segIndex < maxLines; i++) {
-        for (let j = i + 1; j < nodeCount && segIndex < maxLines; j++) {
+        for (let j = i + 1; j < nodeCount; j++) {
           const dx = nodes[i].x - nodes[j].x
           const dy = nodes[i].y - nodes[j].y
           const dist = Math.sqrt(dx * dx + dy * dy)
           if (dist < linkDistance) {
-            const base = segIndex * 6
-            linePosArr[base] = nodes[i].x
-            linePosArr[base + 1] = height - nodes[i].y
-            linePosArr[base + 2] = 0
-            linePosArr[base + 3] = nodes[j].x
-            linePosArr[base + 4] = height - nodes[j].y
-            linePosArr[base + 5] = 0
-            segIndex++
+            ctx.beginPath()
+            ctx.moveTo(nodes[i].x, nodes[i].y)
+            ctx.lineTo(nodes[j].x, nodes[j].y)
+            ctx.stroke()
           }
         }
       }
-      lineGeometry.setDrawRange(0, segIndex * 2)
-      lineGeometry.attributes.position.needsUpdate = true
+
+      ctx.fillStyle = accentColor
+      ctx.globalAlpha = 0.85
+      for (const n of nodes) {
+        ctx.beginPath()
+        ctx.arc(n.x, n.y, 1.6, 0, Math.PI * 2)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
     }
 
     function step() {
@@ -100,47 +87,32 @@ export default function NetworkBackground({ nodeCount = 46 }) {
         n.x = Math.min(Math.max(n.x, 0), width)
         n.y = Math.min(Math.max(n.y, 0), height)
       }
-      layout()
     }
 
     let frameId
     function animate() {
       step()
-      renderer.render(scene, camera)
+      draw()
       frameId = requestAnimationFrame(animate)
     }
 
-    layout()
-    renderer.render(scene, camera)
+    draw()
     if (!reduced) {
       frameId = requestAnimationFrame(animate)
     }
 
     function handleResize() {
-      width = container.clientWidth
-      height = container.clientHeight
-      camera.right = width
-      camera.bottom = height
-      camera.updateProjectionMatrix()
-      renderer.setSize(width, height)
-      layout()
-      if (reduced) renderer.render(scene, camera)
+      resizeCanvas()
+      linkDistance = Math.max(width, height) * 0.11
+      draw()
     }
     window.addEventListener('resize', handleResize)
 
     return () => {
       if (frameId) cancelAnimationFrame(frameId)
       window.removeEventListener('resize', handleResize)
-      pointsGeometry.dispose()
-      pointsMaterial.dispose()
-      lineGeometry.dispose()
-      lineMaterial.dispose()
-      renderer.dispose()
-      if (container.contains(renderer.domElement)) {
-        container.removeChild(renderer.domElement)
-      }
     }
   }, [nodeCount])
 
-  return <div ref={mountRef} className="hero-canvas" aria-hidden="true" />
+  return <canvas ref={canvasRef} className="hero-canvas" aria-hidden="true" />
 }

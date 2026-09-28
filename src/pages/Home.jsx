@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { lazy, Suspense } from 'react'
 import Reveal from '../components/Reveal.jsx'
+import NewsletterSignup from '../components/NewsletterSignup.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 const NetworkBackground = lazy(() => import('../components/NetworkBackground.jsx'))
@@ -96,6 +97,12 @@ export default function Home() {
           <Reveal delay={0.1}>
             <Link to="/contact" className="btn btn-primary">Demander de l'aide</Link>
           </Reveal>
+        </div>
+      </section>
+
+      <section className="alt">
+        <div className="container" style={{ maxWidth: 720 }}>
+          <NewsletterSignup source="home" />
         </div>
       </section>
     </>

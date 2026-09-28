@@ -7,6 +7,7 @@ import tome4Cover from '../assets/images/tome4-cover.jpg'
 import tome5Cover from '../assets/images/tome5-cover.jpg'
 import tome6Cover from '../assets/images/tome6-cover.jpg'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
+import { trackEvent } from '../lib/analytics.js'
 
 const ETSY_URL = 'https://www.etsy.com/shop/3wmService'
 
@@ -152,7 +153,7 @@ export default function Boutique() {
               <p>Le point de départ idéal pour découvrir Linux et poser de vraies bases en cybersécurité, sans jargon inutile. Installation, ligne de commande, sécurité de base : tout pour bien commencer.</p>
               <div className="book-price">14,99 €</div>
               <p className="small">PDF en français et en anglais inclus · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Acheter sur Etsy</a>
+              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome1')}>Acheter sur Etsy</a>
             </div>
           </Reveal>
 
@@ -164,7 +165,7 @@ export default function Boutique() {
               <p>La suite avancée du Tome 1 : découverte de Kali Linux, méthodologie de pentest étape par étape (reconnaissance, scan, exploitation, reporting) et bonnes pratiques éthiques.</p>
               <div className="book-price">19,90 €</div>
               <p className="small">PDF en français et en anglais inclus · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Acheter sur Etsy</a>
+              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome2')}>Acheter sur Etsy</a>
             </div>
           </Reveal>
 
@@ -176,7 +177,7 @@ export default function Boutique() {
               <p>Sécuriser Windows en profondeur, optimiser les performances et le démarrage, automatiser avec PowerShell et le Planificateur de tâches, et diagnostiquer méthodiquement les pannes courantes grâce à une étude de cas complète.</p>
               <div className="book-price">19,90 €</div>
               <p className="small">PDF en français · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Acheter sur Etsy</a>
+              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome3')}>Acheter sur Etsy</a>
             </div>
           </Reveal>
 
@@ -188,7 +189,7 @@ export default function Boutique() {
               <p>La suite directe du Tome 2 : mener un audit de sécurité méthodique, durcir (hardening) un système et un réseau, structurer une réponse à incident et réaliser un mini-audit de sécurité sur sa propre installation.</p>
               <div className="book-price">24,90 €</div>
               <p className="small">PDF en français · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Acheter sur Etsy</a>
+              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome4')}>Acheter sur Etsy</a>
             </div>
           </Reveal>
 
@@ -200,7 +201,7 @@ export default function Boutique() {
               <p>Comment fonctionne réellement un VPN et ce qu'il ne protège PAS, comment choisir un fournisseur sérieux, configurer son VPN correctement et réduire le pistage publicitaire sur ses réseaux sociaux et messageries.</p>
               <div className="book-price">16,99 €</div>
               <p className="small">PDF en français · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Acheter sur Etsy</a>
+              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome5')}>Acheter sur Etsy</a>
             </div>
           </Reveal>
 
@@ -212,7 +213,7 @@ export default function Boutique() {
               <p>Les bases indispensables (IP, DHCP, DNS, passerelle) expliquées simplement, sécuriser sa box et son Wi-Fi, diagnostiquer un Wi-Fi lent ou qui coupe et isoler ses objets connectés pour plus de sécurité.</p>
               <div className="book-price">14,99 €</div>
               <p className="small">PDF en français · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary">Acheter sur Etsy</a>
+              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome6')}>Acheter sur Etsy</a>
             </div>
           </Reveal>
         </div>

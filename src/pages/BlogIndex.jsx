@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
+import NewsletterSignup from '../components/NewsletterSignup.jsx'
 import { blogPosts } from '../data/blogPosts.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
@@ -32,6 +33,12 @@ export default function BlogIndex() {
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="alt">
+        <div className="container" style={{ maxWidth: 720 }}>
+          <NewsletterSignup source="blog" />
         </div>
       </section>
     </>
