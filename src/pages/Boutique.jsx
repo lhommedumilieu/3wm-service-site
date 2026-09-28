@@ -227,6 +227,4 @@ export default function Boutique() {
       </section>
     </>
   )
-      </>
-  )
 }
