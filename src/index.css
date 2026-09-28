@@ -454,7 +454,7 @@ p.section-sub { color: var(--ink-muted); margin: 0 auto 44px; max-width: 560px; 
 /* --- Cartes ebook --- */
 .book-card {
   display: grid;
-  grid-template-columns: 190px 1fr;
+  grid-template-columns: 130px 1fr;
   gap: 32px;
   background: color-mix(in srgb, var(--surface) 62%, transparent);
   backdrop-filter: blur(22px) saturate(160%);
@@ -509,7 +509,7 @@ p.section-sub { color: var(--ink-muted); margin: 0 auto 44px; max-width: 560px; 
 
 @media (max-width: 640px) {
   .book-card { grid-template-columns: 1fr; }
-  .book-cover-placeholder, .book-card img { max-width: 190px; margin: 0 auto; }
+  .book-cover-placeholder, .book-card img { max-width: 130px; margin: 0 auto; }
   .hero-grid { grid-template-columns: 1fr; }
 }
 
