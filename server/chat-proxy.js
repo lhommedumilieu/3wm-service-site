@@ -80,7 +80,7 @@ const serveur = http.createServer(async (req, res) => {
       ]
 
       const controleur = new AbortController()
-      const delai = setTimeout(() => controleur.abort(), 30_000)
+      const delai = setTimeout(() => controleur.abort(), 55_000)
 
       const reponse = await fetch(`${OLLAMA_HOST}/api/chat`, {
         method: 'POST',
