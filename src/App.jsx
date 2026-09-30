@@ -22,6 +22,7 @@ const APropos = lazy(() => import('./pages/APropos.jsx'))
 const Recommandations = lazy(() => import('./pages/Recommandations.jsx'))
 const Contact = lazy(() => import('./pages/Contact.jsx'))
 const MentionsLegales = lazy(() => import('./pages/MentionsLegales.jsx'))
+const Admin = lazy(() => import('./pages/Admin.jsx'))
 const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 
 function ScrollToTop() {
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="/recommandations" element={<Recommandations />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
