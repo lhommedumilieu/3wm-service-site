@@ -37,7 +37,7 @@ export function trackPageView(path) {
 // aucun cookie de suivi, aucune donnée personnelle. La table `site_presence`
 // n'autorise en lecture que le compte admin du logiciel (RLS).
 let cachedVisitorId = null
-function getVisitorId() {
+export function getVisitorId() {
   if (cachedVisitorId) return cachedVisitorId
   try {
     cachedVisitorId = localStorage.getItem('3wm_vid')
