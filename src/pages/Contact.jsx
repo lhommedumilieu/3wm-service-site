@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 import { trackEvent } from '../lib/analytics.js'
+import { logContactMessage } from '../lib/publicLogs.js'
 
 function encode(data) {
   return Object.keys(data)
@@ -35,6 +36,7 @@ export default function Contact() {
       })
       setStatus('sent')
       trackEvent('contact_submit', form.sujet)
+      logContactMessage(form)
     } catch {
       setStatus('error')
     }
