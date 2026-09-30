@@ -7,14 +7,15 @@
 #
 #   bash ~/3wm-service/deploy/publier-site.sh
 #
-# À adapter une seule fois si besoin : la variable WEB_ROOT ci-dessous
-# doit correspondre au "root" utilisé dans deploy/nginx-3wm-site.conf.
+# Réutilise la configuration nginx "3wm" déjà présente sur ce serveur
+# (/etc/nginx/sites-available/3wm, root /var/www/3wm, gère déjà 3-wm.net,
+# www.3-wm.net et le proxy /api/chat) — pas besoin d'une config séparée.
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(dirname "$SCRIPT_DIR")"
-WEB_ROOT="/var/www/3wm-site"
+WEB_ROOT="/var/www/3wm"
 
 echo "→ Dossier du site : $REPO_DIR"
 cd "$REPO_DIR"
