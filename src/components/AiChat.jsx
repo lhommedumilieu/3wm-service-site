@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CHAT_API_URL } from '../lib/config.js'
+import { logChatMessage } from '../lib/publicLogs.js'
 
 // Petit assistant IA auto-hébergé (voir /server) : répond aux questions
 // courantes sur 3WM Service. En cas d'erreur (IA hors ligne, etc.), on
@@ -31,6 +32,7 @@ export default function AiChat() {
     setInput('')
     setLoading(true)
     setError(false)
+    logChatMessage('user', texte)
 
     // Message assistant vide qu'on remplit progressivement (streaming)
     setMessages((m) => [...m, { role: 'assistant', content: '' }])
@@ -59,6 +61,7 @@ export default function AiChat() {
       }
 
       if (!texteRecu.trim()) throw new Error('reponse vide')
+      logChatMessage('assistant', texteRecu)
     } catch {
       setError(true)
       setMessages((m) => {
