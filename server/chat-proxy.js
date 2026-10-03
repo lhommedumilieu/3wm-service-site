@@ -79,16 +79,37 @@ function limiteAtteinte(ip) {
   return entree.nombre > 20
 }
 
+// Le site (https://3-wm.net) et ce service (https://chat.3-wm.net) sont sur
+// deux sous-domaines differents : le navigateur considere donc que ce sont
+// deux "origines" differentes et bloque la requete sauf si la reponse
+// autorise explicitement le cross-domaine (en-tetes CORS). Avant le POST, le
+// navigateur envoie aussi une requete OPTIONS de verification (preflight)
+// qu'il faut accepter. Pas de cookie ni d'authentification ici, donc
+// autoriser toutes les origines ("*") est sans risque.
+const ENTETES_CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Max-Age': '86400',
+}
+
 const serveur = http.createServer(async (req, res) => {
+  // Requete de verification du navigateur (preflight) : on l'accepte.
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, ENTETES_CORS)
+    res.end()
+    return
+  }
+
   if (req.method !== 'POST' || req.url !== '/api/chat') {
-    res.writeHead(404, { 'Content-Type': 'application/json' })
+    res.writeHead(404, { 'Content-Type': 'application/json', ...ENTETES_CORS })
     res.end(JSON.stringify({ error: 'not_found' }))
     return
   }
 
   const ip = ipClient(req)
   if (limiteAtteinte(ip)) {
-    res.writeHead(429, { 'Content-Type': 'application/json' })
+    res.writeHead(429, { 'Content-Type': 'application/json', ...ENTETES_CORS })
     res.end(JSON.stringify({ error: 'trop_de_requetes' }))
     return
   }
@@ -99,15 +120,15 @@ const serveur = http.createServer(async (req, res) => {
     try {
       const { messages } = JSON.parse(corps || '{}')
       if (!Array.isArray(messages) || messages.length === 0) {
-        res.writeHead(400, { 'Content-Type': 'application/json' })
+        res.writeHead(400, { 'Content-Type': 'application/json', ...ENTETES_CORS })
         res.end(JSON.stringify({ error: 'messages_manquants' }))
         return
       }
 
       const dernierMessage = [...messages].reverse().find((m) => m && m.role !== 'assistant')
       if (tentativeInjection(dernierMessage?.content)) {
-        res.writeHead(200, { 'Content-Type': 'application/json' })
-        res.end(JSON.stringify({ reply: REPONSE_INJECTION }))
+        res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', ...ENTETES_CORS })
+        res.end(REPONSE_INJECTION)
         return
       }
 
@@ -138,11 +159,13 @@ const serveur = http.createServer(async (req, res) => {
       const data = await reponse.json()
       const texte = data?.message?.content?.trim() || "Désolé, je n'ai pas de réponse pour le moment."
 
-      res.writeHead(200, { 'Content-Type': 'application/json' })
-      res.end(JSON.stringify({ reply: texte }))
+      // Le widget du site lit la reponse comme du texte brut : on renvoie
+      // donc directement le texte de l'assistant (pas d'enveloppe JSON).
+      res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8', ...ENTETES_CORS })
+      res.end(texte)
     } catch (erreur) {
       console.error('Erreur chat-proxy :', erreur.message)
-      res.writeHead(502, { 'Content-Type': 'application/json' })
+      res.writeHead(502, { 'Content-Type': 'application/json', ...ENTETES_CORS })
       res.end(JSON.stringify({ error: 'ia_indisponible' }))
     }
   })
