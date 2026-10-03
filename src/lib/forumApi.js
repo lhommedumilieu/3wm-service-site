@@ -1,5 +1,13 @@
 import { SUPABASE_URL, SUPABASE_ANON_KEY, isSupabaseConfigured } from './config.js'
 import { getSession } from './supabaseAuth.js'
+import { mapPseudos } from './profilesApi.js'
+
+// Remplace author_name par le pseudo choisi par le membre (s'il en a un),
+// sinon garde la valeur stockée (partie avant @ de l'email).
+async function appliquerPseudos(lignes) {
+  const pseudos = await mapPseudos(lignes.map((l) => l.author_id))
+  return lignes.map((l) => ({ ...l, author_name: pseudos[l.author_id] || l.author_name }))
+}
 
 // Client du forum communautaire. La lecture est publique (clé anonyme) ;
 // l'écriture (créer un sujet, répondre, marquer une solution, supprimer)
@@ -55,7 +63,8 @@ export async function listerSujets(categorie) {
   })
   if (categorie) params.set('category', `eq.${categorie}`)
   const lignes = await lire(`forum_topics?${params.toString()}`)
-  return lignes.map((s) => ({
+  const avecPseudos = await appliquerPseudos(lignes)
+  return avecPseudos.map((s) => ({
     ...s,
     nbMessages: Array.isArray(s.forum_posts) && s.forum_posts[0] ? s.forum_posts[0].count : 0,
   }))
@@ -63,11 +72,14 @@ export async function listerSujets(categorie) {
 
 export async function getSujet(id) {
   const lignes = await lire(`forum_topics?id=eq.${id}&select=*`)
-  return lignes[0] || null
+  if (!lignes[0]) return null
+  const [sujet] = await appliquerPseudos(lignes)
+  return sujet
 }
 
 export async function listerMessages(topicId) {
-  return lire(`forum_posts?topic_id=eq.${topicId}&select=*&order=created_at.asc`)
+  const lignes = await lire(`forum_posts?topic_id=eq.${topicId}&select=*&order=created_at.asc`)
+  return appliquerPseudos(lignes)
 }
 
 // Crée un sujet + son premier message (le message d'ouverture).
