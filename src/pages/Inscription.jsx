@@ -50,7 +50,7 @@ export default function Inscription() {
 
   return (
     <>
-      <div className="page-header">
+      <div className="page-header auth-header">
         <div className="container">
           <p className="eyebrow">Inscription</p>
           <h1>Créer un compte</h1>

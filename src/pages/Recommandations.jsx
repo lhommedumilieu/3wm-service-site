@@ -27,21 +27,28 @@ export default function Recommandations() {
 
   return (
     <>
-      <div className="page-header">
+      <section className="page-hero page-hero-simple">
         <div className="container">
           <p className="eyebrow">Recommandations</p>
-          <h1>Nos outils recommandés</h1>
+          <h1>
+            Nos outils <span className="hl">recommandés</span>
+          </h1>
+          <p className="lead">
+            Les outils de sécurité informatique que j'utilise et recommande réellement, pas une liste au hasard.
+          </p>
         </div>
-      </div>
+      </section>
 
       <section>
-        <div className="container" style={{ maxWidth: 720 }}>
-          <p>
-            Voici les outils de sécurité informatique que j'utilise et recommande réellement, pas une
-            liste au hasard. Certains liens ci-dessous sont des <strong>liens affiliés</strong> : si vous
-            achetez via ces liens, je touche une commission, sans coût supplémentaire pour vous. Cela
-            n'influence pas mon avis — je ne recommande que ce que j'estime utile.
-          </p>
+        <div className="container" style={{ maxWidth: 860 }}>
+          <div className="notice">
+            <span aria-hidden="true">ℹ️</span>
+            <p>
+              Certains liens ci-dessous sont des <strong>liens affiliés</strong> : si vous achetez via ces liens,
+              je touche une commission, sans coût supplémentaire pour vous. Cela n'influence pas mon avis — je ne
+              recommande que ce que j'estime utile.
+            </p>
+          </div>
 
           <div className="grid grid-2" style={{ marginTop: 32 }}>
             {outils.map((o, i) => (

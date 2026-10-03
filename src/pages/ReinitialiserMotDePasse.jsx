@@ -71,7 +71,7 @@ export default function ReinitialiserMotDePasse() {
 
   return (
     <>
-      <div className="page-header">
+      <div className="page-header auth-header">
         <div className="container">
           <p className="eyebrow">Nouveau mot de passe</p>
           <h1>Réinitialiser le mot de passe</h1>

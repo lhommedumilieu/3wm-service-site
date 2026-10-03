@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { getBlogPost } from '../data/blogPosts.jsx'
 import NotFound from './NotFound.jsx'
 import Comments from '../components/Comments.jsx'
@@ -43,19 +43,24 @@ export default function BlogPost() {
 
   return (
     <>
-      <div className="page-header">
-        <div className="container">
+      <section className="page-hero page-hero-simple post-hero">
+        <div className="container" style={{ maxWidth: 820 }}>
+          <Link to="/blog" className="back-link">← Retour au blog</Link>
+          <span className="blog-cat">{post.category}</span>
           <h1>{post.title}</h1>
-          <p className="post-meta">Par L'Homme-du-Milieu · {post.category}</p>
+          <p className="post-meta">Par L'Homme-du-Milieu</p>
         </div>
-      </div>
+      </section>
 
       <section>
         <div className="container">
-          <article className="post-body" style={{ maxWidth: 720, margin: '0 auto' }}>
+          <article className="post-body">
             <post.Body />
             <Comments slug={post.slug} />
           </article>
+          <p className="center" style={{ marginTop: 40 }}>
+            <Link to="/contact" className="btn btn-primary">Besoin d'un coup de main ? Écrivez-moi</Link>
+          </p>
         </div>
       </section>
     </>

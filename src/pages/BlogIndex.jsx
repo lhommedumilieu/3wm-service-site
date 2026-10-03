@@ -13,23 +13,25 @@ export default function BlogIndex() {
 
   return (
     <>
-      <div className="page-header">
+      <section className="page-hero page-hero-simple">
         <div className="container">
           <p className="eyebrow">Blog</p>
-          <h1>Blog &amp; tutoriels</h1>
-          <p>Des articles pratiques sur Windows, Linux et la cybersécurité, sans jargon inutile.</p>
+          <h1>
+            Blog &amp; <span className="hl">tutoriels</span>
+          </h1>
+          <p className="lead">Des articles pratiques sur Windows, Linux et la cybersécurité, sans jargon inutile.</p>
         </div>
-      </div>
+      </section>
 
       <section>
         <div className="container">
-          <div className="grid grid-2">
+          <div className="grid grid-3 blog-grid">
             {blogPosts.map((post, i) => (
-              <Reveal className="card blog-card" key={post.slug} delay={(i % 2) * 0.08}>
-                <p className="post-meta">{post.category}</p>
+              <Reveal className="card blog-card" key={post.slug} delay={(i % 3) * 0.06}>
+                <span className="blog-cat">{post.category}</span>
                 <h3><Link to={`/blog/${post.slug}`}>{post.title}</Link></h3>
                 <p>{post.excerpt}</p>
-                <Link to={`/blog/${post.slug}`}>Lire l'article →</Link>
+                <Link to={`/blog/${post.slug}`} className="blog-more">Lire l'article →</Link>
               </Reveal>
             ))}
           </div>

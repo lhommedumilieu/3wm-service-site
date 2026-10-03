@@ -20,6 +20,15 @@ function absoluteUrl(path) {
   }
 }
 
+const LIVRES = [
+  { id: 'tome1', cover: tome1Cover, niveau: 'Tome 1 · Débutant', titre: 'Linux pour débutants — Fondamentaux cybersécurité', alt: 'Linux pour débutants, fondamentaux cybersécurité', texte: 'Le point de départ idéal pour découvrir Linux et poser de vraies bases en cybersécurité, sans jargon inutile. Installation, ligne de commande, sécurité de base : tout pour bien commencer.', prix: '14,99 €', format: 'PDF en français et en anglais inclus · accès immédiat après achat' },
+  { id: 'tome2', cover: tome2Cover, niveau: 'Tome 2 · Intermédiaire', titre: 'Kali Linux & Méthodologie Pentest', alt: 'Kali Linux & Méthodologie Pentest', texte: 'La suite avancée du Tome 1 : découverte de Kali Linux, méthodologie de pentest étape par étape (reconnaissance, scan, exploitation, reporting) et bonnes pratiques éthiques.', prix: '19,90 €', format: 'PDF en français et en anglais inclus · accès immédiat après achat' },
+  { id: 'tome3', cover: tome3Cover, niveau: 'Tome 3 · Intermédiaire', titre: 'Windows avancé — Sécurité, optimisation et dépannage professionnel', alt: 'Windows avancé, sécurité, optimisation et dépannage professionnel', texte: 'Sécuriser Windows en profondeur, optimiser les performances et le démarrage, automatiser avec PowerShell et le Planificateur de tâches, et diagnostiquer méthodiquement les pannes courantes grâce à une étude de cas complète.', prix: '19,90 €', format: 'PDF en français · accès immédiat après achat' },
+  { id: 'tome4', cover: tome4Cover, niveau: 'Tome 4 · Avancé', titre: 'Cybersécurité avancée — Audit, hardening et réponse à incident', alt: 'Cybersécurité avancée, audit, hardening et réponse à incident', texte: 'La suite directe du Tome 2 : mener un audit de sécurité méthodique, durcir (hardening) un système et un réseau, structurer une réponse à incident et réaliser un mini-audit de sécurité sur sa propre installation.', prix: '24,90 €', format: 'PDF en français · accès immédiat après achat' },
+  { id: 'tome5', cover: tome5Cover, niveau: 'Tome 5 · Débutant / Intermédiaire', titre: 'VPN & vie privée en ligne — Comprendre, choisir et agir concrètement', alt: 'VPN et vie privée en ligne, comprendre, choisir et agir concrètement', texte: "Comment fonctionne réellement un VPN et ce qu'il ne protège PAS, comment choisir un fournisseur sérieux, configurer son VPN correctement et réduire le pistage publicitaire sur ses réseaux sociaux et messageries.", prix: '16,99 €', format: 'PDF en français · accès immédiat après achat' },
+  { id: 'tome6', cover: tome6Cover, niveau: 'Tome 6 · Débutant', titre: 'Réseaux & Wi-Fi pour tous — Comprendre, sécuriser et dépanner son réseau', alt: 'Réseaux et Wi-Fi pour tous, comprendre, sécuriser et dépanner son réseau', texte: 'Les bases indispensables (IP, DHCP, DNS, passerelle) expliquées simplement, sécuriser sa box et son Wi-Fi, diagnostiquer un Wi-Fi lent ou qui coupe et isoler ses objets connectés pour plus de sécurité.', prix: '14,99 €', format: 'PDF en français · accès immédiat après achat' },
+]
+
 export default function Boutique() {
   const structuredData = [
     {
@@ -135,95 +144,67 @@ export default function Boutique() {
 
   return (
     <>
-      <div className="page-header">
+      <section className="page-hero page-hero-simple">
         <div className="container">
           <p className="eyebrow">Boutique</p>
-          <h1>Nos ebooks Linux, Windows &amp; cybersécurité</h1>
-          <p>Écrits par L'Homme-du-Milieu. PDF en français, accès immédiat après achat. Disponibles sur notre boutique Etsy 3wmService.</p>
-        </div>
-      </div>
-
-      <section>
-        <div className="container">
-          <Reveal className="book-card" style={{ marginBottom: 32 }}>
-            <img src={tome1Cover} alt="Couverture — Linux pour débutants, fondamentaux cybersécurité" width="400" height="400" />
-            <div>
-              <span className="book-tag">Tome 1 — Débutant</span>
-              <h2 className="mt-0">Linux pour débutants — Fondamentaux cybersécurité</h2>
-              <p>Le point de départ idéal pour découvrir Linux et poser de vraies bases en cybersécurité, sans jargon inutile. Installation, ligne de commande, sécurité de base : tout pour bien commencer.</p>
-              <div className="book-price">14,99 €</div>
-              <p className="small">PDF en français et en anglais inclus · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome1')}>Acheter sur Etsy</a>
-            </div>
-          </Reveal>
-
-          <Reveal className="book-card" delay={0.1}>
-            <img src={tome2Cover} alt="Couverture — Kali Linux & Méthodologie Pentest" width="400" height="400" loading="lazy" />
-            <div>
-              <span className="book-tag">Tome 2 — Intermédiaire</span>
-              <h2 className="mt-0">Kali Linux &amp; Méthodologie Pentest</h2>
-              <p>La suite avancée du Tome 1 : découverte de Kali Linux, méthodologie de pentest étape par étape (reconnaissance, scan, exploitation, reporting) et bonnes pratiques éthiques.</p>
-              <div className="book-price">19,90 €</div>
-              <p className="small">PDF en français et en anglais inclus · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome2')}>Acheter sur Etsy</a>
-            </div>
-          </Reveal>
-
-          <Reveal className="book-card" delay={0.1}>
-            <img src={tome3Cover} alt="Couverture — Windows avancé, sécurité, optimisation et dépannage professionnel" width="400" height="400" loading="lazy" />
-            <div>
-              <span className="book-tag">Tome 3 — Intermédiaire</span>
-              <h2 className="mt-0">Windows avancé — Sécurité, optimisation et dépannage professionnel</h2>
-              <p>Sécuriser Windows en profondeur, optimiser les performances et le démarrage, automatiser avec PowerShell et le Planificateur de tâches, et diagnostiquer méthodiquement les pannes courantes grâce à une étude de cas complète.</p>
-              <div className="book-price">19,90 €</div>
-              <p className="small">PDF en français · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome3')}>Acheter sur Etsy</a>
-            </div>
-          </Reveal>
-
-          <Reveal className="book-card" delay={0.15}>
-            <img src={tome4Cover} alt="Couverture — Cybersécurité avancée, audit, hardening et réponse à incident" width="400" height="400" loading="lazy" />
-            <div>
-              <span className="book-tag">Tome 4 — Avancé</span>
-              <h2 className="mt-0">Cybersécurité avancée — Audit, hardening et réponse à incident</h2>
-              <p>La suite directe du Tome 2 : mener un audit de sécurité méthodique, durcir (hardening) un système et un réseau, structurer une réponse à incident et réaliser un mini-audit de sécurité sur sa propre installation.</p>
-              <div className="book-price">24,90 €</div>
-              <p className="small">PDF en français · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome4')}>Acheter sur Etsy</a>
-            </div>
-          </Reveal>
-
-          <Reveal className="book-card" delay={0.2}>
-            <img src={tome5Cover} alt="Couverture — VPN et vie privée en ligne, comprendre, choisir et agir concrètement" width="400" height="400" loading="lazy" />
-            <div>
-              <span className="book-tag">Tome 5 — Débutant/Intermédiaire</span>
-              <h2 className="mt-0">VPN &amp; vie privée en ligne — Comprendre, choisir et agir concrètement</h2>
-              <p>Comment fonctionne réellement un VPN et ce qu'il ne protège PAS, comment choisir un fournisseur sérieux, configurer son VPN correctement et réduire le pistage publicitaire sur ses réseaux sociaux et messageries.</p>
-              <div className="book-price">16,99 €</div>
-              <p className="small">PDF en français · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome5')}>Acheter sur Etsy</a>
-            </div>
-          </Reveal>
-
-          <Reveal className="book-card" delay={0.25}>
-            <img src={tome6Cover} alt="Couverture — Réseaux et Wi-Fi pour tous, comprendre, sécuriser et dépanner son réseau" width="400" height="400" loading="lazy" />
-            <div>
-              <span className="book-tag">Tome 6 — Débutant</span>
-              <h2 className="mt-0">Réseaux &amp; Wi-Fi pour tous — Comprendre, sécuriser et dépanner son réseau</h2>
-              <p>Les bases indispensables (IP, DHCP, DNS, passerelle) expliquées simplement, sécuriser sa box et son Wi-Fi, diagnostiquer un Wi-Fi lent ou qui coupe et isoler ses objets connectés pour plus de sécurité.</p>
-              <div className="book-price">14,99 €</div>
-              <p className="small">PDF en français · accès immédiat après achat</p>
-              <a href={ETSY_URL} target="_blank" rel="noopener noreferrer" className="btn btn-primary" onClick={() => trackEvent('etsy_click', 'tome6')}>Acheter sur Etsy</a>
-            </div>
-          </Reveal>
+          <h1>
+            Nos ebooks <span className="hl">Linux, Windows &amp; cybersécurité</span>
+          </h1>
+          <p className="lead">
+            Écrits par L'Homme-du-Milieu. PDF en français, accès immédiat après achat. Disponibles sur notre
+            boutique Etsy 3wmService.
+          </p>
+          <div className="page-hero-tags">
+            <span>📘 6 ebooks</span>
+            <span>⚡ Accès immédiat</span>
+            <span>🇫🇷 En français</span>
+          </div>
         </div>
       </section>
 
-      <section className="alt">
-        <div className="container center">
-          <h2 className="section-title">Une question avant d'acheter ?</h2>
-          <p className="section-sub">Écrivez-nous, nous répondons rapidement.</p>
-          <Link to="/contact" className="btn btn-outline">Contacter 3WM Service</Link>
+      <section>
+        <div className="container book-list">
+          {LIVRES.map((l, i) => (
+            <Reveal className="book-card" delay={i === 0 ? 0 : 0.08} key={l.id}>
+              <img
+                src={l.cover}
+                alt={`Couverture — ${l.alt}`}
+                width="400"
+                height="400"
+                loading={i === 0 ? undefined : 'lazy'}
+              />
+              <div>
+                <span className="book-tag">{l.niveau}</span>
+                <h2 className="mt-0">{l.titre}</h2>
+                <p>{l.texte}</p>
+                <div className="book-buy">
+                  <div>
+                    <div className="book-price">{l.prix}</div>
+                    <p className="small" style={{ margin: 0 }}>{l.format}</p>
+                  </div>
+                  <a
+                    href={ETSY_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-primary"
+                    onClick={() => trackEvent('etsy_click', l.id)}
+                  >
+                    Acheter sur Etsy
+                  </a>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      <section style={{ paddingTop: 0 }}>
+        <div className="container">
+          <Reveal className="cta-band cta-soft">
+            <h2>Une question avant d'acheter ?</h2>
+            <p>Écrivez-nous, nous répondons rapidement.</p>
+            <Link to="/contact" className="btn btn-primary btn-lg">Contacter 3WM Service</Link>
+          </Reveal>
         </div>
       </section>
     </>

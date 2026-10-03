@@ -38,14 +38,30 @@ export function logChatMessage(role, content) {
   })
 }
 
-// Copie le message du formulaire de contact dans Supabase, en plus de
-// l'envoi habituel via Netlify Forms (qui gère toujours la notification
-// par e-mail) — pour que l'admin le voie aussi directement dans /admin.
-export function logContactMessage({ name, email, sujet, message }) {
-  poster('contact_messages', {
-    name: name || null,
-    email: email || null,
-    sujet: sujet || null,
-    message: message || null,
-  })
+// Enregistre le message du formulaire de contact dans Supabase (visible
+// dans /admin). Contrairement aux autres journaux, on attend la réponse :
+// la fonction renvoie true si le message a bien été enregistré, false sinon,
+// pour que la page de contact n'affiche « Message envoyé » que si c'est vrai.
+export async function logContactMessage({ name, email, sujet, message }) {
+  if (!isSupabaseConfigured) return false
+  try {
+    const rep = await fetch(`${SUPABASE_URL}/rest/v1/contact_messages`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({
+        name: name || null,
+        email: email || null,
+        sujet: sujet || null,
+        message: message || null,
+      }),
+    })
+    return rep.ok
+  } catch {
+    return false
+  }
 }

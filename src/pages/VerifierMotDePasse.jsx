@@ -55,7 +55,7 @@ export default function VerifierMotDePasse() {
 
       <section>
         <div className="container" style={{ maxWidth: 640 }}>
-          <form className="contact-form" onSubmit={handleSubmit} style={{ margin: 0, maxWidth: 'none' }}>
+          <form className="contact-form card" onSubmit={handleSubmit} style={{ margin: 0, maxWidth: "none", padding: 28 }}>
             <div>
               <label htmlFor="mdp">Mot de passe à vérifier</label>
               <div style={{ display: 'flex', gap: 8 }}>

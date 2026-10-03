@@ -40,7 +40,7 @@ export default function MotDePasseOublie() {
 
   return (
     <>
-      <div className="page-header">
+      <div className="page-header auth-header">
         <div className="container">
           <p className="eyebrow">Mot de passe oublié</p>
           <h1>Mot de passe oublié</h1>

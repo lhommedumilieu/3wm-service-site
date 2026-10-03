@@ -41,7 +41,7 @@ export default function Connexion() {
 
   return (
     <>
-      <div className="page-header">
+      <div className="page-header auth-header">
         <div className="container">
           <p className="eyebrow">Connexion</p>
           <h1>Connexion</h1>

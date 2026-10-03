@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
+import IllustrationDepannage from '../components/IllustrationDepannage.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 
 const STRUCTURED_DATA = {
@@ -21,6 +22,42 @@ const STRUCTURED_DATA = {
   ],
 }
 
+const ETAPES = [
+  {
+    titre: 'Vous décrivez le problème',
+    texte: (
+      <>
+        Via le <Link to="/contact">formulaire de contact</Link>, expliquez ce qui ne va pas sur votre PC Windows.
+        Vous recevez une réponse avec la formule la plus adaptée.
+      </>
+    ),
+  },
+  { titre: 'Session à distance', texte: "Une fois d'accord, une session d'assistance est lancée sur votre PC Windows. Vous voyez tout ce qui se passe et pouvez l'interrompre instantanément." },
+  { titre: 'Problème résolu', texte: 'Diagnostic, correction et explications claires sur ce qui a été fait, pour éviter que le souci ne revienne.' },
+]
+
+const PANNES = [
+  { emo: '🐢', titre: 'Lenteur et démarrage', texte: 'PC qui rame, démarrage interminable, programmes qui se lancent tout seuls.' },
+  { emo: '🦠', titre: 'Virus et sécurité', texte: 'Suspicion de virus, pop-up publicitaires, antivirus à configurer.' },
+  { emo: '🔄', titre: 'Windows Update', texte: 'Mise à jour bloquée, écran bleu après une mise à jour, Windows qui ne démarre plus.' },
+  { emo: '🖨️', titre: 'Imprimante et périphériques', texte: 'Imprimante non détectée, pilotes manquants, périphérique USB qui ne fonctionne pas.' },
+  { emo: '📶', titre: 'Wi-Fi et réseau', texte: 'Connexion instable, Wi-Fi qui se déconnecte, partage de fichiers entre PC.' },
+  { emo: '✉️', titre: 'E-mails et logiciels', texte: "Configuration d'Outlook ou Mail, installation et dépannage de logiciels du quotidien." },
+]
+
+const FORMULES = [
+  { nom: 'Dépannage ponctuel', sous: '1 problème identifié', prix: '29 €', texte: 'Idéal pour un souci précis sur Windows : PC lent, virus, écran bleu, panne logicielle, configuration.' },
+  { nom: 'Dépannage approfondi', sous: 'Plusieurs problèmes', prix: '49 €', texte: 'Pour un PC Windows qui cumule plusieurs soucis (mises à jour, pilotes, imprimante, Wi-Fi…) à traiter dans la même session.' },
+  { nom: 'Forfait mensuel', sous: 'Assistance illimitée', prix: '19 €', suffixe: '/mois', texte: 'Pour ceux qui veulent une assistance Windows récurrente sans compter les sessions.' },
+  { nom: 'Pack entreprise', sous: 'Plusieurs postes', prix: '79 €', texte: 'Pour les petites structures avec plusieurs postes Windows à suivre.' },
+]
+
+const GARANTIES = [
+  { ico: '🤝', titre: 'Une autorisation claire', texte: "Avant toute chose, une demande d'autorisation s'affiche sur votre écran." },
+  { ico: '🛑', titre: 'Un bouton pour tout arrêter', texte: 'Une bannière reste visible pendant toute la session, avec un bouton pour tout interrompre immédiatement.' },
+  { ico: '🔒', titre: 'Une session chiffrée', texte: 'Le trafic de la session est chiffré de bout en bout.' },
+]
+
 export default function Services() {
   useDocumentMeta(
     'Dépannage Windows à distance',
@@ -31,115 +68,109 @@ export default function Services() {
 
   return (
     <>
-      <div className="page-header">
-        <div className="container">
-          <p className="eyebrow eyebrow-ps">Assistance Windows à distance</p>
-          <h1>Dépannage Windows à distance</h1>
-          <p>Une assistance basée sur le consentement explicite : rien ne démarre sans votre accord, et vous gardez à tout moment le contrôle de la session.</p>
-        </div>
-      </div>
-
-      <section>
-        <div className="container">
-          <h2 className="section-title">Comment ça se passe</h2>
-          <div className="grid grid-3">
-            <Reveal className="card">
-              <h3>1. Vous décrivez le problème</h3>
-              <p>Via le <Link to="/contact">formulaire de contact</Link>, expliquez ce qui ne va pas sur votre PC Windows. Vous recevez une réponse avec la formule la plus adaptée.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.08}>
-              <h3>2. Session à distance</h3>
-              <p>Une fois d'accord, une session d'assistance est lancée sur votre PC Windows. Vous voyez tout ce qui se passe et pouvez l'interrompre instantanément.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.16}>
-              <h3>3. Problème résolu</h3>
-              <p>Diagnostic, correction et explications claires sur ce qui a été fait — pour éviter que le souci ne revienne.</p>
-            </Reveal>
+      <section className="page-hero">
+        <div className="container page-hero-grid">
+          <div>
+            <p className="eyebrow">Assistance Windows à distance</p>
+            <h1>
+              Dépannage Windows <span className="hl">à distance</span>
+            </h1>
+            <p className="lead">
+              Une assistance basée sur le consentement explicite : rien ne démarre sans votre accord, et vous
+              gardez à tout moment le contrôle de la session.
+            </p>
+            <div className="btn-row">
+              <Link to="/contact" className="btn btn-primary btn-lg">Demander un dépannage</Link>
+              <a href="#formules" className="btn btn-outline btn-lg">Voir les formules</a>
+            </div>
+          </div>
+          <div className="hero-art page-hero-art">
+            <IllustrationDepannage />
           </div>
         </div>
       </section>
 
       <section>
         <div className="container">
-          <h2 className="section-title">Les pannes Windows les plus fréquentes</h2>
-          <p className="section-sub">Si vous reconnaissez l'un de ces soucis, c'est le bon endroit.</p>
-          <div className="grid grid-3">
-            <Reveal className="card">
-              <h3>Lenteur &amp; démarrage</h3>
-              <p className="small">PC qui rame, démarrage interminable, programmes qui se lancent tout seuls.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.06}>
-              <h3>Virus &amp; sécurité</h3>
-              <p className="small">Suspicion de virus, pop-up publicitaires, antivirus à configurer.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.12}>
-              <h3>Windows Update</h3>
-              <p className="small">Mise à jour bloquée, écran bleu après une mise à jour, Windows qui ne démarre plus.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.18}>
-              <h3>Imprimante &amp; périphériques</h3>
-              <p className="small">Imprimante non détectée, pilotes manquants, périphérique USB qui ne fonctionne pas.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.24}>
-              <h3>Wi-Fi &amp; réseau</h3>
-              <p className="small">Connexion instable, Wi-Fi qui se déconnecte, partage de fichiers entre PC.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.3}>
-              <h3>Emails &amp; logiciels</h3>
-              <p className="small">Configuration d'Outlook ou Mail, installation et dépannage de logiciels du quotidien.</p>
-            </Reveal>
+          <Reveal as="h2" className="section-title">Comment ça se passe</Reveal>
+          <Reveal as="p" className="section-sub" delay={0.05}>Trois étapes, sans jargon et sans prise de tête.</Reveal>
+          <div className="grid grid-3 steps">
+            {ETAPES.map((e, i) => (
+              <Reveal className="card step-card" delay={i * 0.08} key={e.titre}>
+                <h3>{e.titre}</h3>
+                <p>{e.texte}</p>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
       <section className="alt">
         <div className="container">
-          <h2 className="section-title">Nos formules</h2>
-          <p className="section-sub">Des tarifs simples, sans surprise. Paiement précisé lors de la prise de contact.</p>
-          <div className="grid grid-4">
-            <Reveal className="card">
-              <h3>Dépannage ponctuel</h3>
-              <p className="small">1 problème identifié</p>
-              <div className="price">29 €</div>
-              <p className="small">Idéal pour un souci précis sur Windows : PC lent, virus, écran bleu, panne logicielle, configuration.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.06}>
-              <h3>Dépannage approfondi</h3>
-              <p className="small">Plusieurs problèmes</p>
-              <div className="price">49 €</div>
-              <p className="small">Pour un PC Windows qui cumule plusieurs soucis (mises à jour, pilotes, imprimante, Wi-Fi…) à traiter dans la même session.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.12}>
-              <h3>Forfait mensuel</h3>
-              <p className="small">Assistance illimitée</p>
-              <div className="price">19 € <small>/mois</small></div>
-              <p className="small">Pour ceux qui veulent une assistance Windows récurrente sans compter les sessions.</p>
-            </Reveal>
-            <Reveal className="card" delay={0.18}>
-              <h3>Pack entreprise</h3>
-              <p className="small">Plusieurs postes</p>
-              <div className="price">79 €</div>
-              <p className="small">Pour les petites structures avec plusieurs postes Windows à suivre.</p>
-            </Reveal>
+          <Reveal as="h2" className="section-title">Les pannes Windows les plus fréquentes</Reveal>
+          <Reveal as="p" className="section-sub" delay={0.05}>Si vous reconnaissez l'un de ces soucis, c'est le bon endroit.</Reveal>
+          <div className="problem-grid">
+            {PANNES.map((p, i) => (
+              <Reveal className="problem" delay={i * 0.05} key={p.titre}>
+                <span className="emo" aria-hidden="true">{p.emo}</span>
+                <span>
+                  {p.titre}
+                  <small>{p.texte}</small>
+                </span>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="formules">
+        <div className="container">
+          <Reveal as="h2" className="section-title">Nos formules</Reveal>
+          <Reveal as="p" className="section-sub" delay={0.05}>Des tarifs simples, sans surprise. Paiement précisé lors de la prise de contact.</Reveal>
+          <div className="price-grid">
+            {FORMULES.map((f, i) => (
+              <Reveal className="card price-card" delay={i * 0.06} key={f.nom}>
+                <h3>{f.nom}</h3>
+                <p className="small price-sub">{f.sous}</p>
+                <p className="big">{f.prix}{f.suffixe && <small> {f.suffixe}</small>}</p>
+                <p className="small">{f.texte}</p>
+              </Reveal>
+            ))}
           </div>
           <p className="center" style={{ marginTop: 32 }}>
-            <Link to="/contact" className="btn btn-primary">Demander un dépannage</Link>
+            <Link to="/contact" className="btn btn-primary btn-lg">Demander un dépannage</Link>
           </p>
         </div>
       </section>
 
-      <section>
+      <section className="alt">
         <div className="container">
-          <h2 className="section-title">Le logiciel utilisé</h2>
-          <p className="section-sub">La confiance et la transparence avant tout.</p>
-          <Reveal className="card" style={{ maxWidth: 720, margin: '0 auto' }}>
-            <p>Les sessions d'assistance reposent sur un principe simple : <strong>rien ne se passe sans consentement explicite et visible</strong>.</p>
-            <ul>
-              <li>Avant toute chose, une demande d'autorisation claire s'affiche sur votre écran.</li>
-              <li>Une bannière reste visible pendant toute la session, avec un bouton pour tout arrêter immédiatement.</li>
-              <li>Le trafic de la session est chiffré de bout en bout.</li>
-            </ul>
-            <p className="small">Pour un usage professionnel ou répété, des outils établis et audités (RustDesk, AnyDesk, TeamViewer) peuvent également être utilisés selon le cas.</p>
+          <Reveal as="h2" className="section-title">Le logiciel utilisé</Reveal>
+          <Reveal as="p" className="section-sub" delay={0.05}>
+            La confiance et la transparence avant tout : rien ne se passe sans consentement explicite et visible.
+          </Reveal>
+          <div className="grid grid-3">
+            {GARANTIES.map((g, i) => (
+              <Reveal className="card garantie" delay={i * 0.08} key={g.titre}>
+                <span className="trust-ico" aria-hidden="true">{g.ico}</span>
+                <h3>{g.titre}</h3>
+                <p>{g.texte}</p>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal as="p" className="small center note-centre" delay={0.1}>
+            Pour un usage professionnel ou répété, des outils établis et audités (RustDesk, AnyDesk, TeamViewer)
+            peuvent également être utilisés selon le cas.
+          </Reveal>
+        </div>
+      </section>
+
+      <section style={{ paddingTop: 0 }}>
+        <div className="container">
+          <Reveal className="cta-band">
+            <h2>Un souci sur votre PC Windows ?</h2>
+            <p>Décrivez-le via le formulaire de contact : je reviens vers vous avec la formule adaptée, avant toute intervention.</p>
+            <Link to="/contact" className="btn btn-primary btn-lg">Demander de l'aide</Link>
           </Reveal>
         </div>
       </section>
