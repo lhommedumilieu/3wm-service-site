@@ -76,6 +76,17 @@ export default function Header() {
                 </NavLink>
               </li>
             ))}
+            {user?.email === 'service@3-wm.net' && (
+              <li>
+                <NavLink
+                  to="/admin"
+                  onClick={() => setOpen(false)}
+                  className={({ isActive }) => (isActive ? 'active' : '')}
+                >
+                  Admin
+                </NavLink>
+              </li>
+            )}
             {accountLink && (
               <li>
                 <NavLink
