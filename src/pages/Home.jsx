@@ -89,6 +89,31 @@ export default function Home() {
       </section>
 
       <section>
+        <div className="container">
+          <Reveal as="h2" className="section-title">Vos données ont-elles fuité ?</Reveal>
+          <Reveal as="p" className="section-sub" delay={0.05}>
+            Deux outils gratuits pour savoir si vos informations circulent après un piratage de site.
+          </Reveal>
+          <div className="grid grid-2">
+            <Reveal className="card" delay={0}>
+              <h3>Mon mot de passe est-il compromis ?</h3>
+              <p>Testez un mot de passe en quelques secondes, sans compte. Il reste dans votre navigateur : seuls 5 caractères d'une empreinte sont envoyés au service de vérification.</p>
+              <p><Link to="/verifier-mot-de-passe">Tester un mot de passe →</Link></p>
+            </Reveal>
+            <Reveal className="card" delay={0.08}>
+              <h3>Mon adresse e-mail a-t-elle fuité ?</h3>
+              <p>Avec un compte gratuit, vérifiez si l'adresse de votre compte apparaît dans des fuites connues, et quelles données ont été exposées.</p>
+              <p><Link to="/espace-membre">Vérifier mon adresse e-mail →</Link></p>
+            </Reveal>
+          </div>
+          <Reveal as="p" className="small" delay={0.12} style={{ marginTop: 16 }}>
+            Pas sûr de ce que ça change pour vous ? Lisez{' '}
+            <Link to="/blog/mot-de-passe-email-fuite-que-faire">notre guide : que faire si vos données ont fuité</Link>.
+          </Reveal>
+        </div>
+      </section>
+
+      <section>
         <div className="container center">
           <Reveal as="h2" className="section-title">Un souci sur votre PC Windows, maintenant ?</Reveal>
           <Reveal as="p" className="section-sub" delay={0.05}>

@@ -373,6 +373,44 @@ balenaEtcher   # gratuit, disponible sous Windows, macOS et Linux`}</code></pre>
       </>
     ),
   },
+  {
+    slug: 'mot-de-passe-email-fuite-que-faire',
+    title: 'Mot de passe ou e-mail dans une fuite de données : que faire ?',
+    category: 'Cybersécurité',
+    excerpt: "Votre adresse apparaît dans une fuite ? Pas de panique : voici comment vérifier gratuitement, comprendre le risque réel et agir dans le bon ordre.",
+    Body: () => (
+      <>
+        <p>Chaque année, des sites très connus se font pirater et une partie de leurs données — adresses e-mail, mots de passe, parfois bien plus — se retrouve en circulation sur Internet. Si vous avez un compte quelque part, il y a de bonnes chances que vos informations figurent dans au moins une de ces fuites. La bonne nouvelle : vérifier est gratuit, et savoir quoi faire ensuite tient en quelques gestes.</p>
+
+        <h2>Pourquoi une fuite vous concerne même si « votre » compte n'a rien</h2>
+        <p>Beaucoup de personnes réutilisent le même mot de passe sur plusieurs sites. Quand un petit site mal protégé est piraté, les attaquants essaient ensuite ces mêmes combinaisons adresse + mot de passe sur des services bien plus sensibles : messagerie, réseaux sociaux, administrations, banque en ligne. C'est ce qu'on appelle le « credential stuffing », et c'est l'une des principales manières dont des comptes sont piratés sans que la victime ait fait la moindre erreur récente.</p>
+
+        <h2>Étape 1 : vérifier si votre mot de passe est connu</h2>
+        <p>Un mot de passe qui figure dans une fuite doit être considéré comme grillé, même s'il est compliqué : il est dans les listes que les attaquants testent en premier. Vous pouvez le vérifier avec <Link to="/verifier-mot-de-passe">l'outil de vérification de mot de passe</Link> de 3WM Service. Il fonctionne sans compte et votre mot de passe ne quitte pas votre navigateur : seule une toute petite partie de son empreinte est envoyée au service de vérification, qui ne peut donc pas savoir lequel vous testez.</p>
+
+        <h2>Étape 2 : vérifier si votre adresse e-mail a fuité</h2>
+        <p>Dans votre <Link to="/espace-membre">espace membre</Link>, l'onglet « Sécurité » indique si l'adresse e-mail de votre compte apparaît dans des fuites connues, avec le nom du site touché, l'année et le type de données exposées. Pour éviter qu'on s'en serve pour fouiller l'adresse de quelqu'un d'autre, chacun ne peut vérifier que sa propre adresse.</p>
+        <p>Seules les fuites rendues publiques sont connues : l'absence de résultat n'est pas une garantie, et un résultat ne veut pas dire que votre compte est piraté aujourd'hui. Il indique que des informations ont circulé et qu'il vaut mieux agir.</p>
+
+        <h2>Étape 3 : agir dans le bon ordre</h2>
+        <p>Commencez par ce qui protège le reste :</p>
+        <ul>
+          <li><strong>Votre messagerie en premier.</strong> Qui contrôle votre boîte mail peut réinitialiser presque tous vos autres mots de passe. Changez-le, et activez la double authentification.</li>
+          <li><strong>Les sites cités dans la fuite</strong>, puis tout site où vous aviez réutilisé le même mot de passe.</li>
+          <li><strong>Votre banque et vos comptes de paiement</strong>, si le mot de passe concerné y a déjà servi.</li>
+        </ul>
+
+        <h2>Étape 4 : ne plus se retrouver dans cette situation</h2>
+        <p>Utilisez un mot de passe unique par site, ce qui n'est réaliste qu'avec un gestionnaire de mots de passe (voir <Link to="/blog/5-reflexes-cybersecurite-quotidien">les 5 réflexes de cybersécurité au quotidien</Link>, ou la page <Link to="/recommandations">Recommandations</Link>). Activez la double authentification partout où elle existe : même avec votre mot de passe, un attaquant sera bloqué sans le second facteur.</p>
+
+        <h2>Attention aux messages qui suivent une fuite</h2>
+        <p>Les données volées servent aussi à fabriquer des arnaques très crédibles : e-mails ou SMS qui citent votre vrai nom, un vrai service que vous utilisez, parfois un vrai ancien mot de passe pour vous mettre en confiance. Ne cliquez pas sur les liens d'un message inattendu et reportez-vous à notre guide pour <Link to="/blog/reconnaitre-un-email-de-phishing">reconnaître un e-mail de phishing</Link>.</p>
+
+        <h2>Besoin d'un coup de main ?</h2>
+        <p>Si vous craignez qu'un ordinateur soit compromis ou si vous voulez être accompagné pour tout sécuriser, 3WM Service propose un <Link to="/services">dépannage et un diagnostic à distance</Link>, avec votre accord à chaque étape.</p>
+      </>
+    ),
+  },
 ]
 
 export function getBlogPost(slug) {
