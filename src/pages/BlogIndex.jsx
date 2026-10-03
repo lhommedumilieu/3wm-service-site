@@ -15,7 +15,7 @@ export default function BlogIndex() {
     <>
       <div className="page-header">
         <div className="container">
-          <p className="eyebrow">tail -f blog.log</p>
+          <p className="eyebrow">Blog</p>
           <h1>Blog &amp; tutoriels</h1>
           <p>Des articles pratiques sur Windows, Linux et la cybersécurité, sans jargon inutile.</p>
         </div>

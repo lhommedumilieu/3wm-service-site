@@ -42,7 +42,7 @@ export default function MotDePasseOublie() {
     <>
       <div className="page-header">
         <div className="container">
-          <p className="eyebrow">passwd --reset</p>
+          <p className="eyebrow">Mot de passe oublié</p>
           <h1>Mot de passe oublié</h1>
           <p>Recevez un lien par email pour choisir un nouveau mot de passe.</p>
         </div>

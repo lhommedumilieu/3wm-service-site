@@ -137,7 +137,7 @@ export default function Boutique() {
     <>
       <div className="page-header">
         <div className="container">
-          <p className="eyebrow">cd boutique</p>
+          <p className="eyebrow">Boutique</p>
           <h1>Nos ebooks Linux, Windows &amp; cybersécurité</h1>
           <p>Écrits par L'Homme-du-Milieu. PDF en français, accès immédiat après achat. Disponibles sur notre boutique Etsy 3wmService.</p>
         </div>

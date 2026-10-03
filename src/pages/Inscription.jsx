@@ -52,7 +52,7 @@ export default function Inscription() {
     <>
       <div className="page-header">
         <div className="container">
-          <p className="eyebrow">useradd</p>
+          <p className="eyebrow">Inscription</p>
           <h1>Créer un compte</h1>
           <p>Rejoignez l'espace membre 3WM Service : contenu réservé et commentaires sur le blog.</p>
         </div>

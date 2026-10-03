@@ -237,7 +237,7 @@ export default function Admin() {
     <>
       <div className="page-header">
         <div className="container">
-          <p className="eyebrow">sudo</p>
+          <p className="eyebrow">Administration</p>
           <h1>Administration — comptes membres</h1>
           <p>Comptes inscrits, présence en direct, création et bannissement.</p>
         </div>

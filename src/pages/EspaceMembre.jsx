@@ -250,7 +250,7 @@ export default function EspaceMembre() {
     <>
       <div className="page-header">
         <div className="container">
-          <p className="eyebrow">cd ~</p>
+          <p className="eyebrow">Espace membre</p>
           <h1>Bienvenue, {user.email}</h1>
           <p>Votre espace membre 3WM Service.</p>
         </div>

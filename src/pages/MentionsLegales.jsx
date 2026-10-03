@@ -28,7 +28,7 @@ export default function MentionsLegales() {
     <>
       <div className="page-header">
         <div className="container">
-          <p className="eyebrow">cat mentions-legales.txt</p>
+          <p className="eyebrow">Informations légales</p>
           <h1>Mentions légales</h1>
         </div>
       </div>

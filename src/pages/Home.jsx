@@ -1,10 +1,7 @@
 import { Link } from 'react-router-dom'
-import { lazy, Suspense } from 'react'
 import Reveal from '../components/Reveal.jsx'
 import NewsletterSignup from '../components/NewsletterSignup.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
-
-const NetworkBackground = lazy(() => import('../components/NetworkBackground.jsx'))
 
 const STRUCTURED_DATA = {
   '@context': 'https://schema.org',
@@ -19,6 +16,62 @@ const STRUCTURED_DATA = {
   sameAs: ['https://www.etsy.com/shop/3wmService'],
 }
 
+const CONFIANCE = [
+  { ico: '🤝', titre: 'Rien sans votre accord', texte: "Une demande d'autorisation claire s'affiche avant chaque session." },
+  { ico: '🛑', titre: 'Vous gardez la main', texte: 'Un bouton pour tout arrêter, à tout moment.' },
+  { ico: '🔒', titre: 'Session chiffrée', texte: 'Le trafic est chiffré de bout en bout.' },
+  { ico: '💶', titre: 'Tarifs simples', texte: 'Dès 29 €, sans mauvaise surprise.' },
+]
+
+const ETAPES = [
+  { titre: 'Vous décrivez le problème', texte: 'Via le formulaire de contact, expliquez ce qui ne va pas sur votre PC. Vous recevez la formule la plus adaptée.' },
+  { titre: 'Session à distance', texte: "Une fois d'accord, la session démarre. Vous voyez tout ce qui se passe et pouvez l'interrompre instantanément." },
+  { titre: 'Problème résolu', texte: 'Diagnostic, correction et explications claires sur ce qui a été fait, pour éviter que le souci ne revienne.' },
+]
+
+const PANNES = [
+  { emo: '🐢', titre: 'PC lent ou démarrage interminable', texte: 'Programmes qui se lancent tout seuls, PC qui rame.' },
+  { emo: '🦠', titre: 'Virus et sécurité', texte: 'Pop-up publicitaires, suspicion de virus.' },
+  { emo: '🔄', titre: 'Windows Update bloqué', texte: 'Mise à jour qui plante, écran bleu.' },
+  { emo: '🖨️', titre: 'Imprimante et périphériques', texte: 'Imprimante non détectée, pilotes manquants.' },
+  { emo: '📶', titre: 'Wi-Fi et réseau', texte: 'Connexion instable, partage de fichiers.' },
+  { emo: '✉️', titre: 'E-mails et logiciels', texte: "Outlook, Mail, installation de logiciels du quotidien." },
+]
+
+const FORMULES = [
+  { nom: 'Dépannage ponctuel', prix: '29 €', detail: '1 problème identifié' },
+  { nom: 'Dépannage approfondi', prix: '49 €', detail: 'Plusieurs problèmes dans la même session', vedette: true },
+  { nom: 'Forfait mensuel', prix: '19 €', suffixe: '/mois', detail: 'Assistance illimitée' },
+  { nom: 'Pack entreprise', prix: '79 €', detail: 'Plusieurs postes Windows' },
+]
+
+function IllustrationDepannage() {
+  return (
+    <svg viewBox="0 0 420 300" role="img" aria-label="Illustration : un ordinateur portable dépanné à distance, avec une coche verte de réussite">
+      {/* écran */}
+      <rect className="art-screen" x="62" y="22" width="296" height="188" rx="16" />
+      <path className="art-bar" d="M62 38a16 16 0 0116-16h264a16 16 0 0116 16v14H62z" />
+      <circle className="art-dot" cx="82" cy="37" r="4" />
+      <circle className="art-dot" cx="97" cy="37" r="4" />
+      <circle className="art-dot" cx="112" cy="37" r="4" />
+      {/* contenu */}
+      <rect className="art-line-accent" x="86" y="72" width="120" height="12" rx="6" />
+      <rect className="art-line" x="86" y="96" width="200" height="10" rx="5" />
+      <rect className="art-line" x="86" y="116" width="170" height="10" rx="5" />
+      <rect className="art-line" x="86" y="136" width="188" height="10" rx="5" />
+      <rect className="art-line-accent" x="86" y="166" width="96" height="22" rx="11" />
+      {/* coche de réussite */}
+      <circle className="art-ok" cx="296" cy="150" r="34" />
+      <path d="M279 150l12 12 22-24" fill="none" stroke="#fff" strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" />
+      {/* socle */}
+      <path className="art-base" d="M30 222h360l-22 30a12 12 0 01-10 5H62a12 12 0 01-10-5z" />
+      <rect className="art-base" x="170" y="222" width="80" height="8" rx="4" opacity="0.6" />
+      {/* curseur du technicien */}
+      <path className="art-cursor" d="M214 128l0 46 12-12 9 22 10-4-9-21 17-1z" />
+    </svg>
+  )
+}
+
 export default function Home() {
   useDocumentMeta(
     null,
@@ -29,66 +82,113 @@ export default function Home() {
 
   return (
     <>
-      <section className="hero">
-        <Suspense fallback={null}>
-          <NetworkBackground />
-        </Suspense>
-        <div className="container hero-grid hero-grid-single">
+      <section className="hero-split">
+        <div className="container hero-split-grid">
           <div>
-            <p className="eyebrow eyebrow-ps">3WM Service — Assistance Windows</p>
-            <h1>Dépannage Windows à distance, simple et rassurant</h1>
+            <p className="eyebrow">Dépannage Windows à distance</p>
+            <h1>
+              Votre PC Windows pose problème ? On le <span className="hl">répare à distance</span>, simplement.
+            </h1>
             <p className="lead">
-              Un PC lent, un virus, une mise à jour qui bloque ? Assistance à distance basée sur le
-              consentement pour votre PC Windows — et, pour les curieux, des ebooks pour apprendre
-              Linux et la cybersécurité.
+              Un PC lent, un virus, une mise à jour qui bloque ? Je prends la main sur votre ordinateur
+              avec votre accord, vous regardez tout en direct, et je vous explique ce qui a été fait.
             </p>
+            <ul className="hero-points">
+              <li>Rien ne démarre sans votre autorisation</li>
+              <li>Vous pouvez tout arrêter d'un clic</li>
+              <li>Aucun déplacement, depuis votre canapé</li>
+            </ul>
             <div className="btn-row">
-              <Link to="/services" className="btn btn-primary">Voir les formules de dépannage</Link>
-              <Link to="/boutique" className="btn btn-outline">Découvrir les ebooks Linux</Link>
+              <Link to="/contact" className="btn btn-primary btn-lg">Demander de l'aide</Link>
+              <Link to="/services" className="btn btn-outline btn-lg">Voir les tarifs</Link>
             </div>
+            <p className="hero-note">À partir de 29 € · Paiement précisé lors de la prise de contact</p>
+          </div>
+
+          <div className="hero-art">
+            <IllustrationDepannage />
+            <span className="chip chip-1"><i></i>Session chiffrée</span>
+            <span className="chip chip-2"><i></i>Vous gardez le contrôle</span>
+            <span className="chip chip-3"><i></i>Rien sans votre accord</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="trust">
+        <div className="container">
+          <div className="trust-grid">
+            {CONFIANCE.map((c) => (
+              <div className="trust-item" key={c.titre}>
+                <span className="trust-ico" aria-hidden="true">{c.ico}</span>
+                <div>
+                  <strong>{c.titre}</strong>
+                  <span className="t">{c.texte}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div className="container">
+          <Reveal as="h2" className="section-title">Comment ça se passe</Reveal>
+          <Reveal as="p" className="section-sub" delay={0.05}>
+            Trois étapes, sans jargon et sans prise de tête.
+          </Reveal>
+          <div className="grid grid-3 steps">
+            {ETAPES.map((e, i) => (
+              <Reveal className="card step-card" delay={i * 0.08} key={e.titre}>
+                <h3>{e.titre}</h3>
+                <p>{e.texte}</p>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
       <section className="alt">
         <div className="container">
-          <Reveal as="h2" className="section-title">Ce que propose 3WM Service</Reveal>
+          <Reveal as="h2" className="section-title">Les pannes que je règle le plus souvent</Reveal>
           <Reveal as="p" className="section-sub" delay={0.05}>
-            Trois façons de progresser : se faire dépanner, apprendre par soi-même, ou suivre les tutoriels du blog.
+            Si vous vous reconnaissez dans l'une d'elles, vous êtes au bon endroit.
           </Reveal>
-          <div className="grid grid-3">
-            <Reveal className="card" delay={0}>
-              <svg className="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="9"></circle>
-                <path d="M8.5 12.5l2.3 2.3L16 10"></path>
-              </svg>
-              <h3>Dépannage Windows à distance</h3>
-              <p>PC lent, virus, mise à jour Windows qui bloque, imprimante ou Wi-Fi capricieux… Assistance basée sur le consentement explicite : rien ne se passe sur votre machine sans votre accord.</p>
-              <p><Link to="/services">Voir les formules →</Link></p>
-            </Reveal>
-            <Reveal className="card" delay={0.08}>
-              <svg className="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 4.5h6a4 4 0 014 4v13a3 3 0 00-3-3H2z"></path>
-                <path d="M22 4.5h-6a4 4 0 00-4 4v13a3 3 0 013-3h7z"></path>
-              </svg>
-              <h3>Ebooks Linux &amp; cybersécurité</h3>
-              <p>Deux tomes pour découvrir Linux, poser des bases solides en cybersécurité, puis progresser vers Kali Linux et la méthodologie de pentest.</p>
-              <p><Link to="/boutique">Voir les ebooks →</Link></p>
-            </Reveal>
-            <Reveal className="card" delay={0.16}>
-              <svg className="icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M4 19.5V17l10-10 2.5 2.5-10 10H4z"></path>
-                <path d="M13.5 8L16 5.5 18.5 8 16 10.5z"></path>
-              </svg>
-              <h3>Blog &amp; tutoriels</h3>
-              <p>Des articles pratiques sur Linux, la sécurité informatique et les outils utiles au quotidien, écrits pour être compris sans jargon inutile.</p>
-              <p><Link to="/blog">Lire le blog →</Link></p>
-            </Reveal>
+          <div className="problem-grid">
+            {PANNES.map((p, i) => (
+              <Reveal className="problem" delay={i * 0.05} key={p.titre}>
+                <span className="emo" aria-hidden="true">{p.emo}</span>
+                <span>
+                  {p.titre}
+                  <small>{p.texte}</small>
+                </span>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
       <section>
+        <div className="container">
+          <Reveal as="h2" className="section-title">Des tarifs clairs</Reveal>
+          <Reveal as="p" className="section-sub" delay={0.05}>
+            Pas de devis compliqué : vous savez ce que vous payez avant que ça commence.
+          </Reveal>
+          <div className="price-grid">
+            {FORMULES.map((f, i) => (
+              <Reveal className={`card price-card${f.vedette ? ' featured' : ''}`} delay={i * 0.06} key={f.nom}>
+                <h3>{f.nom}</h3>
+                <p className="big">{f.prix}{f.suffixe && <small> {f.suffixe}</small>}</p>
+                <p className="small">{f.detail}</p>
+              </Reveal>
+            ))}
+          </div>
+          <p className="center" style={{ marginTop: 32 }}>
+            <Link to="/services" className="btn btn-outline">Voir le détail des formules</Link>
+          </p>
+        </div>
+      </section>
+
+      <section className="alt">
         <div className="container">
           <Reveal as="h2" className="section-title">Vos données ont-elles fuité ?</Reveal>
           <Reveal as="p" className="section-sub" delay={0.05}>
@@ -96,17 +196,17 @@ export default function Home() {
           </Reveal>
           <div className="grid grid-2">
             <Reveal className="card" delay={0}>
-              <h3>Mon mot de passe est-il compromis ?</h3>
+              <h3 className="mt-0">Mon mot de passe est-il compromis ?</h3>
               <p>Testez un mot de passe en quelques secondes, sans compte. Il reste dans votre navigateur : seuls 5 caractères d'une empreinte sont envoyés au service de vérification.</p>
               <p><Link to="/verifier-mot-de-passe">Tester un mot de passe →</Link></p>
             </Reveal>
             <Reveal className="card" delay={0.08}>
-              <h3>Mon adresse e-mail a-t-elle fuité ?</h3>
+              <h3 className="mt-0">Mon adresse e-mail a-t-elle fuité ?</h3>
               <p>Avec un compte gratuit, vérifiez si l'adresse de votre compte apparaît dans des fuites connues, et quelles données ont été exposées.</p>
               <p><Link to="/espace-membre">Vérifier mon adresse e-mail →</Link></p>
             </Reveal>
           </div>
-          <Reveal as="p" className="small" delay={0.12} style={{ marginTop: 16 }}>
+          <Reveal as="p" className="small center" delay={0.12} style={{ marginTop: 20 }}>
             Pas sûr de ce que ça change pour vous ? Lisez{' '}
             <Link to="/blog/mot-de-passe-email-fuite-que-faire">notre guide : que faire si vos données ont fuité</Link>.
           </Reveal>
@@ -114,13 +214,32 @@ export default function Home() {
       </section>
 
       <section>
-        <div className="container center">
-          <Reveal as="h2" className="section-title">Un souci sur votre PC Windows, maintenant ?</Reveal>
+        <div className="container">
+          <Reveal as="h2" className="section-title">Pour apprendre par vous-même</Reveal>
           <Reveal as="p" className="section-sub" delay={0.05}>
-            Décrivez votre souci via le formulaire de contact et 3WM Service revient vers vous avec une formule adaptée.
+            Envie de comprendre plutôt que de déléguer ? Des ebooks et des tutoriels pour progresser à votre rythme.
           </Reveal>
-          <Reveal delay={0.1}>
-            <Link to="/contact" className="btn btn-primary">Demander de l'aide</Link>
+          <div className="grid grid-2">
+            <Reveal className="card" delay={0}>
+              <h3 className="mt-0">Ebooks Linux &amp; cybersécurité</h3>
+              <p>Des guides pour découvrir Linux, poser des bases solides en cybersécurité, puis progresser vers Kali Linux et la méthodologie de pentest.</p>
+              <p><Link to="/boutique">Voir les ebooks →</Link></p>
+            </Reveal>
+            <Reveal className="card" delay={0.08}>
+              <h3 className="mt-0">Blog &amp; tutoriels</h3>
+              <p>Des articles pratiques sur Linux, la sécurité informatique et les outils utiles au quotidien, écrits pour être compris sans jargon inutile.</p>
+              <p><Link to="/blog">Lire le blog →</Link></p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      <section style={{ paddingTop: 0 }}>
+        <div className="container">
+          <Reveal className="cta-band">
+            <h2>Un souci sur votre PC Windows, maintenant ?</h2>
+            <p>Décrivez-le via le formulaire de contact : je reviens vers vous avec la formule adaptée, avant toute intervention.</p>
+            <Link to="/contact" className="btn btn-primary btn-lg">Demander de l'aide</Link>
           </Reveal>
         </div>
       </section>

@@ -43,7 +43,7 @@ export default function Connexion() {
     <>
       <div className="page-header">
         <div className="container">
-          <p className="eyebrow">whoami</p>
+          <p className="eyebrow">Connexion</p>
           <h1>Connexion</h1>
           <p>Accédez à votre espace membre 3WM Service.</p>
         </div>

@@ -73,7 +73,7 @@ export default function ReinitialiserMotDePasse() {
     <>
       <div className="page-header">
         <div className="container">
-          <p className="eyebrow">passwd --set</p>
+          <p className="eyebrow">Nouveau mot de passe</p>
           <h1>Réinitialiser le mot de passe</h1>
           <p>Choisissez un nouveau mot de passe pour votre compte.</p>
         </div>
