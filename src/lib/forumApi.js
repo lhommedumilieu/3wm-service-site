@@ -46,8 +46,11 @@ async function lire(url) {
 // Liste des sujets, le plus actif en premier. Chaque sujet contient le
 // nombre de messages (forum_posts(count)).
 export async function listerSujets(categorie) {
+  // On précise la relation (forum_posts_topic_id_fkey) car il existe deux
+  // liens entre topics et posts (topic_id et solution_post_id) : sans ça,
+  // le comptage des messages serait ambigu côté API.
   const params = new URLSearchParams({
-    select: '*,forum_posts(count)',
+    select: '*,forum_posts!forum_posts_topic_id_fkey(count)',
     order: 'last_activity_at.desc',
   })
   if (categorie) params.set('category', `eq.${categorie}`)
