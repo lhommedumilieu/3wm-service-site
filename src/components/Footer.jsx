@@ -9,6 +9,7 @@ export default function Footer() {
         <Link to="/boutique">Boutique</Link>
         <Link to="/blog">Blog</Link>
         <Link to="/recommandations">Recommandations</Link>
+        <Link to="/verifier-mot-de-passe">Mot de passe piraté ?</Link>
         <Link to="/a-propos">À propos</Link>
         <Link to="/contact">Contact</Link>
         <Link to="/mentions-legales">Mentions légales</Link>
