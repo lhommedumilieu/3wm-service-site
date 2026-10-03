@@ -25,6 +25,7 @@ const MentionsLegales = lazy(() => import('./pages/MentionsLegales.jsx'))
 const Admin = lazy(() => import('./pages/Admin.jsx'))
 const ForumIndex = lazy(() => import('./pages/ForumIndex.jsx'))
 const ForumSujet = lazy(() => import('./pages/ForumSujet.jsx'))
+const VerifierMotDePasse = lazy(() => import('./pages/VerifierMotDePasse.jsx'))
 const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 
 function ScrollToTop() {
@@ -64,6 +65,7 @@ export default function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/forum" element={<ForumIndex />} />
             <Route path="/forum/:id" element={<ForumSujet />} />
+            <Route path="/verifier-mot-de-passe" element={<VerifierMotDePasse />} />
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="*" element={<NotFound />} />
