@@ -13,4 +13,8 @@ export const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 // nginx redirige ensuite vers le petit service qui interroge l'IA locale.
 export const CHAT_API_URL = 'https://chat.3-wm.net/api/chat'
 
+// Verification des fuites de donnees de l'adresse e-mail d'un membre
+// (meme service auto-heberge que le chat, voir server/chat-proxy.js).
+export const FUITES_API_URL = 'https://chat.3-wm.net/api/fuites'
+
 export const isSupabaseConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)

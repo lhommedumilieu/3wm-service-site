@@ -85,12 +85,129 @@ function limiteAtteinte(ip) {
 // autorise explicitement le cross-domaine (en-tetes CORS). Avant le POST, le
 // navigateur envoie aussi une requete OPTIONS de verification (preflight)
 // qu'il faut accepter. Pas de cookie ni d'authentification ici, donc
-// autoriser toutes les origines ("*") est sans risque.
+// autoriser toutes les origines ("*") est sans risque. (La route /api/fuites
+// recoit bien un jeton de connexion, mais dans l'en-tete Authorization et non
+// dans un cookie : un autre site ne peut donc pas le reutiliser a l'insu de
+// l'utilisateur.)
 const ENTETES_CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   'Access-Control-Max-Age': '86400',
+}
+
+// ---------------------------------------------------------------------
+// Verification des fuites de donnees pour l'adresse e-mail d'un MEMBRE.
+//
+// Le navigateur envoie son jeton de connexion ; on demande a Supabase a qui
+// il appartient et on ne teste QUE l'adresse e-mail (confirmee) de ce compte :
+// impossible d'utiliser le site pour fouiller l'adresse de quelqu'un d'autre.
+// La recherche elle-meme est faite par le service gratuit XposedOrNot.
+//
+// Limites du service gratuit : 2 requetes/seconde, 25/heure et 100/jour pour
+// l'adresse IP de ce serveur. On garde une marge, et on memorise chaque
+// resultat 6 heures pour ne pas consommer de quota quand un membre reclique.
+// ---------------------------------------------------------------------
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://dnpnxgnlilnwnhhnibti.supabase.co'
+// Cle "anon" de Supabase : publique par conception (deja presente dans le
+// code du site, la securite repose sur les regles RLS cote base).
+const SUPABASE_ANON_KEY =
+  process.env.SUPABASE_ANON_KEY ||
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRucG54Z25saWxud25oaG5pYnRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk4MTI0NzgsImV4cCI6MjEwNTM4ODQ3OH0.ywpTWGlLGc5cvAYf__d-kwGSE3Sni27srVqtotP6Q2I'
+const XPOSED_URL = process.env.XPOSED_URL || 'https://api.xposedornot.com'
+
+const MAX_PAR_HEURE = 20 // limite du service : 25
+const MAX_PAR_JOUR = 90 // limite du service : 100
+const DUREE_CACHE = 6 * 3600_000
+const cacheFuites = new Map() // email -> { t, resultat }
+const appelsService = [] // horodatages des appels reels vers XposedOrNot
+const essaisParMembre = new Map() // id membre -> horodatages
+
+function quotaServiceAtteint() {
+  const maintenant = Date.now()
+  while (appelsService.length && maintenant - appelsService[0] > 86_400_000) appelsService.shift()
+  const derniereHeure = appelsService.filter((t) => maintenant - t < 3_600_000).length
+  return derniereHeure >= MAX_PAR_HEURE || appelsService.length >= MAX_PAR_JOUR
+}
+
+// Un membre : 5 verifications reelles par heure au maximum.
+function limiteMembreAtteinte(idMembre) {
+  const maintenant = Date.now()
+  const liste = (essaisParMembre.get(idMembre) || []).filter((t) => maintenant - t < 3_600_000)
+  liste.push(maintenant)
+  essaisParMembre.set(idMembre, liste)
+  return liste.length > 5
+}
+
+// Transforme la reponse de l'API "breach-analytics" en une liste simple.
+export function normaliserFuites(json) {
+  const details = json?.ExposedBreaches?.breaches_details
+  if (!Array.isArray(details)) return []
+  return details
+    .filter((d) => d && d.breach)
+    .map((d) => ({
+      nom: String(d.breach),
+      annee: d.xposed_date ? String(d.xposed_date) : null,
+      enregistrements: Number.isFinite(Number(d.xposed_records)) ? Number(d.xposed_records) : null,
+      donnees: typeof d.xposed_data === 'string' ? d.xposed_data.split(';').map((x) => x.trim()).filter(Boolean) : [],
+    }))
+    .sort((a, b) => (b.annee || '').localeCompare(a.annee || ''))
+}
+
+function repondreJson(res, statut, objet) {
+  res.writeHead(statut, { 'Content-Type': 'application/json', ...ENTETES_CORS })
+  res.end(JSON.stringify(objet))
+}
+
+async function gererFuites(req, res) {
+  const jeton = (req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim()
+  if (!jeton) return repondreJson(res, 401, { error: 'connexion_requise' })
+
+  // 1. A qui appartient ce jeton ?
+  let membre
+  try {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${jeton}` },
+      signal: AbortSignal.timeout(10_000),
+    })
+    if (!r.ok) return repondreJson(res, 401, { error: 'connexion_requise' })
+    membre = await r.json()
+  } catch {
+    return repondreJson(res, 502, { error: 'service_indisponible' })
+  }
+  const email = String(membre?.email || '').trim().toLowerCase()
+  if (!membre?.id || !email) return repondreJson(res, 401, { error: 'connexion_requise' })
+  if (!membre.email_confirmed_at && !membre.confirmed_at) {
+    return repondreJson(res, 403, { error: 'email_non_confirme' })
+  }
+
+  // 2. Resultat deja connu ? (ne consomme ni quota ni essai)
+  const enCache = cacheFuites.get(email)
+  if (enCache && Date.now() - enCache.t < DUREE_CACHE) {
+    return repondreJson(res, 200, { ...enCache.resultat, email, depuisCache: true })
+  }
+
+  if (limiteMembreAtteinte(membre.id)) return repondreJson(res, 429, { error: 'trop_de_requetes' })
+  if (quotaServiceAtteint()) return repondreJson(res, 429, { error: 'quota_atteint' })
+
+  // 3. Question au service XposedOrNot
+  appelsService.push(Date.now())
+  try {
+    const r = await fetch(`${XPOSED_URL}/v1/breach-analytics?email=${encodeURIComponent(email)}`, {
+      headers: { 'User-Agent': '3WM-Service/1.0 (+https://3-wm.net)' },
+      signal: AbortSignal.timeout(20_000),
+    })
+    if (r.status === 429) return repondreJson(res, 429, { error: 'quota_atteint' })
+    let fuites = []
+    if (r.ok) fuites = normaliserFuites(await r.json())
+    else if (r.status !== 404) throw new Error(`xposed_${r.status}`)
+    const resultat = { fuites, total: fuites.length, verifieLe: new Date().toISOString() }
+    cacheFuites.set(email, { t: Date.now(), resultat })
+    return repondreJson(res, 200, { ...resultat, email })
+  } catch (erreur) {
+    console.error('Erreur fuites :', erreur.message)
+    return repondreJson(res, 502, { error: 'service_indisponible' })
+  }
 }
 
 const serveur = http.createServer(async (req, res) => {
@@ -98,6 +215,11 @@ const serveur = http.createServer(async (req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204, ENTETES_CORS)
     res.end()
+    return
+  }
+
+  if (req.method === 'POST' && req.url === '/api/fuites') {
+    await gererFuites(req, res)
     return
   }
 

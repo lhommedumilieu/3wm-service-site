@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
+import FuitesEmail from '../components/FuitesEmail.jsx'
 
 const TIPS = [
   {
@@ -276,6 +277,15 @@ export default function EspaceMembre() {
             >
               Outils &amp; astuces
             </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab === 'securite'}
+              className={`member-tab${tab === 'securite' ? ' active' : ''}`}
+              onClick={() => setTab('securite')}
+            >
+              Sécurité
+            </button>
           </div>
 
           {tab === 'compte' ? (
@@ -292,6 +302,8 @@ export default function EspaceMembre() {
                 <button type="button" className="btn btn-outline" onClick={signOut}>Se déconnecter</button>
               </div>
             </div>
+          ) : tab === 'securite' ? (
+            <FuitesEmail email={user.email} />
           ) : (
             <OutilsEtAstuces />
           )}
