@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 import { listerSujets, creerSujet, CATEGORIES } from '../lib/forumApi.js'
+import { getMonPseudo, definirPseudo } from '../lib/profilesApi.js'
 
 function formatDate(valeur) {
   if (!valeur) return ''
@@ -30,6 +31,11 @@ export default function ForumIndex() {
   const [envoi, setEnvoi] = useState(false)
   const [messageForm, setMessageForm] = useState('')
 
+  const [pseudo, setPseudo] = useState('')
+  const [pseudoCharge, setPseudoCharge] = useState(false)
+  const [sauvePseudo, setSauvePseudo] = useState(false)
+  const [messagePseudo, setMessagePseudo] = useState('')
+
   const rafraichir = useCallback(async () => {
     setChargement(true)
     setErreur('')
@@ -45,6 +51,34 @@ export default function ForumIndex() {
   useEffect(() => {
     rafraichir()
   }, [rafraichir])
+
+  useEffect(() => {
+    let actif = true
+    if (user?.id) {
+      getMonPseudo(user.id).then((p) => {
+        if (actif) {
+          setPseudo(p || '')
+          setPseudoCharge(true)
+        }
+      })
+    }
+    return () => { actif = false }
+  }, [user?.id])
+
+  async function handlePseudo(e) {
+    e.preventDefault()
+    setSauvePseudo(true)
+    setMessagePseudo('')
+    try {
+      await definirPseudo(user.id, pseudo.trim())
+      setMessagePseudo('Pseudo enregistré ✅')
+      rafraichir()
+    } catch (err) {
+      setMessagePseudo(err.message)
+    } finally {
+      setSauvePseudo(false)
+    }
+  }
 
   async function handleCreation(e) {
     e.preventDefault()
@@ -77,6 +111,30 @@ export default function ForumIndex() {
 
       <section>
         <div className="container">
+          {user && pseudoCharge && (
+            <form
+              onSubmit={handlePseudo}
+              className="card"
+              style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center', marginBottom: 20 }}
+            >
+              <label htmlFor="pseudo" style={{ fontWeight: 600 }}>Votre pseudo :</label>
+              <input
+                id="pseudo"
+                type="text"
+                placeholder="3 à 20 caractères, sans espace"
+                minLength={3}
+                maxLength={20}
+                value={pseudo}
+                onChange={(e) => setPseudo(e.target.value)}
+                style={{ flex: '1 1 200px' }}
+              />
+              <button type="submit" className="btn btn-outline" disabled={sauvePseudo || pseudo.trim().length < 3}>
+                {sauvePseudo ? 'Enregistrement…' : 'Enregistrer'}
+              </button>
+              {messagePseudo && <span className="small" style={{ width: '100%' }}>{messagePseudo}</span>}
+            </form>
+          )}
+
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
               {categoriesAffichees.map((c) => (
