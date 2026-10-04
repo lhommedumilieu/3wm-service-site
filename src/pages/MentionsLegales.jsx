@@ -47,13 +47,12 @@ export default function MentionsLegales() {
   )
 
   const rows = [
-    ["Éditeur du site", 'Otman El Bataoui, entrepreneur individuel (micro-entreprise), nom commercial 3WM Service'],
-    ['Adresse', '8 B rue du Chemin Vert, 95610 Éragny, France'],
+    ["Éditeur du site", '3WM Service, entrepreneur individuel (micro-entreprise)'],
     ['SIRET', '822 840 518 00010'],
     ['Adresse e-mail', <a href="mailto:service@3-wm.net">service@3-wm.net</a>],
-    ['Directeur de la publication', 'Otman El Bataoui'],
+    ['Directeur de la publication', 'Le responsable de 3WM Service'],
     ['TVA', 'TVA non applicable, art. 293 B du CGI (franchise en base)'],
-    ["Hébergement", "Serveur exploité par l'éditeur (auto-hébergé), à l'adresse ci-dessus. Diffusion et protection du site via Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis."],
+    ["Hébergement", "Serveur exploité par l'éditeur (auto-hébergé), en France. Diffusion et protection du site via Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis."],
     ['Paiements en ligne', 'Stripe Payments Europe, Ltd., 1 Grand Canal Street Lower, Grand Canal Dock, Dublin, D02 H210, Irlande. 3WM Service n’a jamais accès aux données de carte bancaire.'],
     ['Conditions de vente', <a href="/cgv">Conditions générales de vente</a>],
     ['Propriété intellectuelle', "L'ensemble des contenus de ce site (textes, images, ebooks) est la propriété de 3WM Service, sauf mention contraire. Toute reproduction sans autorisation est interdite."],
