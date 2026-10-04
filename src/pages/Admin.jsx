@@ -11,6 +11,7 @@ const Reception = lazy(() => import('../components/admin/Reception.jsx'))
 const Moderation = lazy(() => import('../components/admin/Moderation.jsx'))
 const Comptes = lazy(() => import('../components/admin/Comptes.jsx'))
 const Systeme = lazy(() => import('../components/admin/Systeme.jsx'))
+const AvisAdmin = lazy(() => import('../components/admin/Avis.jsx'))
 
 const ADMIN_EMAIL = 'service@3-wm.net'
 
@@ -19,6 +20,7 @@ const ONGLETS = [
   { id: 'clients', ico: '🧑‍💼', libelle: 'Clients & dépannages', composant: Clients },
   { id: 'reception', ico: '✉️', libelle: 'Messages', composant: Reception },
   { id: 'stats', ico: '📈', libelle: 'Statistiques', composant: Statistiques },
+  { id: 'avis', ico: '⭐', libelle: 'Avis clients', composant: AvisAdmin },
   { id: 'moderation', ico: '🛡️', libelle: 'Forum & commentaires', composant: Moderation },
   { id: 'comptes', ico: '👥', libelle: 'Comptes membres', composant: Comptes },
   { id: 'systeme', ico: '⚙️', libelle: 'Chatbot & erreurs', composant: Systeme },

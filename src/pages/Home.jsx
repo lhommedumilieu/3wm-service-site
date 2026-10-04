@@ -3,6 +3,7 @@ import Reveal from '../components/Reveal.jsx'
 import NewsletterSignup from '../components/NewsletterSignup.jsx'
 import IllustrationDepannage from '../components/IllustrationDepannage.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
+import AvisAccueil from '../components/AvisAccueil.jsx'
 
 const STRUCTURED_DATA = {
   '@context': 'https://schema.org',
@@ -161,6 +162,8 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      <AvisAccueil />
 
       <section className="alt">
         <div className="container">
