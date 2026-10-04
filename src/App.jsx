@@ -4,6 +4,7 @@ import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import AiChat from './components/AiChat.jsx'
 import { trackPageView, pingPresence } from './lib/analytics.js'
+import './boutique.css'
 
 // Chaque page (et ce qu'elle importe, ex. GSAP via Reveal) n'est chargée
 // que lorsque sa route est visitée, au lieu d'alourdir le bundle initial
@@ -27,6 +28,9 @@ const ForumIndex = lazy(() => import('./pages/ForumIndex.jsx'))
 const ForumSujet = lazy(() => import('./pages/ForumSujet.jsx'))
 const VerifierMotDePasse = lazy(() => import('./pages/VerifierMotDePasse.jsx'))
 const Avis = lazy(() => import('./pages/Avis.jsx'))
+const Commander = lazy(() => import('./pages/Commander.jsx'))
+const CommandeMerci = lazy(() => import('./pages/CommandeMerci.jsx'))
+const CGV = lazy(() => import('./pages/CGV.jsx'))
 const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 
 function ScrollToTop() {
@@ -70,6 +74,9 @@ export default function App() {
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/avis" element={<Avis />} />
+            <Route path="/commander/:formule" element={<Commander />} />
+            <Route path="/commande/merci" element={<CommandeMerci />} />
+            <Route path="/cgv" element={<CGV />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

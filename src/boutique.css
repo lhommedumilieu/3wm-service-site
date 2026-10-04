@@ -1,0 +1,9 @@
+/* ===== Vente en ligne : commande, CGV ===== */
+.case-legale { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; cursor: pointer; line-height: 1.45; }
+.case-legale input { margin-top: 4px; width: 18px; height: 18px; flex: none; accent-color: var(--cta); }
+.prix-commander { margin-top: 14px; width: 100%; justify-content: center; }
+.cgv-article { margin-bottom: 28px; }
+.cgv-article h2 { font-size: 1.15rem; margin-bottom: 8px; }
+.cgv-article p, .cgv-article li { color: var(--ink); }
+.cgv-formulaire { margin-top: 12px; }
+.cgv-formulaire:hover { transform: none; }
