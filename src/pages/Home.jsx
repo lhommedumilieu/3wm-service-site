@@ -44,7 +44,7 @@ const FORMULES = [
   { nom: 'Dépannage ponctuel', prix: '29 €', detail: '1 problème identifié' },
   { nom: 'Dépannage approfondi', prix: '49 €', detail: 'Plusieurs problèmes dans la même session' },
   { nom: 'Forfait mensuel', prix: '19 €', suffixe: '/mois', detail: 'Assistance illimitée' },
-  { nom: 'Pack entreprise', prix: '79 €', detail: 'Plusieurs postes Windows' },
+  { nom: 'Pack entreprise', prix: 'Dès 149 €', detail: 'Jusqu’à 3 postes, puis sur devis' },
 ]
 
 export default function Home() {

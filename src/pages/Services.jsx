@@ -19,7 +19,7 @@ const STRUCTURED_DATA = {
     { '@type': 'Offer', name: 'Dépannage ponctuel', price: '29', priceCurrency: 'EUR', description: '1 problème identifié' },
     { '@type': 'Offer', name: 'Dépannage approfondi', price: '49', priceCurrency: 'EUR', description: 'Plusieurs problèmes traités dans la même session' },
     { '@type': 'Offer', name: 'Forfait mensuel', price: '19', priceCurrency: 'EUR', description: 'Assistance illimitée, par mois' },
-    { '@type': 'Offer', name: 'Pack entreprise', price: '79', priceCurrency: 'EUR', description: 'Plusieurs postes Windows à suivre' },
+    { '@type': 'Offer', name: 'Pack entreprise', price: '149', priceCurrency: 'EUR', description: 'Intervention pour les entreprises, jusqu’à 3 postes Windows, puis sur devis' },
   ],
 }
 
@@ -50,7 +50,7 @@ const FORMULES = [
   { cle: 'ponctuel', nom: 'Dépannage ponctuel', sous: '1 problème identifié', prix: '29 €', texte: 'Idéal pour un souci précis sur Windows : PC lent, virus, écran bleu, panne logicielle, configuration.' },
   { cle: 'approfondi', nom: 'Dépannage approfondi', sous: 'Plusieurs problèmes', prix: '49 €', texte: 'Pour un PC Windows qui cumule plusieurs soucis (mises à jour, pilotes, imprimante, Wi-Fi…) à traiter dans la même session.' },
   { cle: 'mensuel', nom: 'Forfait mensuel', sous: 'Assistance illimitée', prix: '19 €', suffixe: '/mois', texte: 'Pour ceux qui veulent une assistance Windows récurrente sans compter les sessions.' },
-  { nom: 'Pack entreprise', sous: 'Plusieurs postes', prix: '79 €', texte: 'Pour les petites structures avec plusieurs postes Windows à suivre.' },
+  { nom: 'Pack entreprise', sous: 'Jusqu’à 3 postes, puis sur devis', prix: 'Dès 149 €', texte: 'Remise à niveau des postes Windows de votre structure : nettoyage, mises à jour, sécurité et sauvegardes. Au-delà de 3 postes, devis gratuit.' },
 ]
 
 const GARANTIES = [
