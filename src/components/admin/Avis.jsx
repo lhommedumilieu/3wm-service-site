@@ -1,6 +1,25 @@
 import { useState } from 'react'
-import { listerAvisAdmin, majAvis, supprimerAvis, urlPhoto } from '../../lib/avisApi.js'
+import { listerAvisAdmin, majAvis, marquerRemercie, moisAnnee, supprimerAvis, urlPhoto } from '../../lib/avisApi.js'
 import { Erreur, Panneau, Pastille, StatCard, Vide, confirmer, formatDate, useListe } from './ui.jsx'
+
+// Modèle de l'e-mail de remerciement (s'ouvre dans votre messagerie, prêt à envoyer)
+function lienRemerciement(a) {
+  const sujet = 'Merci pour votre avis sur 3WM Service'
+  const corps = [
+    'Bonjour,',
+    '',
+    `Merci beaucoup d'avoir pris le temps de laisser un avis sur 3WM Service${a.date_intervention ? ` à propos de votre dépannage de ${moisAnnee(a.date_intervention)}` : ''}.`,
+    "Il est maintenant en ligne sur https://3-wm.net/avis et aidera d'autres personnes à franchir le pas.",
+    '',
+    "Si votre ordinateur vous joue encore des tours, je reste disponible : répondez simplement à ce message.",
+    "Et si vous souhaitez être accompagné(e) toute l'année, le forfait mensuel d'assistance est présenté ici : https://3-wm.net/services",
+    '',
+    'Encore merci et à bientôt,',
+    'Otman — 3WM Service',
+    'https://3-wm.net',
+  ].join('\n')
+  return `mailto:${a.email}?subject=${encodeURIComponent(sujet)}&body=${encodeURIComponent(corps)}`
+}
 
 const ONGLETS = [
   { id: 'en_attente', libelle: 'En attente' },
@@ -16,7 +35,7 @@ function LigneAvis({ a, onAction }) {
       <div>
         <strong>{a.author_name}</strong>{' '}
         <span className="avis-etoiles" aria-label={`${a.note} sur 5`}>{'★'.repeat(a.note)}<span className="vide">{'★'.repeat(5 - a.note)}</span></span>
-        <small> · {formatDate(a.created_at)}</small>
+        <small> · {formatDate(a.created_at)}{a.date_intervention && <> · dépannage de {moisAnnee(a.date_intervention)}</>}</small>
         {a.titre && <p className="modere-texte"><strong>{a.titre}</strong></p>}
         <p className="modere-texte">{a.contenu}</p>
         {a.photos?.length > 0 && (
@@ -41,6 +60,15 @@ function LigneAvis({ a, onAction }) {
           )}
           {a.statut !== 'refuse' && (
             <button type="button" className="btn btn-outline btn-sm" onClick={() => onAction(() => majAvis(a.id, { statut: 'refuse' }))}>✗ Refuser</button>
+          )}
+          {a.statut === 'publie' && a.email && (
+            <a
+              href={lienRemerciement(a)}
+              className="btn btn-outline btn-sm"
+              onClick={() => onAction(() => marquerRemercie(a.id))}
+            >
+              ✉️ {a.remercie_at ? `Remercié le ${formatDate(a.remercie_at)} — renvoyer` : 'Envoyer un remerciement'}
+            </a>
           )}
           <button
             type="button"
