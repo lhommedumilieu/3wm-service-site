@@ -2,11 +2,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
-import { listerAvisPublies, monAvis as chargerMonAvis, publierAvis, resumeAvis, supprimerAvis, urlPhoto } from '../lib/avisApi.js'
+import { listerAvisPublies, monAvis as chargerMonAvis, moisAnnee, publierAvis, resumeAvis, supprimerAvis, urlPhoto } from '../lib/avisApi.js'
 import '../avis.css'
 
 const PAR_PAGE = 10
 const LIBELLES = ['', 'Très décevant', 'Décevant', 'Correct', 'Très bien', 'Excellent']
+const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre']
+const ANNEE_ACTUELLE = new Date().getFullYear()
+const ANNEES = Array.from({ length: 8 }, (_, i) => ANNEE_ACTUELLE - i)
 
 export function Etoiles({ note, taille }) {
   const arrondi = Math.round(note)
@@ -32,7 +35,10 @@ function CarteAvis({ avis, estMoi, onSupprimer, onPhoto }) {
             {avis.statut === 'en_attente' && <span className="avis-badge">En attente de validation</span>}
             {avis.statut === 'refuse' && <span className="avis-badge">Non publié</span>}
           </div>
-          <div className="small">{dateFr(avis.created_at)}</div>
+          <div className="small">
+            {avis.date_intervention && <>Dépannage de {moisAnnee(avis.date_intervention)} · </>}
+            publié le {dateFr(avis.created_at)}
+          </div>
         </div>
       </div>
       <Etoiles note={avis.note} />
@@ -70,6 +76,8 @@ function Formulaire({ user, onPublie, onAnnuler }) {
   const [fichiers, setFichiers] = useState([])
   const [erreur, setErreur] = useState('')
   const [envoi, setEnvoi] = useState(false)
+  const [mois, setMois] = useState('')
+  const [annee, setAnnee] = useState('')
   const v = survol || note
 
   function ajouter(e) {
@@ -94,9 +102,12 @@ function Formulaire({ user, onPublie, onAnnuler }) {
     if (!note) return setErreur('Choisissez une note de 1 à 5 étoiles.')
     if (contenu.trim().length < 10) return setErreur('Votre avis doit faire au moins 10 caractères.')
     if (titre.trim() && titre.trim().length < 3) return setErreur('Le titre doit faire au moins 3 caractères.')
+    if (!mois || !annee) return setErreur('Indiquez le mois et l’année de votre dépannage.')
+    const dateIntervention = `${annee}-${String(mois).padStart(2, '0')}-01`
+    if (new Date(`${dateIntervention}T00:00:00`) > new Date()) return setErreur('La date du dépannage ne peut pas être dans le futur.')
     setEnvoi(true)
     try {
-      const avis = await publierAvis(user.id, { note, titre: titre.trim(), contenu: contenu.trim(), fichiers })
+      const avis = await publierAvis(user.id, { note, titre: titre.trim(), contenu: contenu.trim(), fichiers, dateIntervention })
       onPublie(avis)
     } catch (err) {
       setErreur(err.code === '23505' ? 'Vous avez déjà donné un avis.' : "L'envoi a échoué. Vérifiez votre connexion et réessayez.")
@@ -124,6 +135,19 @@ function Formulaire({ user, onPublie, onAnnuler }) {
         ))}
       </div>
       <p className="small avis-libelle">{v ? `${v}/5 · ${LIBELLES[v]}` : 'Cliquez sur les étoiles'}</p>
+
+      <label id="lbl-date">Quand a eu lieu votre dépannage ? *</label>
+      <div className="avis-date" role="group" aria-labelledby="lbl-date">
+        <select aria-label="Mois du dépannage" value={mois} onChange={(e) => setMois(e.target.value)}>
+          <option value="">Mois</option>
+          {MOIS.map((m, i) => <option key={m} value={i + 1}>{m.charAt(0).toUpperCase() + m.slice(1)}</option>)}
+        </select>
+        <select aria-label="Année du dépannage" value={annee} onChange={(e) => setAnnee(e.target.value)}>
+          <option value="">Année</option>
+          {ANNEES.map((a) => <option key={a} value={a}>{a}</option>)}
+        </select>
+      </div>
+      <p className="small">Même si c’était avant l’ouverture du site : indiquez simplement le mois approximatif.</p>
 
       <label htmlFor="avis-titre">Titre <span className="small">(facultatif)</span></label>
       <input id="avis-titre" type="text" maxLength={100} value={titre} onChange={(e) => setTitre(e.target.value)} placeholder="Ex. : PC réparé en une heure" />
