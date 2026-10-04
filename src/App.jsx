@@ -33,10 +33,20 @@ const CommandeMerci = lazy(() => import('./pages/CommandeMerci.jsx'))
 const CGV = lazy(() => import('./pages/CGV.jsx'))
 const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 
+// Le visiteur peut refuser la mesure d'audience depuis les mentions légales.
+function statistiquesRefusees() {
+  try {
+    return localStorage.getItem('3wm-stats-refusees') === '1'
+  } catch {
+    return false
+  }
+}
+
 function ScrollToTop() {
   const { pathname } = useLocation()
   useEffect(() => {
     window.scrollTo(0, 0)
+    if (statistiquesRefusees()) return undefined
     trackPageView(pathname)
     pingPresence(pathname)
     const id = setInterval(() => pingPresence(pathname), 20000)
