@@ -74,36 +74,40 @@ function OutilsEtAstuces() {
       </div>
 
       <div className="card" style={{ marginTop: 24 }}>
-        <h3 className="mt-0">Diagnostic-PC.exe — analyse + corrections</h3>
+        <h3 className="mt-0">Diagnostic-PC — analyse + corrections</h3>
         <p>
-          Un outil signé 3WM Service qui analyse votre PC (antivirus, mises à jour, espace disque,
-          démarrage...) et calcule un score de santé sur 100. S'il trouve des problèmes corrigeables
-          (antivirus désactivé, mises à jour en attente, disque encombré...), il peut ensuite les
-          réparer — mais chaque correction vous est demandée individuellement, et rien n'est fait sans
-          votre accord explicite à chaque fois. L'outil ne redémarre jamais votre ordinateur tout seul :
-          si un redémarrage est nécessaire, il vous le signale, à vous de le faire quand vous voulez.
+          Un script PowerShell de 3WM Service qui analyse votre PC (antivirus, mises à jour, espace
+          disque, démarrage...) et calcule un score de santé sur 100. S'il trouve des problèmes
+          corrigeables (antivirus désactivé, mises à jour en attente, disque encombré...), il peut
+          ensuite les réparer — mais chaque correction vous est demandée individuellement, et rien n'est
+          fait sans votre accord explicite à chaque fois. L'outil ne redémarre jamais votre ordinateur
+          tout seul : si un redémarrage est nécessaire, il vous le signale, à vous de le faire quand
+          vous voulez.
         </p>
         <p>
-          <a href="/downloads/Diagnostic-PC.exe" className="btn btn-primary" download>
-            Télécharger Diagnostic-PC.exe
+          <a href="/downloads/Diagnostic-PC.ps1" className="btn btn-primary" download>
+            Télécharger Diagnostic-PC.ps1
           </a>
+        </p>
+        <p className="small">
+          Le fichier est un simple texte lisible : vous pouvez l'ouvrir avec le Bloc-notes et lire
+          exactement ce qu'il fait avant de le lancer. Empreinte SHA-256 pour vérifier que le fichier
+          n'a pas été modifié :<br />
+          <code style={{ wordBreak: 'break-all' }}>87c3e9a9fa939143ea9992e7febf11fd7221b8a66af35f3c57a0a038c9d26052</code>
         </p>
 
         <h4 style={{ marginTop: 28, marginBottom: 12 }}>Comment l'utiliser</h4>
         <ol className="small" style={{ paddingLeft: 20, display: 'grid', gap: 10 }}>
-          <li>Téléchargez le fichier ci-dessus, puis double-cliquez dessus pour le lancer.</li>
-          <li>Une fenêtre demande de confirmer le lancement du diagnostic : c'est le moment de vérifier que le client est d'accord.</li>
+          <li>Téléchargez le fichier ci-dessus (si votre navigateur demande confirmation, choisissez « Conserver »).</li>
+          <li>Faites un <strong>clic droit</strong> sur le fichier, puis <strong>« Exécuter avec PowerShell »</strong> (un double-clic l'ouvrirait simplement dans le Bloc-notes).</li>
+          <li>Une question demande de confirmer le lancement du diagnostic : c'est le moment de vérifier que vous êtes d'accord.</li>
           <li>L'analyse se déroule automatiquement (antivirus, mises à jour, disque, démarrage, mémoire...) et affiche un score de santé.</li>
           <li>Si des problèmes corrigeables sont trouvés, l'outil les propose un par un : « Voulez-vous corriger : ... ? (O/N) ». Chaque correction se fait uniquement après un « oui » pour cette correction précise.</li>
           <li>Un rapport texte horodaté est enregistré sur le Bureau, avec le score final et le détail des corrections acceptées ou refusées.</li>
         </ol>
         <p className="small" style={{ marginTop: 12 }}>
-          Certaines corrections (mises à jour, nettoyage complet) nécessitent que l'outil soit lancé en
-          tant qu'administrateur pour fonctionner pleinement.
-        </p>
-        <p className="small" style={{ marginTop: 12 }}>
-          Windows peut afficher un avertissement SmartScreen la première fois (outil peu téléchargé) :
-          cliquez sur « Informations complémentaires » puis « Exécuter quand même ».
+          Certaines corrections (mises à jour, nettoyage complet) nécessitent de lancer l'outil en tant
+          qu'administrateur : dans ce cas, ouvrez PowerShell en administrateur et lancez-y le fichier.
         </p>
       </div>
 
