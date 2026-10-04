@@ -35,7 +35,7 @@ async function rest(chemin, options = {}, connecte = false) {
   return res.status === 204 ? null : res.json()
 }
 
-const CHAMPS = 'id,user_id,author_name,note,titre,contenu,photos,statut,reponse,created_at'
+const CHAMPS = 'id,user_id,author_name,note,titre,contenu,photos,statut,reponse,date_intervention,created_at'
 
 export const urlPhoto = (chemin) => `${SUPABASE_URL}/storage/v1/object/public/${BUCKET}/${chemin}`
 
@@ -92,7 +92,7 @@ export async function supprimerPhotos(chemins) {
   }).catch(() => {})
 }
 
-export async function publierAvis(userId, { note, titre, contenu, fichiers }) {
+export async function publierAvis(userId, { note, titre, contenu, fichiers, dateIntervention }) {
   const chemins = []
   try {
     for (const f of fichiers) chemins.push(await envoyerPhoto(userId, f))
@@ -102,7 +102,7 @@ export async function publierAvis(userId, { note, titre, contenu, fichiers }) {
         method: 'POST',
         headers: { Prefer: 'return=representation' },
         // author_name et statut sont imposés par la base (trigger)
-        body: JSON.stringify({ user_id: userId, author_name: '-', note, titre: titre || null, contenu, photos: chemins }),
+        body: JSON.stringify({ user_id: userId, author_name: '-', note, titre: titre || null, contenu, photos: chemins, date_intervention: dateIntervention || null }),
       },
       true
     )
@@ -119,6 +119,19 @@ export async function supprimerAvis(avis) {
 }
 
 // --- Administration ---------------------------------------------------------
-export const listerAvisAdmin = () => rest(`avis?select=${CHAMPS}&order=created_at.desc&limit=500`, {}, true)
+export async function listerAvisAdmin() {
+  const [avis, emails] = await Promise.all([
+    rest(`avis?select=${CHAMPS}&order=created_at.desc&limit=500`, {}, true),
+    rest('avis_emails?select=avis_id,email,remercie_at', {}, true),
+  ])
+  const parAvis = new Map(emails.map((e) => [e.avis_id, e]))
+  return avis.map((a) => ({ ...a, email: parAvis.get(a.id)?.email || null, remercie_at: parAvis.get(a.id)?.remercie_at || null }))
+}
+export const marquerRemercie = (avisId) =>
+  rest(`avis_emails?avis_id=eq.${avisId}`, { method: 'PATCH', body: JSON.stringify({ remercie_at: new Date().toISOString() }) }, true)
+// Mois et année lisibles : « mars 2026 »
+export const moisAnnee = (date) =>
+  date ? new Date(`${date}T12:00:00`).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }) : ''
+
 export const majAvis = (id, valeurs) =>
   rest(`avis?id=eq.${id}`, { method: 'PATCH', body: JSON.stringify(valeurs) }, true)
