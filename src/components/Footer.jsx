@@ -13,6 +13,7 @@ export default function Footer() {
         <Link to="/a-propos">À propos</Link>
         <Link to="/contact">Contact</Link>
         <Link to="/mentions-legales">Mentions légales</Link>
+        <Link to="/cgv">CGV</Link>
       </nav>
       <p>© 2026 3WM Service — contact : <a href="mailto:service@3-wm.net">service@3-wm.net</a></p>
     </footer>
