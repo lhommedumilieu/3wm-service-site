@@ -1,0 +1,59 @@
+/* ===== Avis clients (page /avis, bloc d'accueil, onglet admin) ===== */
+.avis-page { max-width: 880px; }
+.avis-etoiles { color: #F5A623; letter-spacing: 2px; white-space: nowrap; }
+.avis-etoiles .vide { color: var(--border-strong); }
+
+.avis-resume { display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; margin-bottom: 28px; }
+.avis-resume:hover { transform: none; }
+.avis-moyenne { text-align: center; min-width: 130px; }
+.avis-chiffre { font-family: var(--font-display); font-size: 3rem; font-weight: 700; line-height: 1; color: var(--ink); margin-bottom: 4px; }
+.avis-barres { display: grid; gap: 6px; }
+.avis-barre { display: grid; grid-template-columns: 48px 1fr 32px; gap: 10px; align-items: center; font-size: .9rem; color: var(--ink-muted); }
+.avis-fond { height: 9px; background: var(--surface-alt); border-radius: 9px; overflow: hidden; }
+.avis-plein { height: 100%; background: #F5A623; border-radius: 9px; transition: width .6s; }
+
+.avis-liste-tete { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin: 8px 0 16px; }
+.avis-liste-tete h2 { margin: 0; }
+.avis-liste { display: grid; gap: 16px; }
+.avis-carte:hover { transform: none; }
+.avis-entete { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.avis-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--sky, var(--surface-alt)); color: var(--accent); display: grid; place-items: center; font-weight: 700; flex: none; }
+.avis-auteur { font-weight: 600; color: var(--ink); }
+.avis-badge { display: inline-block; font-size: .75rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: var(--sun, var(--surface-alt)); color: var(--ink); margin-left: 8px; }
+.card h3.avis-titre { margin: 8px 0 4px; }
+.card p.avis-texte, .avis-texte { white-space: pre-line; color: var(--ink); margin: 6px 0 0; }
+.avis-photos { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.avis-photos button, .avis-photos a { padding: 0; border: 0; background: none; cursor: zoom-in; }
+.avis-photos img { width: 96px; height: 96px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--border); display: block; }
+.avis-reponse { margin-top: 14px; padding: 12px 14px; background: var(--surface-alt); border-left: 3px solid var(--accent); border-radius: 8px; font-size: .95rem; white-space: pre-line; }
+.avis-reponse strong { display: block; margin-bottom: 2px; }
+.avis-vide { text-align: center; }
+.avis-vide-ico { font-size: 2.4rem; color: #F5A623; }
+
+.avis-form { margin-bottom: 28px; }
+.avis-form:hover { transform: none; }
+.avis-form label { display: block; font-weight: 600; margin: 16px 0 6px; }
+.avis-form input[type=text], .avis-form textarea { width: 100%; }
+.avis-form textarea { min-height: 120px; }
+.avis-choix { display: flex; gap: 4px; }
+.avis-choix button { background: none; border: 0; padding: 2px; font-size: 2.1rem; line-height: 1; cursor: pointer; color: var(--border-strong); transition: transform .1s, color .1s; }
+.avis-choix button.actif { color: #F5A623; }
+.avis-choix button:hover { transform: scale(1.12); }
+.avis-libelle { min-height: 1.4em; margin: 4px 0 0; }
+.avis-vignettes { display: flex; gap: 10px; flex-wrap: wrap; }
+.avis-vignette { position: relative; width: 86px; height: 86px; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); }
+.avis-vignette img { width: 100%; height: 100%; object-fit: cover; }
+.avis-vignette button { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; border: 0; background: rgba(0,0,0,.65); color: #fff; cursor: pointer; line-height: 1; }
+.avis-form label.avis-ajout { width: 86px; height: 86px; margin: 0; border: 2px dashed var(--border-strong); border-radius: var(--radius-sm); display: grid; place-items: center; text-align: center; font-size: .8rem; font-weight: 500; color: var(--ink-muted); cursor: pointer; }
+.avis-form label.avis-ajout:hover { border-color: var(--accent); color: var(--accent); }
+.avis-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+.avis-visionneuse { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.85); display: grid; place-items: center; padding: 16px; cursor: zoom-out; }
+.avis-visionneuse img { max-width: 100%; max-height: 90vh; border-radius: 8px; }
+
+.avis-grille-accueil { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.avis-admin-reponse { width: 100%; min-height: 64px; margin-top: 10px; }
+
+@media (max-width: 600px) {
+  .avis-resume { grid-template-columns: 1fr; gap: 16px; }
+}
