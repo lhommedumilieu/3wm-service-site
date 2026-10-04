@@ -12,6 +12,7 @@ const links = [
   { to: '/services', label: 'Services' },
   { to: '/boutique', label: 'Boutique' },
   { to: '/forum', label: 'Forum' },
+  { to: '/avis', label: 'Avis' },
   { to: '/blog', label: 'Blog' },
   { to: '/recommandations', label: 'Recommandations' },
   { to: '/a-propos', label: 'À propos' },
