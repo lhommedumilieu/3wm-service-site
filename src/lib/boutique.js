@@ -7,15 +7,14 @@ import { SUPABASE_URL, SUPABASE_ANON_KEY } from './config.js'
 // Médiateur de la consommation (obligatoire pour vendre à des particuliers).
 // Tant que ce nom est vide, les boutons « Commander » restent cachés sur le site.
 export const MEDIATEUR = {
-  nom: '',      // ex. 'CM2C'
-  adresse: '',  // adresse postale du médiateur
-  site: '',     // ex. 'https://www.cm2c.net'
+  nom: 'CM2C (Centre de la Médiation de la Consommation de Conciliateurs de Justice)',
+  adresse: '49 rue de Ponthieu, 75008 Paris',
+  site: 'https://www.cm2c.net',
 }
 export const VENTE_ACTIVE = Boolean(MEDIATEUR.nom)
 
 // Lien du portail client Stripe (résilier le forfait, télécharger ses factures).
-// ⚠️ Lien de TEST : à remplacer par celui du mode réel au lancement.
-export const PORTAIL_CLIENT_URL = 'https://billing.stripe.com/p/login/test_8x25kD6z4aPpast78Q6Zy00'
+export const PORTAIL_CLIENT_URL = 'https://billing.stripe.com/p/login/eVq00jaNecRzc6j48UfEk00'
 
 export const VENDEUR = {
   nom: 'Otman El Bataoui',
