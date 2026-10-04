@@ -17,11 +17,11 @@ export const VENTE_ACTIVE = Boolean(MEDIATEUR.nom)
 export const PORTAIL_CLIENT_URL = 'https://billing.stripe.com/p/login/eVq00jaNecRzc6j48UfEk00'
 
 export const VENDEUR = {
-  nom: 'Otman El Bataoui',
+  // Nom et adresse volontairement non affichés sur le site (choix de l'éditeur).
+  // Ils figurent sur les factures envoyées par Stripe.
   enseigne: '3WM Service',
   statut: 'Entrepreneur individuel (micro-entreprise)',
   siret: '822 840 518 00010',
-  adresse: '8 B rue du Chemin Vert, 95610 Éragny',
   email: 'service@3-wm.net',
   tva: 'TVA non applicable, art. 293 B du CGI',
 }
