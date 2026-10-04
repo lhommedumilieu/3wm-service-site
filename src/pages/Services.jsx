@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal.jsx'
 import IllustrationDepannage from '../components/IllustrationDepannage.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
+import { VENTE_ACTIVE } from '../lib/boutique.js'
 
 const STRUCTURED_DATA = {
   '@context': 'https://schema.org',
@@ -46,9 +47,9 @@ const PANNES = [
 ]
 
 const FORMULES = [
-  { nom: 'Dépannage ponctuel', sous: '1 problème identifié', prix: '29 €', texte: 'Idéal pour un souci précis sur Windows : PC lent, virus, écran bleu, panne logicielle, configuration.' },
-  { nom: 'Dépannage approfondi', sous: 'Plusieurs problèmes', prix: '49 €', texte: 'Pour un PC Windows qui cumule plusieurs soucis (mises à jour, pilotes, imprimante, Wi-Fi…) à traiter dans la même session.' },
-  { nom: 'Forfait mensuel', sous: 'Assistance illimitée', prix: '19 €', suffixe: '/mois', texte: 'Pour ceux qui veulent une assistance Windows récurrente sans compter les sessions.' },
+  { cle: 'ponctuel', nom: 'Dépannage ponctuel', sous: '1 problème identifié', prix: '29 €', texte: 'Idéal pour un souci précis sur Windows : PC lent, virus, écran bleu, panne logicielle, configuration.' },
+  { cle: 'approfondi', nom: 'Dépannage approfondi', sous: 'Plusieurs problèmes', prix: '49 €', texte: 'Pour un PC Windows qui cumule plusieurs soucis (mises à jour, pilotes, imprimante, Wi-Fi…) à traiter dans la même session.' },
+  { cle: 'mensuel', nom: 'Forfait mensuel', sous: 'Assistance illimitée', prix: '19 €', suffixe: '/mois', texte: 'Pour ceux qui veulent une assistance Windows récurrente sans compter les sessions.' },
   { nom: 'Pack entreprise', sous: 'Plusieurs postes', prix: '79 €', texte: 'Pour les petites structures avec plusieurs postes Windows à suivre.' },
 ]
 
@@ -126,7 +127,7 @@ export default function Services() {
       <section id="formules">
         <div className="container">
           <Reveal as="h2" className="section-title">Nos formules</Reveal>
-          <Reveal as="p" className="section-sub" delay={0.05}>Des tarifs simples, sans surprise. Paiement précisé lors de la prise de contact.</Reveal>
+          <Reveal as="p" className="section-sub" delay={0.05}>{VENTE_ACTIVE ? 'Des tarifs simples, sans surprise. Commandez et payez en ligne en toute sécurité.' : 'Des tarifs simples, sans surprise. Paiement précisé lors de la prise de contact.'}</Reveal>
           <div className="price-grid">
             {FORMULES.map((f, i) => (
               <Reveal className="card price-card" delay={i * 0.06} key={f.nom}>
@@ -134,6 +135,11 @@ export default function Services() {
                 <p className="small price-sub">{f.sous}</p>
                 <p className="big">{f.prix}{f.suffixe && <small> {f.suffixe}</small>}</p>
                 <p className="small">{f.texte}</p>
+                {VENTE_ACTIVE && (f.cle ? (
+                  <Link to={`/commander/${f.cle}`} className="btn btn-primary prix-commander">Commander</Link>
+                ) : (
+                  <Link to="/contact" className="btn btn-outline prix-commander">Demander un devis</Link>
+                ))}
               </Reveal>
             ))}
           </div>

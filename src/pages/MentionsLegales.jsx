@@ -8,20 +8,18 @@ export default function MentionsLegales() {
   )
 
   const rows = [
-    ["Identité de l'entreprise", '3WM Service'],
-    ["Adresse de l'entreprise", 'Entreprise individuelle — adresse postale communiquée sur demande'],
-    ['Numéro de téléphone', 'Contact par e-mail uniquement'],
+    ["Éditeur du site", 'Otman El Bataoui, entrepreneur individuel (micro-entreprise), nom commercial 3WM Service'],
+    ['Adresse', '8 B rue du Chemin Vert, 95610 Éragny, France'],
+    ['SIRET', '822 840 518 00010'],
     ['Adresse e-mail', <a href="mailto:service@3-wm.net">service@3-wm.net</a>],
-    ['Nom du propriétaire', "L'Homme-du-Milieu (3WM Service)"],
-    ["Numéro d'identification TVA", 'Non applicable (franchise en base de TVA)'],
-    ["Numéro d'immatriculation au RCS", 'Non applicable (entreprise individuelle, non immatriculée au RCS)'],
-    ['Forme juridique et capital social', 'Entreprise individuelle (micro-entreprise)'],
-    ["Identité de l'hébergeur du site", 'Netlify, Inc. (hébergement statique)'],
-    ["Adresse de l'hébergeur du site", '44 Montgomery Street, Suite 300, San Francisco, CA 94104, États-Unis'],
-    ["Numéro de téléphone de l'hébergeur", 'Non communiqué — support via netlify.com/support'],
+    ['Directeur de la publication', 'Otman El Bataoui'],
+    ['TVA', 'TVA non applicable, art. 293 B du CGI (franchise en base)'],
+    ["Hébergement", "Serveur exploité par l'éditeur (auto-hébergé), à l'adresse ci-dessus. Diffusion et protection du site via Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis."],
+    ['Paiements en ligne', 'Stripe Payments Europe, Ltd., 1 Grand Canal Street Lower, Grand Canal Dock, Dublin, D02 H210, Irlande. 3WM Service n’a jamais accès aux données de carte bancaire.'],
+    ['Conditions de vente', <a href="/cgv">Conditions générales de vente</a>],
     ['Propriété intellectuelle', "L'ensemble des contenus de ce site (textes, images, ebooks) est la propriété de 3WM Service, sauf mention contraire. Toute reproduction sans autorisation est interdite."],
-    ['Clause de non-responsabilité', "Les informations fournies sur ce site (services de dépannage, contenus des ebooks) le sont à titre indicatif. 3WM Service ne saurait être tenu responsable des dommages résultant de leur utilisation."],
-    ['Traitement des données personnelles (RGPD) et cookies', "Les données personnelles collectées via le formulaire de contact (nom, e-mail, message) servent uniquement à répondre à votre demande et ne sont ni revendues ni partagées. Ce site utilise des cookies techniques nécessaires à son fonctionnement (formulaire de contact). Vous pouvez demander l'accès, la rectification ou la suppression de vos données à service@3-wm.net."],
+    ['Clause de non-responsabilité', "Les informations fournies sur ce site (articles, contenus des ebooks) le sont à titre indicatif. Les prestations vendues sont régies par les conditions générales de vente."],
+    ['Traitement des données personnelles (RGPD) et cookies', "Les données collectées (formulaire de contact, compte membre, commandes) servent uniquement à répondre aux demandes, gérer les comptes, exécuter les prestations et établir les factures. Elles ne sont ni revendues ni partagées, hors prestataires techniques nécessaires (hébergement de la base de données Supabase, paiement Stripe). Ce site utilise uniquement des cookies et stockages techniques nécessaires à son fonctionnement. Vous pouvez demander l'accès, la rectification ou la suppression de vos données à service@3-wm.net."],
   ]
 
   return (
