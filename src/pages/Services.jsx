@@ -3,6 +3,7 @@ import Reveal from '../components/Reveal.jsx'
 import IllustrationDepannage from '../components/IllustrationDepannage.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 import { VENTE_ACTIVE } from '../lib/boutique.js'
+import { EncartCloud } from '../components/PromoCloud.jsx'
 
 const STRUCTURED_DATA = {
   '@context': 'https://schema.org',
@@ -123,6 +124,8 @@ export default function Services() {
           </div>
         </div>
       </section>
+
+      <EncartCloud />
 
       <section id="formules">
         <div className="container">
