@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 import { PORTAIL_CLIENT_URL, VENDEUR } from '../lib/boutique.js'
+import '../promo.css'
 
 export default function CommandeMerci() {
   useDocumentMeta('Merci pour votre commande', 'Confirmation de commande 3WM Service.', '/commande/merci')
@@ -22,6 +23,14 @@ export default function CommandeMerci() {
           <p className="small">
             Factures, carte bancaire ou résiliation du forfait mensuel : <a href={PORTAIL_CLIENT_URL} target="_blank" rel="noopener noreferrer">votre espace de facturation</a>.
             Une question ? <a href={`mailto:${VENDEUR.email}`}>{VENDEUR.email}</a>
+          </p>
+        </div>
+        <div className="guide-aide">
+          <span aria-hidden="true">☁️</span>
+          <p>
+            <strong>Vous avez choisi le Forfait mensuel ?</strong> Votre espace de cloud de 50 Go est déjà créé :
+            vous allez recevoir un e-mail « Bienvenue » pour choisir votre mot de passe.{' '}
+            <Link to="/guide-cloud">Suivez le guide du cloud</Link> pour bien démarrer.
           </p>
         </div>
         <p style={{ marginTop: 24 }}><Link to="/" className="btn btn-outline">Retour à l’accueil</Link></p>
