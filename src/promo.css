@@ -1,0 +1,36 @@
+/* ===== Mise en avant du cloud 50 Go (bandeau + encart Services) ===== */
+.bandeau-cloud {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 8px 44px 8px 16px; position: relative;
+  background: var(--accent); color: #fff; font-size: .92rem; text-align: center;
+}
+.bandeau-cloud p { margin: 0; }
+.bandeau-cloud a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.bandeau-cloud button {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 30px; height: 30px; border: 0; border-radius: 50%;
+  background: rgba(255,255,255,.18); color: #fff; font-size: 1.2rem; line-height: 1; cursor: pointer;
+}
+.bandeau-cloud button:hover { background: rgba(255,255,255,.3); }
+
+.encart-cloud { background: var(--surface-alt); }
+.encart-cloud-grille { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: center; }
+.encart-cloud h2 { margin-top: 4px; }
+.encart-cloud-atouts { list-style: none; padding: 0; margin: 24px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.encart-cloud-atouts li { display: flex; gap: 12px; align-items: flex-start; }
+.encart-cloud-atouts li > span:first-child { font-size: 1.6rem; line-height: 1; }
+.encart-cloud-atouts strong { display: block; color: var(--ink); }
+.encart-cloud-atouts small { display: block; color: var(--ink-muted); margin-top: 2px; }
+.encart-cloud .btn-row { margin-bottom: 12px; }
+
+.cloud-illu { width: 100%; max-width: 320px; justify-self: center; }
+.cloud-illu-nuage { fill: var(--accent); opacity: .18; stroke: var(--accent); stroke-width: 3; }
+.cloud-illu-bouclier { fill: var(--accent); }
+.cloud-illu-coche { fill: none; stroke: #fff; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 800px) {
+  .encart-cloud-grille { grid-template-columns: 1fr; }
+  .cloud-illu { max-width: 200px; grid-row: 1; }
+  .encart-cloud-atouts { grid-template-columns: 1fr; }
+  .bandeau-cloud { font-size: .85rem; }
+}
