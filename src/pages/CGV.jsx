@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 import { FORMULES_VENTE, MEDIATEUR, PORTAIL_CLIENT_URL, VENDEUR, euros } from '../lib/boutique.js'
 
-const MAJ = '4 octobre 2026'
+const MAJ = '5 octobre 2026'
 
 function Article({ n, titre, children }) {
   return (
@@ -35,8 +35,9 @@ export default function CGV() {
           <Article n={1} titre="Vendeur">
             <p>
               Les présentes conditions générales de vente (CGV) s’appliquent aux prestations vendues sur le site
-              3-wm.net par {VENDEUR.nom}, exerçant sous le nom commercial {VENDEUR.enseigne}, {VENDEUR.statut},
-              SIRET {VENDEUR.siret}, dont l’adresse est {VENDEUR.adresse}. Contact : <a href={`mailto:${VENDEUR.email}`}>{VENDEUR.email}</a>.
+              3-wm.net par {VENDEUR.enseigne}, {VENDEUR.statut}, SIRET {VENDEUR.siret}.
+              Contact : <a href={`mailto:${VENDEUR.email}`}>{VENDEUR.email}</a>. L’identité complète et l’adresse du
+              vendeur figurent sur chaque facture.
             </p>
           </Article>
 
@@ -63,7 +64,8 @@ export default function CGV() {
             <p>
               Le <strong>Forfait mensuel</strong> couvre un seul ordinateur Windows appartenant au client ou à son
               foyer, pour un usage personnel. Le nombre de sessions n’est pas limité, dans le cadre d’un usage normal :
-              les sessions sont planifiées d’un commun accord, selon les disponibilités du prestataire.
+              les sessions sont planifiées d’un commun accord, selon les disponibilités du prestataire. Il comprend
+              aussi un espace de stockage en ligne de 50 Go, décrit à l’article 9.
             </p>
             <p>
               Sont exclus de toutes les formules : les pannes matérielles nécessitant une intervention physique, la
@@ -126,21 +128,20 @@ export default function CGV() {
               <li>une fois la prestation entièrement exécutée, il ne peut plus exercer son droit de rétractation.</li>
             </ul>
             <p>
-              Pour se rétracter, le client envoie une déclaration claire à <a href={`mailto:${VENDEUR.email}`}>{VENDEUR.email}</a> ou
-              par courrier à l’adresse de l’article 1, par exemple avec le formulaire ci-dessous. Le remboursement est
+              Pour se rétracter, le client envoie une déclaration claire par e-mail à <a href={`mailto:${VENDEUR.email}`}>{VENDEUR.email}</a>,
+              par exemple avec le formulaire ci-dessous. Le remboursement est
               effectué dans les 14 jours suivant la réception de la demande, avec le même moyen de paiement.
             </p>
             <div className="card cgv-formulaire">
               <h3 className="mt-0">Formulaire de rétractation</h3>
               <p className="small">(À compléter et renvoyer uniquement si vous souhaitez vous rétracter.)</p>
               <p>
-                À l’attention de {VENDEUR.nom} — {VENDEUR.enseigne}, {VENDEUR.adresse}, {VENDEUR.email} :<br />
+                À l’attention de {VENDEUR.enseigne}, {VENDEUR.email} :<br />
                 Je vous notifie par la présente ma rétractation du contrat portant sur la prestation de services
                 ci-dessous :<br />
                 Commandée le : …………… <br />
                 Nom du client : …………… <br />
                 Adresse du client : …………… <br />
-                Signature du client (uniquement en cas de notification sur papier) : …………… <br />
                 Date : ……………
               </p>
             </div>
@@ -156,7 +157,35 @@ export default function CGV() {
             </p>
           </Article>
 
-          <Article n={9} titre="Responsabilité">
+          <Article n={9} titre="Espace de stockage en ligne (cloud) du Forfait mensuel">
+            <p>
+              Le Forfait mensuel inclut un espace personnel de stockage en ligne de <strong>50 Go</strong>, accessible
+              sur <a href="https://cloud.3-wm.net" target="_blank" rel="noopener noreferrer">cloud.3-wm.net</a> et avec
+              l’application gratuite Nextcloud (ordinateur et téléphone). Le compte est créé automatiquement après le
+              paiement : le client reçoit par e-mail un lien pour choisir son mot de passe. Il est responsable de la
+              confidentialité de ses identifiants. Au-delà de 50 Go, l’ajout de nouveaux fichiers est bloqué.
+            </p>
+            <p>
+              Les fichiers sont hébergés en France, sur un serveur exploité par le prestataire. Ils font l’objet d’une
+              sauvegarde automatique chaque nuit, conservée 14 jours. Le prestataire est tenu d’une obligation de
+              moyens : il ne garantit pas une disponibilité permanente (maintenances, pannes) et le client est invité à
+              conserver une autre copie de ses fichiers importants.
+            </p>
+            <p>
+              Le prestataire n’ouvre pas les fichiers du client, sauf à sa demande (par exemple pour l’aider à les
+              récupérer) ou sur réquisition d’une autorité légalement habilitée. L’espace est réservé à un usage
+              personnel et licite : le stockage ou le partage de contenus illicites (contrefaçon, contenus haineux,
+              logiciels malveillants…) est interdit et peut entraîner la suspension du compte.
+            </p>
+            <p>
+              En cas de résiliation, le compte est désactivé à la fin de la période déjà payée. Les fichiers sont
+              conservés <strong>30 jours</strong> : pendant ce délai, le client peut se réabonner pour retrouver son
+              espace, ou demander à <a href={`mailto:${VENDEUR.email}`}>{VENDEUR.email}</a> de récupérer une copie de
+              ses fichiers. Passé ce délai, le compte et les fichiers sont définitivement supprimés.
+            </p>
+          </Article>
+
+          <Article n={10} titre="Responsabilité">
             <p>
               Le prestataire n’est pas responsable des dommages résultant d’une panne préexistante, d’une défaillance
               matérielle, d’une absence de sauvegarde ou d’une utilisation de l’ordinateur non conforme à ses
@@ -166,7 +195,7 @@ export default function CGV() {
             </p>
           </Article>
 
-          <Article n={10} titre="Garanties légales">
+          <Article n={11} titre="Garanties légales">
             <p>
               Le client bénéficie des garanties prévues par la loi, notamment la garantie légale de conformité
               applicable aux services numériques (articles L224-25-12 et suivants du Code de la consommation). Pour
@@ -174,18 +203,20 @@ export default function CGV() {
             </p>
           </Article>
 
-          <Article n={11} titre="Données personnelles">
+          <Article n={12} titre="Données personnelles">
             <p>
               Les données collectées lors de la commande (nom, e-mail, téléphone, adresse de facturation, description
               du problème) servent uniquement à exécuter la prestation, à établir la facture et à respecter les
               obligations comptables. Elles ne sont ni vendues ni cédées. Les données de paiement sont traitées par
               Stripe. Le client peut exercer ses droits d’accès, de rectification et de suppression à{' '}
               <a href={`mailto:${VENDEUR.email}`}>{VENDEUR.email}</a>. Pendant une session à distance, le prestataire
-              n’accède qu’aux éléments nécessaires à l’intervention, sous le regard du client.
+              n’accède qu’aux éléments nécessaires à l’intervention, sous le regard du client. Pour l’espace de stockage
+              en ligne, l’adresse e-mail et le nom du client servent à créer son compte ; ses fichiers restent sur le
+              serveur du prestataire en France et ne sont transmis à aucun tiers.
             </p>
           </Article>
 
-          <Article n={12} titre="Réclamations et médiation">
+          <Article n={13} titre="Réclamations et médiation">
             <p>
               En cas de litige, le client adresse d’abord une réclamation écrite à <a href={`mailto:${VENDEUR.email}`}>{VENDEUR.email}</a>.
               À défaut de solution, il peut recourir gratuitement au médiateur de la consommation
@@ -198,7 +229,7 @@ export default function CGV() {
             </p>
           </Article>
 
-          <Article n={13} titre="Droit applicable">
+          <Article n={14} titre="Droit applicable">
             <p>
               Les présentes CGV sont soumises au droit français. À défaut d’accord amiable, le litige est porté devant
               les juridictions compétentes selon les règles de droit commun.
