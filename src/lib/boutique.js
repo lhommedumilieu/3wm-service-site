@@ -45,8 +45,8 @@ export const FORMULES_VENTE = {
     nom: 'Forfait mensuel',
     prix: 19,
     suffixe: '/mois',
-    resume: 'Assistance Windows à distance sans compter les sessions, résiliable à tout moment en ligne.',
-    inclus: ['Sessions d’assistance à distance illimitées*', 'Un seul ordinateur Windows couvert', 'Sans engagement : résiliation en ligne en quelques clics'],
+    resume: 'Assistance Windows à distance sans compter les sessions + 50 Go de cloud pour sauvegarder vos fichiers, résiliable à tout moment en ligne.',
+    inclus: ['Sessions d’assistance à distance illimitées*', '50 Go de stockage en ligne sur cloud.3-wm.net (sauvegarde quotidienne)', 'Un seul ordinateur Windows couvert', 'Sans engagement : résiliation en ligne en quelques clics'],
   },
 }
 
