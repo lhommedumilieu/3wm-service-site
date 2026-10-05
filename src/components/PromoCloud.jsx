@@ -61,7 +61,7 @@ function IllustrationCloud() {
 const ATOUTS = [
   { ico: '💾', titre: '50 Go rien que pour vous', texte: 'Photos, papiers, documents : de quoi garder l’essentiel en sécurité.' },
   { ico: '🌙', titre: 'Sauvegardé chaque nuit', texte: '14 jours d’historique : un fichier effacé par erreur peut être récupéré.' },
-  { ico: '🇫🇷', titre: 'Hébergé en France', texte: 'Sur un serveur que je gère moi-même. Vos fichiers ne sont ni lus ni revendus.' },
+  { ico: '📍', titre: 'Hébergé en France', texte: 'Sur un serveur que je gère moi-même. Vos fichiers ne sont ni lus ni revendus.' },
   { ico: '📱', titre: 'PC et téléphone', texte: 'Accès par le navigateur ou l’application gratuite Nextcloud, synchronisation automatique.' },
 ]
 
