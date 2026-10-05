@@ -34,3 +34,27 @@
   .encart-cloud-atouts { grid-template-columns: 1fr; }
   .bandeau-cloud { font-size: .85rem; }
 }
+
+/* ===== Page « Guide du cloud » ===== */
+.guide { display: grid; gap: 20px; }
+.guide-etape { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: start; }
+.guide-etape:hover { transform: none; }
+.guide-etape h2 { margin: 2px 0 10px; font-size: 1.3rem; }
+.guide-etape ol { margin: 0 0 10px; padding-left: 1.2em; display: grid; gap: 8px; }
+.guide-etape code { background: var(--surface-alt); padding: 2px 6px; border-radius: 6px; white-space: nowrap; }
+.guide-num {
+  width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--accent); color: #fff; font-weight: 700; font-size: 1.1rem;
+}
+.guide-aide { display: flex; gap: 12px; align-items: flex-start; margin-top: 20px; padding: 14px 16px;
+  background: var(--surface-alt); border-left: 3px solid var(--accent); border-radius: 10px; }
+.guide-aide span { font-size: 1.5rem; line-height: 1; }
+.guide-aide p { margin: 0; }
+.guide-faq-titre { margin: 24px 0 0; }
+.guide-faq { display: grid; gap: 10px; }
+.guide-faq details:hover { transform: none; }
+.guide-faq summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+.guide-faq details p { margin: 10px 0 0; }
+@media (max-width: 600px) {
+  .guide-etape { grid-template-columns: 1fr; gap: 10px; }
+}
