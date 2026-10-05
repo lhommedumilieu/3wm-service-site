@@ -3,6 +3,7 @@ import { useEffect, lazy, Suspense } from 'react'
 import Header from './components/Header.jsx'
 import Footer from './components/Footer.jsx'
 import AiChat from './components/AiChat.jsx'
+import { BandeauCloud } from './components/PromoCloud.jsx'
 import { trackPageView, pingPresence } from './lib/analytics.js'
 import './boutique.css'
 
@@ -61,6 +62,7 @@ export default function App() {
       <ScrollToTop />
       <a href="#main-content" className="skip-link">Aller au contenu</a>
       <AiChat />
+      <BandeauCloud />
       <Header />
       <main id="main-content" tabIndex={-1}>
         <Suspense fallback={null}>
