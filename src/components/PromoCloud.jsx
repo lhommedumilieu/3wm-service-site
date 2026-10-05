@@ -104,7 +104,10 @@ export function EncartCloud() {
             )}
             <a href="#formules" className="btn btn-outline btn-lg">Comparer les formules</a>
           </div>
-          <p className="small">Sans engagement, résiliable en ligne en quelques clics. Détails à l’article 9 des <Link to="/cgv">CGV</Link>.</p>
+          <p className="small">
+            Sans engagement, résiliable en ligne en quelques clics. Comment ça marche ? Voir le{' '}
+            <Link to="/guide-cloud">guide du cloud</Link>. Détails à l’article 9 des <Link to="/cgv">CGV</Link>.
+          </p>
         </div>
         <IllustrationCloud />
       </div>
