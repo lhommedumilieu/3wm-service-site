@@ -4,6 +4,7 @@ import NewsletterSignup from '../components/NewsletterSignup.jsx'
 import IllustrationDepannage from '../components/IllustrationDepannage.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 import AvisAccueil from '../components/AvisAccueil.jsx'
+import AppelDiagnostic from '../components/AppelDiagnostic.jsx'
 
 const STRUCTURED_DATA = {
   '@context': 'https://schema.org',
@@ -77,7 +78,9 @@ export default function Home() {
               <Link to="/contact" className="btn btn-primary btn-lg">Demander de l'aide</Link>
               <Link to="/services" className="btn btn-outline btn-lg">Voir les tarifs</Link>
             </div>
-            <p className="hero-note">À partir de 29 € · Paiement précisé lors de la prise de contact</p>
+            <p className="hero-note">
+              À partir de 29 € · <Link to="/diagnostic">Pas sûr de votre problème ? Diagnostic gratuit en 2 minutes</Link>
+            </p>
           </div>
 
           <div className="hero-art">
@@ -160,6 +163,7 @@ export default function Home() {
           <p className="center" style={{ marginTop: 32 }}>
             <Link to="/services" className="btn btn-outline">Voir le détail des formules</Link>
           </p>
+          <AppelDiagnostic />
         </div>
       </section>
 

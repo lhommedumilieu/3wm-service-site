@@ -4,6 +4,7 @@ import IllustrationDepannage from '../components/IllustrationDepannage.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 import { VENTE_ACTIVE } from '../lib/boutique.js'
 import { EncartCloud } from '../components/PromoCloud.jsx'
+import AppelDiagnostic from '../components/AppelDiagnostic.jsx'
 
 const STRUCTURED_DATA = {
   '@context': 'https://schema.org',
@@ -146,6 +147,7 @@ export default function Services() {
               </Reveal>
             ))}
           </div>
+          <AppelDiagnostic />
           <p className="center" style={{ marginTop: 32 }}>
             <Link to="/contact" className="btn btn-primary btn-lg">Demander un dépannage</Link>
           </p>
