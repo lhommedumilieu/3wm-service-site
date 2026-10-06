@@ -43,7 +43,7 @@ const PANNES = [
 const FORMULES = [
   { nom: 'Dépannage ponctuel', prix: '29 €', detail: '1 problème identifié' },
   { nom: 'Dépannage approfondi', prix: '49 €', detail: 'Plusieurs problèmes dans la même session' },
-  { nom: 'Forfait mensuel', prix: '19 €', suffixe: '/mois', detail: 'Assistance illimitée' },
+  { nom: 'Forfait mensuel', prix: '19 €', suffixe: '/mois', detail: 'Assistance illimitée + 50 Go de cloud' },
   { nom: 'Pack entreprise', prix: 'Dès 149 €', detail: 'Jusqu’à 3 postes, puis sur devis' },
 ]
 
@@ -62,11 +62,11 @@ export default function Home() {
           <div>
             <p className="eyebrow">Dépannage Windows à distance</p>
             <h1>
-              Votre PC Windows pose problème ? On le <span className="hl">répare à distance</span>, simplement.
+              Votre PC Windows pose problème ? On le <span className="hl">répare à distance</span>, simplement.
             </h1>
             <p className="lead">
-              Un PC lent, un virus, une mise à jour qui bloque ? Je prends la main sur votre ordinateur
-              avec votre accord, vous regardez tout en direct, et je vous explique ce qui a été fait.
+              Un PC lent, un virus, une mise à jour qui bloque ? On prend la main sur votre ordinateur
+              avec votre accord, vous regardez tout en direct, et on vous explique ce qui a été fait.
             </p>
             <ul className="hero-points">
               <li>Rien ne démarre sans votre autorisation</li>
@@ -124,7 +124,7 @@ export default function Home() {
 
       <section className="alt">
         <div className="container">
-          <Reveal as="h2" className="section-title">Les pannes que je règle le plus souvent</Reveal>
+          <Reveal as="h2" className="section-title">Les pannes qu’on règle le plus souvent</Reveal>
           <Reveal as="p" className="section-sub" delay={0.05}>
             Si vous vous reconnaissez dans l'une d'elles, vous êtes au bon endroit.
           </Reveal>
@@ -215,7 +215,7 @@ export default function Home() {
         <div className="container">
           <Reveal className="cta-band">
             <h2>Un souci sur votre PC Windows, maintenant ?</h2>
-            <p>Décrivez-le via le formulaire de contact : je reviens vers vous avec la formule adaptée, avant toute intervention.</p>
+            <p>Décrivez-le via le formulaire de contact : on revient vers vous avec la formule adaptée, avant toute intervention.</p>
             <Link to="/contact" className="btn btn-primary btn-lg">Demander de l'aide</Link>
           </Reveal>
         </div>
