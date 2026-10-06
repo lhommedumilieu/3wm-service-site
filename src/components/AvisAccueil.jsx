@@ -24,7 +24,7 @@ export default function AvisAccueil() {
         <div className="avis-liste-tete">
           <div>
             <p className="eyebrow">Avis clients</p>
-            <h2 className="mt-0">Ils m'ont fait confiance</h2>
+            <h2 className="mt-0">Ils nous ont fait confiance</h2>
             <p className="small">
               <Etoiles note={resume.moyenne} /> {String(resume.moyenne).replace('.', ',')}/5 · {resume.nombre} avis
             </p>
