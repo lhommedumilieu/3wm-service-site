@@ -1,0 +1,36 @@
+/* ===== Diagnostic gratuit « Votre PC est-il en bonne santé ? » ===== */
+.diag-question:hover, .diag-score:hover, .diag-reco:hover, .diag-resultat .card:hover { transform: none; }
+.diag-progression { height: 8px; background: var(--surface-alt); border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+.diag-progression div { height: 100%; background: var(--accent); border-radius: 8px; transition: width .3s; }
+.diag-question h2 { margin: 4px 0 18px; font-size: 1.35rem; }
+.diag-reponses { display: grid; gap: 10px; margin-bottom: 14px; }
+.diag-reponse {
+  text-align: left; padding: 14px 16px; border-radius: var(--radius-sm, 10px);
+  border: 1.5px solid var(--border); background: var(--surface, #fff); color: var(--ink);
+  font: inherit; font-weight: 500; cursor: pointer; transition: border-color .15s, background .15s;
+}
+.diag-reponse:hover, .diag-reponse:focus-visible { border-color: var(--accent); background: var(--surface-alt); outline: none; }
+.diag-lien { background: none; border: 0; padding: 0; color: var(--accent); font: inherit; cursor: pointer; text-decoration: underline; }
+
+.diag-resultat { display: grid; gap: 18px; }
+.diag-score { display: grid; grid-template-columns: 140px 1fr; gap: 24px; align-items: center; }
+.diag-jauge { width: 140px; height: 140px; transform: rotate(-90deg); }
+.diag-jauge text { transform: rotate(90deg); transform-origin: 60px 60px; }
+.diag-jauge-fond { fill: none; stroke: var(--surface-alt); stroke-width: 12; }
+.diag-jauge-valeur { fill: none; stroke-width: 12; stroke-linecap: round; transition: stroke-dashoffset .8s; }
+.diag-jauge.bon .diag-jauge-valeur { stroke: #2E9E5B; }
+.diag-jauge.moyen .diag-jauge-valeur { stroke: #E8A317; }
+.diag-jauge.faible .diag-jauge-valeur { stroke: #D9534F; }
+.diag-jauge-chiffre { font-size: 30px; font-weight: 700; fill: var(--ink); }
+.diag-jauge-sur { font-size: 11px; fill: var(--ink-muted); }
+.diag-conseils { margin: 0; padding-left: 1.2em; display: grid; gap: 8px; }
+.diag-reco { border: 2px solid var(--accent); }
+.diag-cloud { background: var(--surface-alt); padding: 12px 14px; border-radius: 10px; }
+
+/* Bandeau d'appel vers le diagnostic (accueil, services) */
+.diag-appel { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 18px 22px; border-radius: 14px; background: var(--surface-alt); border-left: 4px solid var(--accent); margin-top: 28px; }
+.diag-appel p { margin: 0; }
+@media (max-width: 600px) {
+  .diag-score { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+}

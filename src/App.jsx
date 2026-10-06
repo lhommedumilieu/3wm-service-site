@@ -33,6 +33,7 @@ const Commander = lazy(() => import('./pages/Commander.jsx'))
 const CommandeMerci = lazy(() => import('./pages/CommandeMerci.jsx'))
 const CGV = lazy(() => import('./pages/CGV.jsx'))
 const GuideCloud = lazy(() => import('./pages/GuideCloud.jsx'))
+const Diagnostic = lazy(() => import('./pages/Diagnostic.jsx'))
 const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 
 // Le visiteur peut refuser la mesure d'audience depuis les mentions légales.
@@ -91,6 +92,7 @@ export default function App() {
             <Route path="/commande/merci" element={<CommandeMerci />} />
             <Route path="/cgv" element={<CGV />} />
             <Route path="/guide-cloud" element={<GuideCloud />} />
+            <Route path="/diagnostic" element={<Diagnostic />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
