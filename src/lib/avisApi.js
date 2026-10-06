@@ -92,7 +92,7 @@ export async function supprimerPhotos(chemins) {
   }).catch(() => {})
 }
 
-export async function publierAvis(userId, { note, titre, contenu, fichiers, dateIntervention }) {
+export async function publierAvis(userId, { note, titre, contenu, fichiers, dateIntervention, pseudo }) {
   const chemins = []
   try {
     for (const f of fichiers) chemins.push(await envoyerPhoto(userId, f))
@@ -101,8 +101,9 @@ export async function publierAvis(userId, { note, titre, contenu, fichiers, date
       {
         method: 'POST',
         headers: { Prefer: 'return=representation' },
-        // author_name et statut sont imposés par la base (trigger)
-        body: JSON.stringify({ user_id: userId, author_name: '-', note, titre: titre || null, contenu, photos: chemins, date_intervention: dateIntervention || null }),
+        // statut imposé par la base (trigger) ; author_name = pseudo choisi, vérifié par la base
+        // (vide -> pseudo du profil ou « Client 3WM », jamais l'adresse e-mail)
+        body: JSON.stringify({ user_id: userId, author_name: pseudo || '-', note, titre: titre || null, contenu, photos: chemins, date_intervention: dateIntervention || null }),
       },
       true
     )
