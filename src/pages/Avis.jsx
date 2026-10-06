@@ -72,6 +72,7 @@ function Formulaire({ user, onPublie, onAnnuler }) {
   const [note, setNote] = useState(0)
   const [survol, setSurvol] = useState(0)
   const [titre, setTitre] = useState('')
+  const [pseudo, setPseudo] = useState('')
   const [contenu, setContenu] = useState('')
   const [fichiers, setFichiers] = useState([])
   const [erreur, setErreur] = useState('')
@@ -103,11 +104,14 @@ function Formulaire({ user, onPublie, onAnnuler }) {
     if (contenu.trim().length < 10) return setErreur('Votre avis doit faire au moins 10 caractères.')
     if (titre.trim() && titre.trim().length < 3) return setErreur('Le titre doit faire au moins 3 caractères.')
     if (!mois || !annee) return setErreur('Indiquez le mois et l’année de votre dépannage.')
+    const nom = pseudo.trim().replace(/\s+/g, ' ')
+    if (nom && (nom.length < 2 || nom.length > 30)) return setErreur('Le nom affiché doit faire entre 2 et 30 caractères.')
+    if (nom.includes('@')) return setErreur('Le nom affiché ne peut pas être une adresse e-mail : choisissez un pseudo.')
     const dateIntervention = `${annee}-${String(mois).padStart(2, '0')}-01`
     if (new Date(`${dateIntervention}T00:00:00`) > new Date()) return setErreur('La date du dépannage ne peut pas être dans le futur.')
     setEnvoi(true)
     try {
-      const avis = await publierAvis(user.id, { note, titre: titre.trim(), contenu: contenu.trim(), fichiers, dateIntervention })
+      const avis = await publierAvis(user.id, { note, titre: titre.trim(), contenu: contenu.trim(), fichiers, dateIntervention, pseudo: nom })
       onPublie(avis)
     } catch (err) {
       setErreur(err.code === '23505' ? 'Vous avez déjà donné un avis.' : "L'envoi a échoué. Vérifiez votre connexion et réessayez.")
@@ -148,6 +152,13 @@ function Formulaire({ user, onPublie, onAnnuler }) {
         </select>
       </div>
       <p className="small">Même si c’était avant l’ouverture du site : indiquez simplement le mois approximatif.</p>
+
+      <label htmlFor="avis-pseudo">Nom affiché <span className="small">(facultatif)</span></label>
+      <input id="avis-pseudo" type="text" maxLength={30} value={pseudo} onChange={(e) => setPseudo(e.target.value)} placeholder="Ex. : Camille, Jean D., Client satisfait" autoComplete="nickname" />
+      <p className="small">
+        Choisissez un prénom ou un pseudo pour rester anonyme. Laissé vide, l’avis sera signé de votre pseudo de
+        profil, ou « Client 3WM ». Votre adresse e-mail n’est jamais affichée.
+      </p>
 
       <label htmlFor="avis-titre">Titre <span className="small">(facultatif)</span></label>
       <input id="avis-titre" type="text" maxLength={100} value={titre} onChange={(e) => setTitre(e.target.value)} placeholder="Ex. : PC réparé en une heure" />
