@@ -1,0 +1,16 @@
+/* ===== Questions fréquentes (accueil + Services) ===== */
+.faq-liste { display: grid; gap: 10px; margin-top: 8px; }
+.faq-item { background: var(--surface, #fff); border: 1px solid var(--border); border-radius: 12px; padding: 0 18px; }
+.faq-item[open] { border-color: var(--accent); }
+.faq-item summary {
+  cursor: pointer; list-style: none; padding: 16px 28px 16px 0; position: relative;
+  font-weight: 600; color: var(--ink);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after {
+  content: '+'; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+  font-size: 1.4rem; font-weight: 400; color: var(--accent); transition: transform .2s;
+}
+.faq-item[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+.faq-item p { margin: 0 0 16px; color: var(--ink-muted); }
+.faq-suite { text-align: center; margin-top: 22px; }
