@@ -5,6 +5,7 @@ import useDocumentMeta from '../hooks/useDocumentMeta.js'
 import { VENTE_ACTIVE } from '../lib/boutique.js'
 import { EncartCloud } from '../components/PromoCloud.jsx'
 import AppelDiagnostic from '../components/AppelDiagnostic.jsx'
+import QuestionsFrequentes from '../components/QuestionsFrequentes.jsx'
 
 const STRUCTURED_DATA = {
   '@context': 'https://schema.org',
@@ -175,6 +176,8 @@ export default function Services() {
           </Reveal>
         </div>
       </section>
+
+      <QuestionsFrequentes />
 
       <section style={{ paddingTop: 0 }}>
         <div className="container">

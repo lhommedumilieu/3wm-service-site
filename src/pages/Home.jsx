@@ -5,6 +5,7 @@ import IllustrationDepannage from '../components/IllustrationDepannage.jsx'
 import useDocumentMeta from '../hooks/useDocumentMeta.js'
 import AvisAccueil from '../components/AvisAccueil.jsx'
 import AppelDiagnostic from '../components/AppelDiagnostic.jsx'
+import QuestionsFrequentes from '../components/QuestionsFrequentes.jsx'
 
 const STRUCTURED_DATA = {
   '@context': 'https://schema.org',
@@ -214,6 +215,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <QuestionsFrequentes />
 
       <section style={{ paddingTop: 0 }}>
         <div className="container">
