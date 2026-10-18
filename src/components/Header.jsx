@@ -43,7 +43,7 @@ export default function Header() {
     <header className="site-header">
       <div className="nav-wrap">
         <NavLink to="/" className="logo" onClick={() => setOpen(false)}>
-          <span className="logo-mark" aria-hidden="true">&gt;_</span>
+          <img src="/logo.png" alt="3WM Service" className="logo-mark" width="34" height="34" />
           3WM<span className="accent">Service</span>
         </NavLink>
         <button
