@@ -2959,6 +2959,7 @@ function genDesert(){
 
 
 /* ========== Réglages ========== */
+const GAMEV=36;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
@@ -2968,7 +2969,7 @@ function openCfg(){
   const sl=(k,n)=>`<label class="cfgr"><span>${n}<b id="cv_${k}">${Math.round(CFG[k]*100)} %</b></span><input type="range" min="0" max="100" value="${Math.round(CFG[k]*100)}" data-cfg="${k}"></label>`;
   const tg=(k,n,d)=>`<label class="cfgt"><span>${n}<small>${d}</small></span><input type="checkbox" data-cfgt="${k}" ${CFG[k]?'checked':''}></label>`;
   openDlg(`<h3>Réglages</h3><div class="cfg"><div class="cfgh">Son</div>${`<label class="cfgt"><span>Son activé<small>Coupe ou remet tout le son du jeu</small></span><input type="checkbox" id="cfgOn" ${AU.on?'checked':''}></label>`}${sl('master','Volume général')}${sl('music','Musique')}${sl('sfx','Bruitages')}
-    <div class="cfgh">Affichage</div>${tg('shake','Tremblements de l’écran','Secousses lors des coups puissants et des boss')}${tg('dmg','Chiffres de dégâts','Nombres qui s’affichent au-dessus des ennemis')}${tg('flash','Flashs lumineux','Éclairs blancs et voile rouge (désactiver si les flashs gênent)')}</div>`,[['Fermer',closeDlg]]);
+    <div class="cfgh">Affichage</div>${tg('shake','Tremblements de l’écran','Secousses lors des coups puissants et des boss')}${tg('dmg','Chiffres de dégâts','Nombres qui s’affichent au-dessus des ennemis')}${tg('flash','Flashs lumineux','Éclairs blancs et voile rouge (désactiver si les flashs gênent)')}<p class="note" style="text-align:center;margin-top:8px">Version ${GAMEV}</p></div>`,[['Fermer',closeDlg]]);
   const card=$('dCard');
   card.querySelectorAll('[data-cfg]').forEach(i=>i.addEventListener('input',()=>{const k=i.dataset.cfg;CFG[k]=i.value/100;$('cv_'+k).textContent=i.value+' %';cfgApply();cfgSave();if(k==='sfx'||k==='master')sfx('click')}));
   card.querySelectorAll('[data-cfgt]').forEach(i=>i.addEventListener('change',()=>{CFG[i.dataset.cfgt]=i.checked?1:0;cfgSave()}));
@@ -3094,6 +3095,6 @@ requestAnimationFrame(loop);
 setInterval(()=>{if(R)save()},15000);
 </script>
 
-<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));</script>
+<script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{}));</script>
 </body>
 </html>
