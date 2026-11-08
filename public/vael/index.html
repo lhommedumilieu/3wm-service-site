@@ -894,7 +894,8 @@ function makeEnemy(t,x,y,o={}){
   const e={t,b,x,y,r:b.r,maxhp:mHP(L)*b.hp*m.hp,dmg:mDMG(L)*b.dmg*m.dmg,spd:b.spd*m.spd*rnd(.9,1.1),
     cd:rnd(.3,1.2),wind:0,wk:null,slow:0,flash:0,kbx:0,kby:0,bcd:0,ph:rnd(0,6),col:b.col};
   if(o.elite){const a=o.elite;e.elite=a;e.r*=1.35;e.maxhp*=2.6*(a.hp||1);e.dmg*=1.4*(a.dmg||1);e.spd*=(a.spd||1);e.name=pick(ELITE_NAMES)+' · '+a.n}
-  e.L=L;e.hp=e.maxhp;pushOut(e);E.push(e);return e;
+  if(typeof NET!=='undefined'&&NET.room&&R&&(R.mode==='world'||R.mode==='dungeon')){const n=peersHere().length;if(n)e.maxhp*=1+.6*n}
+  e.L=L;e.hp=e.maxhp;e.nid=(typeof NET!=='undefined'?NET.id||0:0)+':'+(typeof NET!=='undefined'?++NET.ec:Math.random());pushOut(e);E.push(e);return e;
 }
 function spawnPack(near){
   const m=R.mods,a=rnd(0,6.28),d=near?rnd(380,560):rnd(560,760);
@@ -965,9 +966,11 @@ function hitE(e,mult,id,o={}){
   if(ST.ls>0)P.hp=Math.min(ST.maxHp,P.hp+d*ST.ls/100*R.mods.leech*(o.dot?.2:1));
   if(crit&&ST.pw.has('vampire'))P.hp=Math.min(ST.maxHp,P.hp+ST.maxHp*.01);
   if(o.kb&&!e.boss){const a=Math.atan2(e.y-(o.ky??P.y),e.x-(o.kx??P.x));e.kbx+=Math.cos(a)*o.kb;e.kby+=Math.sin(a)*o.kb}
+  if(e.remote){e.pd=(e.pd||0)+d;e.pdT=performance.now();if(e.hp<1)e.hp=1;const l=NET.hits.get(e.own)||[];l.push([e.nid,Math.round(d),e.slow>0?+e.slow.toFixed(1):0]);NET.hits.set(e.own,l);return}
   if(e.hp<=0)kill(e);
 }
 function hurtP(amt,src){
+  if(P.peer){netSend({t:'hurt',to:P.peer,a:Math.round(amt)});return}
   if(P.inv>0||P.leap||R.over||(R.mode==='world'&&inSafe(P.x,P.y)))return;
   const red=Math.min(.75,ST.armor/(ST.armor+30*S.lvl+30));amt*=1-red;
   P.hp-=amt;P.hurt=.25;shake(3);sfx('hurt');hurtV=Math.min(.85,Math.max(hurtV,.3+amt/ST.maxHp*4));
@@ -978,7 +981,7 @@ function hurtP(amt,src){
 let DEADS=[],RAIN=[],lastNight=0;
 const nightness=()=>{if(MAP.kind!=='world')return 0;const p=(performance.now()/1000/600)%1;return clamp((Math.cos(p*6.283)*-1+.15)*.9,0,1)};
 function kill(e){
-  if(e.dead)return;e.dead=true;DEADS.push({e,t:0});if(DEADS.length>30)DEADS.shift();
+  if(e.dead)return;if(NET.room&&!e.remote&&e.nid&&netOn())netSend({t:'die',mk:mapKey(),n:e.nid});e.dead=true;DEADS.push({e,t:0});if(DEADS.length>30)DEADS.shift();
   const boost=e.boss?40:e.elite?4:1;
   gainXP((5+e.L*2.2)*e.b.xp*boost*WT().xp);if(e.camp)e.camp.alive--;questKill(e);
   for(let i=0;i<(e.boss?50:10);i++)part(e.x,e.y,rnd(-150,150),rnd(-150,150),rnd(.3,.7),e.col,rnd(2,4));
@@ -1293,10 +1296,10 @@ function update(dt){
   if(R.mode==='world')worldTick(dt);else if(R.mode==='dungeon')dungeonTick(dt);
   else if(!R.boss){R.spawnT-=dt;const cap=Math.min(36,13+R.tier*1.5);if(R.spawnT<=0&&E.length<cap){spawnPack();R.spawnT=rnd(.5,1.3)}
     if(R.kills>=R.goal)spawnBoss()}
-  for(const e of E)if(!e.dead)updEnemy(e,dt);
+  {const pr0=PR.length,z0=Z.length;for(const e of E)if(!e.dead){if(e.remote)netProxy(e,dt);else netUpd(e,dt)}netEmit(pr0,z0)}
   separate();
   if(R.mode==='world')for(const e of E){const dx=e.x-VIL.x,dy=e.y-VIL.y,d=Math.hypot(dx,dy)||1,m=SAFE+e.r;if(d<m){e.x=VIL.x+dx/d*m;e.y=VIL.y+dy/d*m;e.charge=0}}
-  for(const e of E)if(!e.boss&&!e.elite&&!e.fixed&&Math.hypot(e.x-P.x,e.y-P.y)>1500)e.dead=1;
+  for(const e of E)if(!e.boss&&!e.elite&&!e.fixed&&!e.remote&&netFar(e))e.dead=1;
   updProj(dt);updZones(dt);
   E=E.filter(e=>!e.dead);
   updDrops(dt);
@@ -1813,6 +1816,8 @@ function netConnect(kind,code,name,after,silent){
     else if(m.t==='peer+'){netAddPeer(m);toast(`${m.name} a rejoint la partie`,'leg');sfx('rare');updParty()}
     else if(m.t==='peer-'){const p=NET.peers.get(m.id);if(p)toast(`${p.name} a quitté la partie`);NET.peers.delete(m.id);updParty()}
     else if(m.t==='host'){NET.host=m.id;updParty()}
+    else if(m.t==='mob')netOnMob(m);else if(m.t==='hits')netOnHits(m);else if(m.t==='die')netOnDie(m);else if(m.t==='efx')netOnEfx(m);else if(m.t==='feat')netOnFeat(m);
+    else if(m.t==='hurt'){if(R&&P&&!R.over)hurtP(m.a)}
     else if(m.t==='st'){const p=NET.peers.get(m.id);if(!p)return;const first=!p.seen;p.seen=1;
       p.tx=m.x;p.ty=m.y;p.face=m.f;p.mk=m.mk;p.l=m.l;p.hp=m.hp;p.mh=m.mh;p.cls=m.cls||p.cls;p.name=m.n||p.name;p.spin=m.sp;p.last=performance.now();
       if(first||Math.hypot(p.tx-p.x,p.ty-p.y)>500){p.x=p.tx;p.y=p.ty}
@@ -1823,6 +1828,56 @@ function netReconnect(){if(!NET.room||NET.leaving||(NET.ws&&NET.ws.readyState<2)
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&NET.room&&!NET.leaving&&(!NET.ws||NET.ws.readyState>1)){clearTimeout(NET.rt);netReconnect()}});
 function netShare(){if(!NET.room)return;const t=`Rejoins ma partie de Cendres de Vael ! Code : ${NET.room} — https://3-wm.net/vael/`;
   if(navigator.share)navigator.share({text:t}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>toast('Code copié : '+NET.room)).catch(()=>toast('Code : '+NET.room));else toast('Code : '+NET.room)}
+
+/* ========== Combat partagé (coopération) ========== */
+Object.assign(NET,{ec:0,hits:new Map(),hitT:0,mobT:0,guest:0,lastMob:0});
+const netOn=()=>!!(NET.room&&R&&(R.mode==='world'||R.mode==='dungeon'));
+const peersHere=()=>{if(!NET.room)return[];const mk=mapKey();const a=[];for(const p of NET.peers.values())if(p.seen&&p.mk===mk)a.push(p);return a};
+function netFar(e){if(Math.hypot(e.x-P.x,e.y-P.y)<=1500)return false;for(const p of peersHere())if(Math.hypot(e.x-p.x,e.y-p.y)<=1500)return false;return true}
+function peerProxy(p){const q=p.px||(p.px={r:14,inv:0,leap:null});q.x=p.x;q.y=p.y;q.hp=p.hp;q.face=p.face;q.peer=p.id;return q}
+function netUpd(e,dt){if(!netOn())return updEnemy(e,dt);const ps=peersHere();if(!ps.length)return updEnemy(e,dt);
+  let best=null,bd=Math.hypot(e.x-P.x,e.y-P.y)-20;for(const p of ps){const d=Math.hypot(e.x-p.x,e.y-p.y);if(d<bd){bd=d;best=p}}
+  if(!best)return updEnemy(e,dt);const real=P;P=peerProxy(best);try{updEnemy(e,dt)}finally{P=real}}
+function netProxy(e,dt){const k=Math.min(1,dt*12);if(Math.hypot(e.tx-e.x,e.ty-e.y)>300){e.x=e.tx;e.y=e.ty}else{e.x+=(e.tx-e.x)*k;e.y+=(e.ty-e.y)*k}
+  if(e.flash>0)e.flash-=dt;if(e.slow>0)e.slow-=dt;if(e.wind>0)e.wind-=dt;
+  if(e.boss&&!R.boss&&Math.hypot(P.x-e.x,P.y-e.y)<650){R.boss=e;$('bossBar').hidden=false;$('bossName').textContent=e.name;bossCard(e);sfx('roar')}}
+function netEmit(pr0,z0){if(!netOn()||!peersHere().length)return;
+  const p=PR.slice(pr0).filter(q=>!q.own&&!q.net).map(q=>[Math.round(q.x),Math.round(q.y),Math.round(q.vx),Math.round(q.vy),q.r,q.life,Math.round(q.dmg),q.col]);
+  const z=Z.slice(z0).filter(q=>q.dmg&&!q.net).map(q=>[q.kind,Math.round(q.x),Math.round(q.y),q.r,q.d,Math.round(q.dmg)]);
+  if(p.length||z.length)netSend({t:'efx',mk:mapKey(),p,z})}
+function netMobs(dt){
+  if(!netOn())return;const ps=peersHere();
+  /* donjon : un seul joueur fait vivre les monstres */
+  if(R.mode==='dungeon'){const now=performance.now();const own=E.some(e=>!e.remote&&!e.dead);
+    if(!own&&NET.guest&&now-NET.lastMob>1500&&(!ps.length||ps.every(p=>p.id>NET.id))){for(const e of E)if(e.remote){e.remote=0;e.own=NET.id}NET.guest=0;if(E.length)toast('Vous menez maintenant le donjon','leg')}}
+  else for(const e of E)if(e.remote&&performance.now()-(e.last||0)>1200)e.dead=1;
+  for(const e of E)if(e.remote&&e.pd&&performance.now()-e.pdT>400)e.pd=0;
+  NET.hitT-=dt;if(NET.hitT<=0&&NET.hits.size){NET.hitT=.05;for(const[own,l]of NET.hits)netSend({t:'hits',to:own,mk:mapKey(),l});NET.hits.clear()}
+  NET.mobT-=dt;if(NET.mobT>0||!ps.length)return;NET.mobT=.1;
+  const l=[];for(const e of E){if(e.remote||e.dead)continue;
+    if(R.mode==='world'){let near=false;for(const p of ps)if(Math.hypot(e.x-p.x,e.y-p.y)<1700){near=true;break}if(!near)continue}
+    l.push([e.nid,e.t,Math.round(e.x),Math.round(e.y),Math.ceil(e.hp),Math.ceil(e.maxhp),e.L,(e.boss?1:0)|(e.elite?2:0)|(e.fixed?8:0)|(e.final?16:0),e.name||'',e.look||'',Math.round(e.r),e.bc?e.bc[0]:'',e.bc?e.bc[1]:'',e.qboss||'',e.secret||'',e.slow>0?1:0,e.wind>0?+e.wind.toFixed(2):0,e.summon||'',Math.round(e.dmg)]);if(l.length>=90)break}
+  netSend({t:'mob',mk:mapKey(),dg:R.mode==='dungeon'?1:0,l})}
+function netOnMob(m){if(!netOn()||m.mk!==mapKey())return;const now=performance.now();
+  if(R.mode==='dungeon'){NET.lastMob=now;if(!NET.guest){if(m.id<NET.id){E=E.filter(e=>e.remote);NET.guest=1}else return}}
+  const idx=new Map();for(const e of E)if(e.nid)idx.set(e.nid,e);const seen=new Set();
+  for(const a of m.l){const[nid,t,x,y,hp,mh,L,fl,nm,look,rr,b0,b1,qb,sc,sl,wd,su,dm]=a;seen.add(nid);let e=idx.get(nid);
+    if(e&&!e.remote)continue;
+    if(!e){if(!ET[t])continue;e=makeEnemy(t,x,y,{L});e.nid=nid;e.remote=1;e.tx=x;e.ty=y;
+      if(fl&1){makeBoss(e,nm,[b0||'#c84a2a',b1||'#200'],1,look||undefined);e.idle=0}
+      if(fl&2)e.elite={n:''};if(nm)e.name=nm;if(fl&8)e.fixed=1;if(fl&16)e.final=1;e.r=rr||e.r;if(qb)e.qboss=qb;if(sc)e.secret=sc;if(su)e.summon=su}
+    e.own=m.id;e.tx=x;e.ty=y;e.maxhp=mh;e.hp=Math.max(1,hp-(e.pd||0));e.L=L;e.last=now;if(dm)e.dmg=dm;if(sl)e.slow=Math.max(e.slow,.3);if(wd){e.wind=wd;e.wk=e.wk||'melee'}}
+  for(const e of E)if(e.remote&&e.own===m.id&&!seen.has(e.nid))e.dead=1}
+function netOnHits(m){if(!netOn()||m.mk!==mapKey())return;const idx=new Map();for(const e of E)if(!e.remote&&e.nid)idx.set(e.nid,e);
+  for(const[nid,d,sl]of m.l){const e=idx.get(nid);if(!e||e.dead)continue;e.hp-=d;e.flash=.08;if(sl)e.slow=Math.max(e.slow,sl);
+    if(Math.random()<.5)FT.push({x:e.x+rnd(-10,10),y:e.y-e.r-10,v:Math.round(d),t:0,crit:false,col:'#9fd0ff'});if(e.hp<=0)kill(e)}}
+function netOnDie(m){if(!netOn()||m.mk!==mapKey())return;for(const e of E)if(e.remote&&e.nid===m.n&&!e.dead){if(Math.hypot(e.x-P.x,e.y-P.y)<1600)kill(e);else e.dead=1;break}}
+function netOnEfx(m){if(!netOn()||m.mk!==mapKey())return;
+  for(const[x,y,vx,vy,r,life,dmg,col]of m.p||[])PR.push({x,y,vx,vy,r,life,own:0,dmg,col,net:1});
+  for(const[kind,x,y,r,d,dmg]of m.z||[])Z.push({kind,x,y,r,t:0,d,dmg,net:1})}
+function netOnFeat(m){if(!netOn()||m.mk!==mapKey())return;const f=FEAT[m.i];if(!f)return;if(m.k==='camp'){f.spawned=1;f.alive=99}else if(m.k==='boss')f.bossOn=1;else if(m.k==='secret')f.on=1}
+function netFeat(f,k){if(netOn()&&peersHere().length)netSend({t:'feat',mk:mapKey(),i:FEAT.indexOf(f),k})}
+const strSeed=s=>{let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return((h>>>0)%1000000)/1000000};
 function netAddPeer(i){NET.peers.set(i.id,{id:i.id,name:i.name,cls:i.cls,x:0,y:0,tx:0,ty:0,face:0,mk:'',l:1,hp:1,mh:1,
   p:{x:0,y:0,face:0,walk:0,swing:0,castT:0,spin:0,leap:null,hurt:0,aimT:0,r:14},an:{fl:1,lw:0,mv:0,st:0,at:-9,ps:0,pc:0}})}
 function netLeave(){NET.leaving=1;clearTimeout(NET.rt);netSend({t:'leave'});const w=NET.ws;NET.ws=null;NET.room=null;NET.peers.clear();NET.st='off';if(w)try{w.close()}catch(e){}updParty();toast('Vous avez quitté la partie.')}
@@ -1830,6 +1885,7 @@ function netTick(dt){
   for(const p of NET.peers.values()){const k=Math.min(1,dt*10),ox=p.x,oy=p.y;p.x+=(p.tx-p.x)*k;p.y+=(p.ty-p.y)*k;const mv=Math.hypot(p.x-ox,p.y-oy);
     const q=p.p;q.x=p.x;q.y=p.y;q.face=p.face;if(mv>.4)q.walk+=dt*10;q.swing=Math.max(0,q.swing-dt);q.castT=Math.max(0,q.castT-dt);q.spin=p.spin?.3:0;q.aimT=q.swing>0||q.castT>0?.2:0}
   if(!NET.room||!R||!P||P.x===undefined)return;
+  netMobs(dt);
   if(P.swing>NET.ps+.05||P.castT>NET.pc+.05)NET.atk++;NET.ps=P.swing||0;NET.pc=P.castT||0;
   NET.sendT-=dt;if(NET.sendT<=0){NET.sendT=.1;
     netSend({t:'st',x:Math.round(P.x),y:Math.round(P.y),f:+P.face.toFixed(2),mk:mapKey(),cls:S.cls,n:netName()||CLSN[S.cls],l:S.lvl,hp:Math.round(P.hp),mh:Math.round(ST.maxHp),a:NET.atk,sp:P.spin>0?1:0})}}
@@ -2688,6 +2744,9 @@ function enterWorld(wid,x,y){
   if(!Object.keys(S.q).length)setTimeout(()=>toast('Parlez aux villageois marqués « ! » pour recevoir des quêtes','leg'),600);
 }
 function enterDungeon(did){
+  if(NET.room){withSeed(strSeed(NET.room+':'+did),()=>enterDungeon0(did));NET.guest=0;NET.lastMob=performance.now();if(peersHere().length||[...NET.peers.values()].some(p=>p.mk==='d:'+did)){E=[];NET.guest=1;toast('Vous rejoignez votre groupe dans le donjon','leg')}return}
+  enterDungeon0(did)}
+function enterDungeon0(did){
   const D=DUNGEONS[did];genDungeon(did);const L=clamp(S.lvl+D.off,D.lv[0]+WT().lv,D.lv[1]+WT().lv);prepRun('dungeon',{L,did});
   const rm=MAP.rooms,W2=t=>(t+.5)*TS;initPlayer(W2(rm[0].cx),W2(rm[0].cy)+60);
   for(let k=1;k<rm.length-1;k++){const r=rm[k];for(let p=0;p<2;p++){const t=pick(D.mobs),cx2=W2(r.x+ri(1,r.w-2)),cy2=W2(r.y+ri(1,r.h-2));
@@ -2719,15 +2778,15 @@ function worldTick(dt){
     for(const id in S.q){const q=QUESTS[id];if(q.type==='reach'&&S.q[id].s==='a'&&q.m===MAP.wid&&Math.hypot(P.x-VIL.x,P.y-VIL.y)<350)qProgress(id,1)}
     for(const f of FEAT){const d=Math.hypot(f.x-P.x,f.y-P.y);
       if(f.type==='waypoint'&&d<160&&!S.wp.includes(f.id)){S.wp.push(f.id);toast('Point de passage découvert : '+WP[f.id].n,'leg');sfx('orb');save()}
-      if((f.type==='camp'||f.type==='shrine')&&!f.spawned&&d<900)campSpawn(f);
-      if(f.boss&&!f.bossOn&&bossActive(f.boss)&&d<900)campBoss(f);
-      if(f.type==='secret'&&!f.on&&d<650&&!R.boss&&!S.secret.includes((S.wt||0)+':'+f.id)&&(!f.night||nightness()>.55))secretBoss(f);
+      if((f.type==='camp'||f.type==='shrine')&&!f.spawned&&d<900){campSpawn(f);netFeat(f,'camp')}
+      if(f.boss&&!f.bossOn&&bossActive(f.boss)&&d<900){campBoss(f);netFeat(f,'boss')}
+      if(f.type==='secret'&&!f.on&&d<650&&!R.boss&&!S.secret.includes((S.wt||0)+':'+f.id)&&(!f.night||nightness()>.55)){secretBoss(f);netFeat(f,'secret')}
       if((f.type==='camp'||f.type==='shrine')&&f.spawned&&f.alive<=0&&d>1800)f.spawned=0}}
   const reg=regionAt(P.x,P.y);MAP.ambT=REG[reg].amb;
   if(R.rain){R.rain-=dt;if(Math.random()<dt*.06&&MAP.wid!=='givre'&&MAP.wid!=='desert'){R.flashT=.35;setTimeout(()=>sfx('boom',.35),400)}if(R.rain<=0){R.rain=0;toast(MAP.wid==='givre'?'La neige cesse':MAP.wid==='desert'?'La tempête retombe':'La pluie cesse')}}
   else if(Math.random()<dt*.004&&reg!=='cendres'&&!REG[reg].safe){R.rain=rnd(60,120);toast(MAP.wid==='givre'?'La neige se met à tomber…':MAP.wid==='desert'?'Une tempête de sable se lève…':'Il commence à pleuvoir…')}
   eventTick(dt);
-  R.spawnT-=dt;const free=E.filter(e=>!e.fixed).length;
+  R.spawnT-=dt;const free=E.filter(e=>!e.fixed&&Math.hypot(e.x-P.x,e.y-P.y)<1100).length;
   if(R.spawnT<=0&&free<10&&REG[reg].mobs){R.spawnT=rnd(1.4,2.8);
     for(let t=0;t<6;t++){const a=rnd(0,6.28),d=rnd(560,760),x=P.x+Math.cos(a)*d,y=P.y+Math.sin(a)*d;if(x<120||y<120||x>WS-120||y>WS-120)continue;
       const rg=regionAt(x,y);if(!REG[rg].mobs||blockedAt(x,y,24)||Math.hypot(x-VIL.x,y-VIL.y)<SAFE+200)continue;
@@ -2959,7 +3018,7 @@ function genDesert(){
 
 
 /* ========== Réglages ========== */
-const GAMEV=37;
+const GAMEV=38;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
