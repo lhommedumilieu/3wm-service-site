@@ -1,8 +1,10 @@
 // Serveur multijoueur de Cendres de Vael : relie les joueurs d'une même partie (2 à 4).
 const { WebSocketServer } = require('ws');
+const fs = require('fs'), path = require('path');
+const SAVES = path.join(__dirname, 'saves'); fs.mkdirSync(SAVES, { recursive: true });
 const PORT = process.env.PORT || 8787;
 const MAX = 4;
-const wss = new WebSocketServer({ port: PORT, maxPayload: 64 * 1024 });
+const wss = new WebSocketServer({ port: PORT, maxPayload: 2 * 1024 * 1024 });
 const rooms = new Map(); // code -> { members: Map(id -> ws), host: id }
 let nextId = 1;
 const LET = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -39,6 +41,15 @@ wss.on('connection', ws => {
       room.members.set(ws.id, ws); ws.room = code; ws.roomCode = code;
       send(ws, { t: 'joined', room: code, id: ws.id, host: room.host, peers: [...room.members.values()].filter(w => w !== ws).map(info) });
       others(room, ws.id, { t: 'peer+', ...info(ws) });
+      return;
+    }
+    if (m.t === 'cloud') { // sauvegarde en ligne
+      const key = String(m.key || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (key.length !== 8) return send(ws, { t: 'cloud', ok: 0, err: 'Code invalide.' });
+      const f = path.join(SAVES, key + '.json');
+      if (m.op === 'save') { const data = JSON.stringify(m.data || {}); if (data.length > 1.8e6) return send(ws, { t: 'cloud', ok: 0, err: 'Sauvegarde trop grosse.' });
+        return fs.writeFile(f, data, e => send(ws, { t: 'cloud', op: 'save', ok: !e, key, err: e ? 'Erreur du serveur.' : undefined })); }
+      if (m.op === 'load') return fs.readFile(f, 'utf8', (e, d) => { if (e) return send(ws, { t: 'cloud', op: 'load', ok: 0, err: 'Aucune sauvegarde avec ce code.' }); let data; try { data = JSON.parse(d); } catch { return send(ws, { t: 'cloud', ok: 0, err: 'Sauvegarde abîmée.' }); } send(ws, { t: 'cloud', op: 'load', ok: 1, data }); });
       return;
     }
     if (m.t === 'leave') return leave(ws);
