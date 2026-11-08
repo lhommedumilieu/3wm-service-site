@@ -277,6 +277,8 @@ img.gi{border-radius:6px}
 .ach.ok{opacity:1;border-color:#8a6a2a;background:#1e180e}.ach>span{font-size:20px}.ach div{display:flex;flex-direction:column}.ach b{font-size:14px}.ach small{font-size:11px;opacity:.75}
 #tut{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 232px);width:min(88vw,380px);z-index:14;padding:12px 14px;border-radius:14px;background:rgba(18,14,20,.92);border:1px solid #c9a35a;box-shadow:0 8px 30px #000a;color:#f2ebe0}
 #tut p{margin:0 0 8px;font-size:15px;line-height:1.35}#tut div{display:flex;justify-content:space-between;align-items:center}#tut small{opacity:.7;font-size:11px}#tut button{font:inherit;font-size:12px;padding:5px 10px;border-radius:8px;border:1px solid #5a4a3a;background:#241c14;color:#e8d3a8}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:11px;border-radius:10px;border:1px solid #ccc;background:#fff;color:#222;font:600 15px system-ui,sans-serif;margin:8px 0 4px}
+#accMsg{color:#ff9a7a;min-height:1em}
 </style>
 
 </head>
@@ -339,6 +341,7 @@ img.gi{border-radius:6px}
     </div>
     <button class="big" id="tPlay">Explorer le monde</button>
     <button class="btn" id="tMulti">Jouer à plusieurs</button>
+    <button class="btn" id="tAcc" hidden>Se connecter / Créer un compte</button>
     <div class="btns"><button class="btn" id="tBag">Personnage et sac</button><button class="btn" id="tTal">Talents</button><button class="btn" id="tSnd">Réglages</button></div>
     <details class="box rift" id="tRift">
       <summary>Failles infinies <span class="note">· défi de fin de jeu</span></summary>
@@ -2359,7 +2362,7 @@ document.querySelectorAll('.sk[data-s]').forEach(b=>{const i=+b.dataset.s;
   const up=()=>{IN.held[i]=0};b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
   b.addEventListener('contextmenu',e=>e.preventDefault())});
 $('fl').addEventListener('pointerdown',ev=>{ev.preventDefault();useFlask()});
-$('bCfg').onclick=()=>openCfg();$('bGrp').onclick=()=>openMulti();$('tMulti').onclick=()=>openMulti();$('bBag').onclick=()=>openSheet('sac');$('bTal').onclick=()=>openSheet('tal');
+$('bCfg').onclick=()=>openCfg();$('bGrp').onclick=()=>openMulti();$('tMulti').onclick=()=>openMulti();$('tAcc').onclick=()=>openAcc();$('bBag').onclick=()=>openSheet('sac');$('bTal').onclick=()=>openSheet('tal');
 $('bPause').onclick=()=>{if(!R||R.over)return;paused=true;clearInput();const o=$('endOv');o.hidden=false;$('eEy').textContent='Faille '+ROMAN(R.tier);$('eH').textContent='Pause';
   if(R.mode!=='rift'){$('eEy').textContent=R.mode==='dungeon'?DUNGEONS[R.did].n:(REG[R.reg||'village']||REG.village).n;$('eP').textContent=qText()[0]}else $('eP').textContent=`${R.kills} / ${R.goal} monstres abattus.`;
   $('eBtns').innerHTML=`<button class="big" data-p="resume">Reprendre</button><button class="btn" data-p="quit">${R.mode==='rift'?'Quitter la faille':'Menu principal'}</button>`};
@@ -3180,8 +3183,71 @@ function cloudLoad(code){const k=code.toUpperCase().replace(/[^A-Z0-9]/g,'');if(
 setInterval(()=>{if(cloudKey()&&netURL()&&meta.cls&&!document.hidden)cloudSave(true)},300000);
 function openCloud(){const k=cloudKey();openDlg(`<h3>Sauvegarde en ligne</h3><p class="note">Gardez vos héros à l’abri sur le serveur du jeu, et retrouvez-les sur un autre téléphone.</p>${k?`<p>Votre code : <b style="color:#f2c96b;letter-spacing:.15em">${k.slice(0,4)}-${k.slice(4)}</b></p>`:''}<label class="mpf"><span>Récupérer avec un code</span><input id="clCode" maxlength="12" placeholder="ABCD-1234" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:.2em"></label>`,
   [[k?'Sauvegarder maintenant':'Créer ma sauvegarde',()=>{closeDlg();cloudSave(false)}],['Récupérer',()=>{const c=$('clCode').value;closeDlg();cloudLoad(c)}],['Fermer',closeDlg]])}
+
+/* ========== Comptes joueurs ========== */
+const SB='https://hviksjqwwqydshcumhtf.supabase.co',SBK='sb_publishable_PNS15KFzZVXG9N3V0VdeRQ_6ICOydaH',AUK='cendres_vael_auth';
+const ACC={s:null,syncT:0,busy:0};
+try{ACC.s=JSON.parse(localStorage.getItem(AUK)||'null')}catch(e){}
+const accOk=()=>!!netURL();
+const accIn=()=>!!(ACC.s&&ACC.s.access_token);
+function accStore(s){ACC.s=s;try{s?localStorage.setItem(AUK,JSON.stringify(s)):localStorage.removeItem(AUK)}catch(e){}updAcc()}
+function accSess(j){if(!j||!j.access_token)return null;return{access_token:j.access_token,refresh_token:j.refresh_token,expires_at:j.expires_at||Math.floor(Date.now()/1000)+(+j.expires_in||3600),email:(j.user&&j.user.email)||ACC.s&&ACC.s.email||'',id:(j.user&&j.user.id)||ACC.s&&ACC.s.id||''}}
+async function sbFetch(path,o={}){const h={apikey:SBK,'Content-Type':'application/json',...(o.headers||{})};if(o.auth!==false&&accIn())h.Authorization='Bearer '+ACC.s.access_token;
+  const r=await fetch(SB+path,{method:o.method||'GET',headers:h,body:o.body?JSON.stringify(o.body):undefined});let j=null;try{j=await r.json()}catch(e){}return{ok:r.ok,status:r.status,j}}
+const errFr=j=>{const m=(j&&(j.msg||j.error_description||j.message||j.error))||'';
+  if(/Invalid login/i.test(m))return'Email ou mot de passe incorrect.';if(/not confirmed/i.test(m))return'Confirmez d’abord votre adresse avec l’email reçu.';
+  if(/already registered|already been registered/i.test(m))return'Un compte existe déjà avec cet email.';if(/at least 6|Password should/i.test(m))return'Le mot de passe doit faire au moins 6 caractères.';
+  if(/rate limit|too many/i.test(m))return'Trop d’essais, réessayez dans quelques minutes.';if(/invalid.*email|Unable to validate email/i.test(m))return'Adresse email invalide.';return m||'Erreur de connexion.'};
+async function accRefresh(){if(!accIn())return false;if(ACC.s.expires_at-60>Date.now()/1000)return true;
+  const r=await sbFetch('/auth/v1/token?grant_type=refresh_token',{method:'POST',auth:false,body:{refresh_token:ACC.s.refresh_token}});
+  if(r.ok){accStore(accSess(r.j));return true}if(r.status===400||r.status===401){accStore(null);toast('Session expirée : reconnectez-vous.')}return false}
+async function accLogin(email,pw){const r=await sbFetch('/auth/v1/token?grant_type=password',{method:'POST',auth:false,body:{email,password:pw}});
+  if(!r.ok)return errFr(r.j);accStore(accSess(r.j));closeDlg();await accAfterLogin();return null}
+async function accSignup(email,pw,pseudo){const back=location.href.split('#')[0];
+  const r=await sbFetch('/auth/v1/signup?redirect_to='+encodeURIComponent(back),{method:'POST',auth:false,body:{email,password:pw,data:{pseudo}}});
+  if(!r.ok)return errFr(r.j);if(r.j&&r.j.access_token){accStore(accSess(r.j));closeDlg();await accAfterLogin();return null}return'mail'}
+function accGoogle(){const back=location.href.split('#')[0];location.href=SB+'/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(back)}
+async function accLogout(){if(accIn()){await accPush(true);sbFetch('/auth/v1/logout',{method:'POST'}).catch(()=>{})}accStore(null);toast('Déconnecté. Vos héros restent sur ce téléphone.')}
+async function accProfile(){const r=await sbFetch('/rest/v1/profiles?select=pseudo&id=eq.'+ACC.s.id);if(r.ok&&r.j&&r.j[0]){ACC.pseudo=r.j[0].pseudo;try{if(!localStorage.getItem('cendres_vael_pseudo'))localStorage.setItem('cendres_vael_pseudo',ACC.pseudo)}catch(e){}}}
+async function accOwned(){const r=await sbFetch('/rest/v1/owned?select=item');ACC.owned=r.ok&&Array.isArray(r.j)?r.j.map(x=>x.item):[]}
+const localHas=()=>Object.keys(cloudData()).some(k=>k.startsWith(KEY+'_'));
+async function accPull(){const r=await sbFetch('/rest/v1/saves?select=data,updated_at&user_id=eq.'+ACC.s.id);return r.ok&&r.j&&r.j[0]?r.j[0]:null}
+async function accPush(silent){if(!accIn()||ACC.busy)return;if(!(await accRefresh()))return;ACC.busy=1;try{if(meta.cls)save();
+  const r=await sbFetch('/rest/v1/saves?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:{user_id:ACC.s.id,data:cloudData(),updated_at:new Date().toISOString()}});
+  if(r.ok){ACC.last=Date.now();updAcc()}else if(!silent)toast('Échec de la sauvegarde du compte')}finally{ACC.busy=0}}
+function accApply(data){try{for(const k of Object.keys(cloudData()))localStorage.removeItem(k);for(const k in data)localStorage.setItem(k,data[k])}catch(e){}location.reload()}
+async function accAfterLogin(){await accProfile();await accOwned();const sv=await accPull(),remote=sv&&sv.data&&Object.keys(sv.data).some(k=>k.startsWith(KEY+'_'));
+  toast(`Connecté : ${ACC.pseudo||ACC.s.email}`,'leg');
+  if(remote&&localHas())openDlg(`<h3>Deux sauvegardes trouvées</h3><p>Votre compte contient déjà des héros, et ce téléphone aussi. Laquelle voulez-vous garder ?</p><p class="note">Sauvegarde du compte : ${new Date(sv.updated_at).toLocaleString('fr-FR')}</p>`,
+    [['Garder celle du compte',()=>{closeDlg();accApply(sv.data)}],['Garder celle de ce téléphone',()=>{closeDlg();accPush()}]]);
+  else if(remote)accApply(sv.data);else accPush()}
+async function accFromHash(){const h=location.hash;if(!h||!/access_token=|error_description=/.test(h))return;const p=new URLSearchParams(h.slice(1));history.replaceState(null,'',location.href.split('#')[0]);
+  if(p.get('error_description')){toast(p.get('error_description').replace(/\+/g,' '));return}
+  accStore(accSess({access_token:p.get('access_token'),refresh_token:p.get('refresh_token'),expires_in:p.get('expires_in')}));
+  const u=await sbFetch('/auth/v1/user');if(u.ok&&u.j){ACC.s.id=u.j.id;ACC.s.email=u.j.email;accStore(ACC.s)}
+  if(p.get('type')==='signup')toast('Adresse confirmée, bienvenue !','leg');await accAfterLogin()}
+function updAcc(){const b=$('tAcc');if(!b)return;b.hidden=!accOk();b.textContent=accIn()?`Compte : ${ACC.pseudo||ACC.s.email||'connecté'}`:'Se connecter / Créer un compte'}
+function openAcc(){if(!accOk()){openDlg('<h3>Compte</h3><p>Les comptes fonctionnent sur la version en ligne du jeu.</p>',[['Fermer',closeDlg]]);return}
+  if(accIn()){openDlg(`<h3>Votre compte</h3><p><b>${ACC.pseudo||''}</b><br><span class="note">${ACC.s.email||''}</span></p><p class="note">Vos héros sont sauvegardés sur votre compte automatiquement. ${ACC.last?'Dernière sauvegarde : '+new Date(ACC.last).toLocaleTimeString('fr-FR'):''}</p>`,
+    [['Sauvegarder maintenant',async()=>{await accPush();toast('Sauvegardé sur votre compte','leg')}],['Se déconnecter',()=>{closeDlg();accLogout()}],['Fermer',closeDlg]]);return}
+  openDlg(`<h3>Compte joueur</h3><p class="note">Un compte garde vos héros à l’abri et vous permet de jouer sur plusieurs appareils. Vous pouvez aussi continuer en invité : vos héros restent sur ce téléphone.</p>
+    <button class="gbtn" id="accG"><svg viewBox="0 0 48 48" width="20" height="20"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>Continuer avec Google</button>
+    <label class="mpf"><span>Email</span><input id="accE" type="email" autocomplete="email" inputmode="email"></label>
+    <label class="mpf"><span>Mot de passe (6 caractères minimum)</span><input id="accP" type="password" autocomplete="current-password"></label>
+    <label class="mpf"><span>Pseudo (pour créer un compte)</span><input id="accN" maxlength="16" value="${(netName()||'').replace(/"/g,'')}"></label><p class="note" id="accMsg"></p>`,
+    [['Se connecter',()=>accDo('in')],['Créer un compte',()=>accDo('up')],['Jouer en invité',closeDlg]]);
+  $('accG').addEventListener('click',accGoogle)}
+async function accDo(k){const e=$('accE').value.trim(),p=$('accP').value,n=$('accN').value.trim(),m=$('accMsg');
+  if(!/^\S+@\S+\.\S+$/.test(e)){m.textContent='Entrez une adresse email valide.';return}if(p.length<6){m.textContent='Le mot de passe doit faire au moins 6 caractères.';return}
+  if(k==='up'&&n.length<2){m.textContent='Choisissez un pseudo (2 caractères minimum).';return}m.textContent='Un instant…';
+  let err;try{err=k==='in'?await accLogin(e,p):await accSignup(e,p,n)}catch(x){err='Impossible de joindre le serveur des comptes.'}
+  if(err==='mail'){closeDlg();openDlg(`<h3>Vérifiez vos emails</h3><p>Un email de confirmation a été envoyé à <b>${e}</b>. Cliquez sur le lien qu’il contient pour activer votre compte : vous reviendrez directement dans le jeu.</p><p class="note">Pensez à regarder dans les indésirables.</p>`,[['OK',closeDlg]]);return}
+  if(err){m.textContent=err;return}}
+setInterval(()=>{if(accIn()&&meta.cls&&!document.hidden)accPush(true)},120000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&accIn())accPush(true)});
+setTimeout(()=>{updAcc();if(accOk()){accFromHash().catch(()=>{});if(accIn())accRefresh().then(ok=>{if(ok){accProfile().then(updAcc);accOwned()}}).catch(()=>{})}},300);
 /* ========== Réglages ========== */
-const GAMEV=40;
+const GAMEV=41;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
@@ -3191,12 +3257,12 @@ function openCfg(){
   const sl=(k,n)=>`<label class="cfgr"><span>${n}<b id="cv_${k}">${Math.round(CFG[k]*100)} %</b></span><input type="range" min="0" max="100" value="${Math.round(CFG[k]*100)}" data-cfg="${k}"></label>`;
   const tg=(k,n,d)=>`<label class="cfgt"><span>${n}<small>${d}</small></span><input type="checkbox" data-cfgt="${k}" ${CFG[k]?'checked':''}></label>`;
   openDlg(`<h3>Réglages</h3><div class="cfg"><div class="cfgh">Son</div>${`<label class="cfgt"><span>Son activé<small>Coupe ou remet tout le son du jeu</small></span><input type="checkbox" id="cfgOn" ${AU.on?'checked':''}></label>`}${sl('master','Volume général')}${sl('music','Musique')}${sl('sfx','Bruitages')}
-    <div class="cfgh">Affichage</div>${tg('shake','Tremblements de l’écran','Secousses lors des coups puissants et des boss')}${tg('dmg','Chiffres de dégâts','Nombres qui s’affichent au-dessus des ennemis')}${tg('flash','Flashs lumineux','Éclairs blancs et voile rouge (désactiver si les flashs gênent)')}<div class="cfgh">Sauvegarde</div><button class="btn" id="cfgCloud" style="width:100%">Sauvegarde en ligne${cloudKey()?' · '+cloudKey().slice(0,4)+'-'+cloudKey().slice(4):''}</button><p class="note" style="text-align:center;margin-top:8px">Version ${GAMEV}</p></div>`,[['Fermer',closeDlg]]);
+    <div class="cfgh">Affichage</div>${tg('shake','Tremblements de l’écran','Secousses lors des coups puissants et des boss')}${tg('dmg','Chiffres de dégâts','Nombres qui s’affichent au-dessus des ennemis')}${tg('flash','Flashs lumineux','Éclairs blancs et voile rouge (désactiver si les flashs gênent)')}<div class="cfgh">Sauvegarde</div>${accOk()?`<button class="btn" id="cfgAcc" style="width:100%;margin-bottom:6px">${accIn()?'Compte : '+(ACC.pseudo||ACC.s.email):'Se connecter / Créer un compte'}</button>`:''}<button class="btn" id="cfgCloud" style="width:100%">Sauvegarde en ligne${cloudKey()?' · '+cloudKey().slice(0,4)+'-'+cloudKey().slice(4):''}</button><p class="note" style="text-align:center;margin-top:8px">Version ${GAMEV}</p></div>`,[['Fermer',closeDlg]]);
   const card=$('dCard');
   card.querySelectorAll('[data-cfg]').forEach(i=>i.addEventListener('input',()=>{const k=i.dataset.cfg;CFG[k]=i.value/100;$('cv_'+k).textContent=i.value+' %';cfgApply();cfgSave();if(k==='sfx'||k==='master')sfx('click')}));
   card.querySelectorAll('[data-cfgt]').forEach(i=>i.addEventListener('change',()=>{CFG[i.dataset.cfgt]=i.checked?1:0;cfgSave()}));
   $('cfgOn').addEventListener('change',e=>{setSound(e.target.checked)});
-  $('cfgCloud').addEventListener('click',()=>{closeDlg();openCloud()});
+  $('cfgCloud').addEventListener('click',()=>{closeDlg();openCloud()});if($('cfgAcc'))$('cfgAcc').addEventListener('click',()=>{closeDlg();openAcc()});
 }
 /* ========== Son (entièrement synthétisé) ========== */
 const AU={ctx:null,on:true,last:{}};
