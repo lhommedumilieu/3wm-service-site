@@ -1792,7 +1792,7 @@ function drawHeroSprite(im,c,x,y,lift){const H=c==='magicien'?74:76,w=H*im.width
 const NET={ws:null,room:null,id:0,host:0,peers:new Map(),st:'off',sendT:0,atk:0,ps:0,pc:0,goto:null};
 const CLSN={guerrier:'Guerrier',magicien:'Magicienne',chasseur:'Chasseur'},CLSC={guerrier:'#ff9a7a',magicien:'#9ac8ff',chasseur:'#9ae0a0'};
 function netURL(){try{const q=new URLSearchParams(location.search).get('ws');if(q)return q}catch(e){}
-  const h=location.hostname||'';if(h==='localhost'||h==='127.0.0.1'||h.endsWith('3-wm.net'))return(location.protocol==='https:'?'wss://':'ws://')+location.host+'/vael-ws';return null}
+  if(!/^https?:$/.test(location.protocol)||!location.host)return null;return(location.protocol==='https:'?'wss://':'ws://')+location.host+'/vael-ws'}
 const netName=()=>{try{return localStorage.getItem('cendres_vael_pseudo')||''}catch(e){return''}};
 const mapKey=()=>!R?'x':MAP.kind==='world'?'w:'+MAP.wid:MAP.kind==='dungeon'?'d:'+MAP.did:'x';
 function netSend(m){if(NET.ws&&NET.ws.readyState===1)NET.ws.send(JSON.stringify(m))}
@@ -1802,7 +1802,7 @@ function netConnect(kind,code,name,after,silent){
   if(NET.ws){const o=NET.ws;NET.ws=null;try{o.close()}catch(e){}}
   NET.st='conn';NET.leaving=0;NET.name=name;const ws=new WebSocket(url);NET.ws=ws;
   ws.onopen=()=>netSend({t:kind,room:code,name,cls:meta.cls||S.cls,rejoin:silent?1:0});
-  ws.onerror=()=>{if(NET.st==='conn'&&!silent)openDlg('<h3>Jouer à plusieurs</h3><p>Impossible de joindre le serveur de jeu. Vérifiez votre connexion internet et réessayez.</p>',[['Fermer',closeDlg]])};
+  ws.onerror=()=>{if(NET.st==='conn'&&!silent){NET.st='off';openDlg('<h3>Jouer à plusieurs</h3><p>Impossible de joindre le serveur de jeu.</p><p class="note">Vérifiez votre connexion internet. Le jeu à plusieurs fonctionne sur https://3-wm.net/vael/ (ou l’adresse locale de votre serveur).</p>',[['Fermer',closeDlg]])}};
   ws.onclose=()=>{if(NET.ws!==ws)return;NET.ws=null;
     if(NET.room&&!NET.leaving){NET.st='reco';updParty();clearTimeout(NET.rt);NET.rt=setTimeout(netReconnect,1500);return}
     const was=NET.room;NET.room=null;NET.peers.clear();NET.st='off';updParty();if(was)toast('Déconnecté de la partie.')};
@@ -2959,7 +2959,7 @@ function genDesert(){
 
 
 /* ========== Réglages ========== */
-const GAMEV=36;
+const GAMEV=37;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
