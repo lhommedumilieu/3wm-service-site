@@ -41,7 +41,7 @@ if sudo grep -q 'vael-ws' "$CONF"; then
 else
   sudo cp "$CONF" "$CONF.bak-vael"
   BLOCK='    location /vael-ws {\n        proxy_pass http://127.0.0.1:8787;\n        proxy_http_version 1.1;\n        proxy_set_header Upgrade $http_upgrade;\n        proxy_set_header Connection "upgrade";\n        proxy_set_header Host $host;\n        proxy_read_timeout 3600s;\n    }\n\n'
-  if sudo grep -q 'location /api/chat' "$CONF"; then ANCHOR='location \/api\/chat'; else ANCHOR='location \/'; fi
+  if sudo grep -q 'location /api/chat' "$CONF"; then ANCHOR='location /api/chat'; else ANCHOR='location /'; fi
   sudo awk -v b="$BLOCK" -v a="$ANCHOR" '!d && $0 ~ a {printf "%s", b; d=1} {print}' "$CONF" | sudo tee "$CONF.new" >/dev/null
   sudo mv "$CONF.new" "$CONF"
   if sudo nginx -t 2>/dev/null; then sudo systemctl reload nginx; echo "  ajouté."

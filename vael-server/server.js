@@ -15,7 +15,7 @@ const clean = s => String(s || '').replace(/[<>&"]/g, '').slice(0, 16) || 'Héro
 function leave(ws) {
   const room = rooms.get(ws.room); if (!room) return;
   room.members.delete(ws.id); ws.room = null;
-  if (!room.members.size) { rooms.delete(ws.roomCode); return; }
+  if (!room.members.size) { room.emptySince = Date.now(); return; } // la partie reste ouverte 10 min (reconnexion)
   others(room, ws.id, { t: 'peer-', id: ws.id });
   if (room.host === ws.id) { room.host = room.members.keys().next().value; for (const w of room.members.values()) send(w, { t: 'host', id: room.host }); }
 }
@@ -31,7 +31,9 @@ wss.on('connection', ws => {
       ws.name = clean(m.name); ws.cls = ['guerrier', 'magicien', 'chasseur'].includes(m.cls) ? m.cls : 'guerrier';
       let code = m.t === 'create' ? newCode() : String(m.room || '').toUpperCase().trim();
       let room = rooms.get(code);
-      if (m.t === 'join' && !room) return send(ws, { t: 'err', m: 'Aucune partie avec ce code.' });
+      if (m.t === 'join' && !room && m.rejoin && /^[A-Z]{4}$/.test(code)) { room = { members: new Map(), host: ws.id }; rooms.set(code, room); }
+      if (m.t === 'join' && !room) return send(ws, { t: 'err', m: 'Aucune partie avec ce code. Vérifiez les 4 lettres, ou demandez à votre ami de recréer la partie.' });
+      if (room && !room.members.size) { room.host = ws.id; room.emptySince = 0; }
       if (room && room.members.size >= MAX) return send(ws, { t: 'err', m: 'La partie est pleine (4 joueurs).' });
       if (!room) { room = { members: new Map(), host: ws.id }; rooms.set(code, room); }
       room.members.set(ws.id, ws); ws.room = code; ws.roomCode = code;
@@ -49,5 +51,6 @@ wss.on('connection', ws => {
 });
 
 setInterval(() => { for (const ws of wss.clients) { ws.msgs = 0; } }, 1000);
+setInterval(() => { const now = Date.now(); for (const [c, r] of rooms) if (!r.members.size && r.emptySince && now - r.emptySince > 10 * 60 * 1000) rooms.delete(c); }, 30000);
 setInterval(() => { for (const ws of wss.clients) { if (!ws.alive) { ws.terminate(); continue; } ws.alive = false; ws.ping(); } }, 20000);
 console.log('Serveur Cendres de Vael prêt sur le port ' + PORT);
