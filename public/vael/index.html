@@ -267,6 +267,7 @@ img.gi{border-radius:6px}
 .mpf{display:flex;flex-direction:column;gap:4px;margin:10px 0}.mpf span{font-size:13px;color:#c9a35a}.mpf input{font:inherit;font-size:17px;padding:10px 12px;border-radius:10px;border:1px solid #5a4a3a;background:#120f14;color:#f2ebe0}
 .mpl{display:flex;flex-direction:column;gap:6px;margin:10px 0}.mpm{display:flex;flex-direction:column;padding:8px 10px;border-radius:10px;background:#18141c;border:1px solid #3a3040}.mpm small{opacity:.75;font-size:12px}
 #bGrp.on{border-color:#7fe07f;box-shadow:0 0 0 2px #7fe07f44}
+.mpcode{font:700 40px/1.1 Georgia,serif;letter-spacing:.35em;text-align:center;color:#f2c96b;padding:10px 0 6px;user-select:all}
 </style>
 
 </head>
@@ -1795,18 +1796,20 @@ function netURL(){try{const q=new URLSearchParams(location.search).get('ws');if(
 const netName=()=>{try{return localStorage.getItem('cendres_vael_pseudo')||''}catch(e){return''}};
 const mapKey=()=>!R?'x':MAP.kind==='world'?'w:'+MAP.wid:MAP.kind==='dungeon'?'d:'+MAP.did:'x';
 function netSend(m){if(NET.ws&&NET.ws.readyState===1)NET.ws.send(JSON.stringify(m))}
-function netConnect(kind,code,name,after){
+function netConnect(kind,code,name,after,silent){
   const url=netURL();if(!url){toast('Le jeu à plusieurs fonctionne sur la version en ligne du jeu.');return}
   try{localStorage.setItem('cendres_vael_pseudo',name)}catch(e){}
-  if(NET.ws){try{NET.ws.close()}catch(e){}}
-  NET.st='conn';const ws=new WebSocket(url);NET.ws=ws;
-  ws.onopen=()=>netSend({t:kind,room:code,name,cls:meta.cls||S.cls});
-  ws.onerror=()=>{if(NET.st==='conn')toast('Impossible de joindre le serveur de jeu.')};
-  ws.onclose=()=>{if(NET.ws!==ws)return;const was=NET.room;NET.ws=null;NET.room=null;NET.peers.clear();NET.st='off';updParty();if(was)toast('Déconnecté de la partie.')};
+  if(NET.ws){const o=NET.ws;NET.ws=null;try{o.close()}catch(e){}}
+  NET.st='conn';NET.leaving=0;NET.name=name;const ws=new WebSocket(url);NET.ws=ws;
+  ws.onopen=()=>netSend({t:kind,room:code,name,cls:meta.cls||S.cls,rejoin:silent?1:0});
+  ws.onerror=()=>{if(NET.st==='conn'&&!silent)openDlg('<h3>Jouer à plusieurs</h3><p>Impossible de joindre le serveur de jeu. Vérifiez votre connexion internet et réessayez.</p>',[['Fermer',closeDlg]])};
+  ws.onclose=()=>{if(NET.ws!==ws)return;NET.ws=null;
+    if(NET.room&&!NET.leaving){NET.st='reco';updParty();clearTimeout(NET.rt);NET.rt=setTimeout(netReconnect,1500);return}
+    const was=NET.room;NET.room=null;NET.peers.clear();NET.st='off';updParty();if(was)toast('Déconnecté de la partie.')};
   ws.onmessage=ev=>{let m;try{m=JSON.parse(ev.data)}catch(e){return}
-    if(m.t==='joined'){NET.room=m.room;NET.id=m.id;NET.host=m.host;NET.st='on';NET.peers.clear();for(const p of m.peers)netAddPeer(p);updParty();sfx('rare');
-      toast(kind==='create'?`Partie créée ! Code : ${m.room}`:`Vous avez rejoint la partie ${m.room}`,'leg');if(after)after()}
-    else if(m.t==='err'){toast(m.m);NET.st='off';try{ws.close()}catch(e){}}
+    if(m.t==='joined'){const re=NET.st==='reco'||silent;NET.room=m.room;NET.id=m.id;NET.host=m.host;NET.st='on';NET.peers.clear();for(const p of m.peers)netAddPeer(p);updParty();
+      if(re){toast('Reconnecté à la partie '+m.room)}else{sfx('rare');if(kind==='create')openDlg(`<h3>Partie créée !</h3><p>Donnez ce code à vos amis :</p><div class="mpcode">${m.room}</div><p class="note">Ce sont 4 lettres. La partie reste ouverte même si vous quittez le jeu un instant pour envoyer le code.</p>`,[['Partager le code',()=>{netShare();closeDlg();if(after)after()}],['Jouer',()=>{closeDlg();if(after)after()}]]);else{toast(`Vous avez rejoint la partie ${m.room}`,'leg');if(after)after()}}}
+    else if(m.t==='err'){NET.st='off';NET.room=null;try{ws.close()}catch(e){}openDlg('<h3>Jouer à plusieurs</h3><p>'+m.m+'</p>',[['Réessayer',()=>{closeDlg();openMulti()}],['Fermer',closeDlg]])}
     else if(m.t==='peer+'){netAddPeer(m);toast(`${m.name} a rejoint la partie`,'leg');sfx('rare');updParty()}
     else if(m.t==='peer-'){const p=NET.peers.get(m.id);if(p)toast(`${p.name} a quitté la partie`);NET.peers.delete(m.id);updParty()}
     else if(m.t==='host'){NET.host=m.id;updParty()}
@@ -1815,9 +1818,14 @@ function netConnect(kind,code,name,after){
       if(first||Math.hypot(p.tx-p.x,p.ty-p.y)>500){p.x=p.tx;p.y=p.ty}
       if(m.a!==p.atk){if(p.atk!==undefined){if(p.cls==='guerrier')p.p.swing=.2;else p.p.castT=.18}p.atk=m.a}}
   }}
+function netReconnect(){if(!NET.room||NET.leaving||(NET.ws&&NET.ws.readyState<2))return;if(document.hidden){NET.rt=setTimeout(netReconnect,2000);return}
+  const room=NET.room;netConnect('join',room,NET.name||netName()||CLSN[S.cls],null,1);NET.st='reco';NET.room=room}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&NET.room&&!NET.leaving&&(!NET.ws||NET.ws.readyState>1)){clearTimeout(NET.rt);netReconnect()}});
+function netShare(){if(!NET.room)return;const t=`Rejoins ma partie de Cendres de Vael ! Code : ${NET.room} — https://3-wm.net/vael/`;
+  if(navigator.share)navigator.share({text:t}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(t).then(()=>toast('Code copié : '+NET.room)).catch(()=>toast('Code : '+NET.room));else toast('Code : '+NET.room)}
 function netAddPeer(i){NET.peers.set(i.id,{id:i.id,name:i.name,cls:i.cls,x:0,y:0,tx:0,ty:0,face:0,mk:'',l:1,hp:1,mh:1,
   p:{x:0,y:0,face:0,walk:0,swing:0,castT:0,spin:0,leap:null,hurt:0,aimT:0,r:14},an:{fl:1,lw:0,mv:0,st:0,at:-9,ps:0,pc:0}})}
-function netLeave(){netSend({t:'leave'});const w=NET.ws;NET.ws=null;NET.room=null;NET.peers.clear();NET.st='off';if(w)try{w.close()}catch(e){}updParty();toast('Vous avez quitté la partie.')}
+function netLeave(){NET.leaving=1;clearTimeout(NET.rt);netSend({t:'leave'});const w=NET.ws;NET.ws=null;NET.room=null;NET.peers.clear();NET.st='off';if(w)try{w.close()}catch(e){}updParty();toast('Vous avez quitté la partie.')}
 function netTick(dt){
   for(const p of NET.peers.values()){const k=Math.min(1,dt*10),ox=p.x,oy=p.y;p.x+=(p.tx-p.x)*k;p.y+=(p.ty-p.y)*k;const mv=Math.hypot(p.x-ox,p.y-oy);
     const q=p.p;q.x=p.x;q.y=p.y;q.face=p.face;if(mv>.4)q.walk+=dt*10;q.swing=Math.max(0,q.swing-dt);q.castT=Math.max(0,q.castT-dt);q.spin=p.spin?.3:0;q.aimT=q.swing>0||q.castT>0?.2:0}
@@ -1838,7 +1846,7 @@ function netMini(g,half){if(!NET.room)return;const mk=mapKey(),rad=R.mode==='wor
   for(const p of NET.peers.values())if(p.seen&&p.mk===mk){let x=half+(p.x-P.x)/rad*half,y=half+(p.y-P.y)/rad*half;const dx=x-half,dy=y-half,dl=Math.hypot(dx,dy);if(dl>half-7){x=half+dx/dl*(half-7);y=half+dy/dl*(half-7)}
     g.fillStyle='#000';g.beginPath();g.arc(x,y,5,0,6.283);g.fill();g.fillStyle=CLSC[p.cls]||'#7fe07f';g.beginPath();g.arc(x,y,3.6,0,6.283);g.fill()}}
 const mkName=mk=>{if(!mk||mk==='x')return'Menu';const[k,v]=mk.split(':');if(k==='w')return(WORLDS[v]&&WORLDS[v].n)||v;return(DUNGEONS[v]&&DUNGEONS[v].n)||'Donjon'};
-function updParty(){const b=$('bGrp');if(!b)return;const n=NET.room?NET.peers.size+1:0;b.querySelector('small').textContent=NET.room?`Groupe ${n}/4`:'Groupe';b.classList.toggle('on',!!NET.room);
+function updParty(){const b=$('bGrp');if(!b)return;const n=NET.room?NET.peers.size+1:0;b.querySelector('small').textContent=NET.room?(NET.st==='reco'?'Reconnexion…':`${NET.room} · ${n}/4`):'Groupe';b.classList.toggle('on',!!NET.room);
   const t=$('tMulti');if(t)t.textContent=NET.room?`Partie ${NET.room} · ${n}/4`:'Jouer à plusieurs'}
 function openMulti(){
   if(!netURL()){openDlg(`<h3>Jouer à plusieurs</h3><p>Le jeu à plusieurs fonctionne sur la version en ligne du jeu, installée sur son site. Il n’est pas disponible dans cette version.</p>`,[['Fermer',closeDlg]]);return}
@@ -1846,14 +1854,14 @@ function openMulti(){
   if(!NET.room){const nm=netName()||CLSN[meta.cls];
     openDlg(`<h3>Jouer à plusieurs</h3><p class="note">Jouez en coopération jusqu’à 4. Créez une partie et donnez le code à vos amis, ou entrez le code d’une partie.</p>
       <label class="mpf"><span>Votre pseudo</span><input id="mpName" maxlength="16" value="${nm.replace(/"/g,'')}"></label>
-      <label class="mpf"><span>Code d’une partie</span><input id="mpCode" maxlength="4" placeholder="ABCD" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:.3em"></label>`,
+      <label class="mpf"><span>Code d’une partie (4 lettres)</span><input id="mpCode" maxlength="10" placeholder="ABCD" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:.3em"></label>`,
       [['Créer une partie',()=>{const n=$('mpName').value.trim()||CLSN[meta.cls];closeDlg();netConnect('create','',n,goPlay)}],
-       ['Rejoindre avec le code',()=>{const c=$('mpCode').value.trim().toUpperCase(),n=$('mpName').value.trim()||CLSN[meta.cls];if(c.length!==4){toast('Le code fait 4 lettres.');return}closeDlg();netConnect('join',c,n,()=>{NET.goto=1;goPlay()})}],['Fermer',closeDlg]]);return}
-  let h=`<h3>Partie ${NET.room}</h3><p class="note">Donnez ce code à vos amis pour qu’ils vous rejoignent (4 joueurs maximum).</p><div class="mpl">`;
+       ['Rejoindre avec le code',()=>{const c=$('mpCode').value.replace(/[^a-zA-Z]/g,'').toUpperCase(),n=$('mpName').value.trim()||CLSN[meta.cls];if(c.length!==4){toast('Le code fait 4 lettres (pas de chiffres).');return}closeDlg();netConnect('join',c,n,()=>{NET.goto=1;goPlay()})}],['Fermer',closeDlg]]);return}
+  let h=`<h3>Partie</h3><div class="mpcode">${NET.room}</div><p class="note">Donnez ce code à vos amis pour qu’ils vous rejoignent (4 joueurs maximum).</p><div class="mpl">`;
   h+=`<div class="mpm"><b style="color:${CLSC[S.cls]}">${NET.host===NET.id?'♛ ':''}${netName()||CLSN[S.cls]} (vous)</b><small>${CLSN[S.cls]} · niv. ${S.lvl} · ${mkName(mapKey())}</small></div>`;
   const bt=[];for(const p of NET.peers.values()){h+=`<div class="mpm"><b style="color:${CLSC[p.cls]}">${NET.host===p.id?'♛ ':''}${p.name}</b><small>${CLSN[p.cls]||''} · niv. ${p.l} · ${p.seen?mkName(p.mk):'arrive…'}</small></div>`;
     if(p.seen&&p.mk&&p.mk.startsWith('w:'))bt.push([`Aller vers ${p.name}`,()=>{closeDlg();netGoTo(p)}])}
-  h+='</div>';bt.push(['Quitter la partie',()=>{closeDlg();netLeave()}]);bt.push(['Fermer',closeDlg]);openDlg(h,bt)}
+  h+='</div>';bt.unshift(['Partager le code',()=>netShare()]);bt.push(['Quitter la partie',()=>{closeDlg();netLeave()}]);bt.push(['Fermer',closeDlg]);openDlg(h,bt)}
 function netGoTo(p){if(!p||!p.mk||!p.mk.startsWith('w:'))return;const wid=p.mk.slice(2);enterWorld(wid,p.x+50,p.y+30);toast(`Vous rejoignez ${p.name}`,'leg')}
 function goPlay(){if($('title')&&!$('title').hidden&&meta.cls)enterWorld();if(NET.goto){NET.goto=0;setTimeout(()=>{const p=[...NET.peers.values()].find(q=>q.seen&&q.mk&&q.mk.startsWith('w:'));if(p)netGoTo(p)},1200)}}
 function drawPlayer(tt){
