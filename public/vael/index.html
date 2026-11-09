@@ -1992,8 +1992,10 @@ let heroLW=0,heroMv=0,heroStep=0;
 function drawHeroSprite(im,c,x,y,lift){const H=c==='magicien'?74:76,w=H*im.width/im.height,f=P.face,cf=Math.cos(f);
   const atk=P.swing>0?Math.sin((1-P.swing/.2)*3.14):(P.castT>0?Math.min(1,P.castT/.15):0),sp=P.spin>0,fight=atk>0||P.aimT>0;
   const th=fight?.02:.22;if(cf>th)heroFl=-1;else if(cf<-th)heroFl=1;
+  {const ddx=x-(P._lx===undefined?x:P._lx);P._lx=x;if(Math.abs(ddx)>.3&&Math.abs(ddx)<60)P._mf=ddx>0?-1:1}
   const dw=P.walk-heroLW;heroLW=P.walk;heroMv+=((dw>0.0001?1:0)-heroMv)*.25;
   const ph=P.walk,mv=heroMv,now=performance.now()/1000;
+  const legFl=(mv>.3&&P._mf)?P._mf:heroFl,torsoFl=legFl;
   const stepS=Math.sin(ph),bob=mv*Math.abs(Math.sin(ph))*4.2,br=(1-mv)*Math.sin(now*2.4)*.014;
   const s=Math.sign(stepS);if(mv>.5&&s!==heroStep){heroStep=s;part(x+s*6,y+9,rnd(-14,14),rnd(-22,-6),.4,'#5a5040',2.4)}
   const lx=Math.cos(f)*11*atk,ly=Math.sin(f)*7*atk,lean=mv*.07*(-heroFl)*Math.abs(cf)*0+mv*.05;
@@ -2002,12 +2004,12 @@ function drawHeroSprite(im,c,x,y,lift){const H=c==='magicien'?74:76,w=H*im.width
    if(haReady(c)&&t>=0&&t<D&&!sp&&!(P.leap)){const L=HAFR[c],fi=L[Math.min(L.length-1,Math.floor(t/D*L.length))],M=HAMETA[c],fim=P.hurt>0&&HARED[c][fi]?HARED[c][fi]:HATK[c][fi],Hb=H*1.08,Hd=Hb/M.h0,Wd=Hd*fim.width/fim.height;
      const walkL=mv>.3&&hwReady(c);
      if(walkL){/* jambes de la marche sous le buste de l'attaque */const n=HWALK[c].length,wi=Math.floor(((ph/6.283/1.6)%1+1)%1*n)%n,wim=P.hurt>0&&HWRED[c][wi]?HWRED[c][wi]:HWALK[c][wi],WM=HWMETA[c],H2=H*1.08/WM.h0,w2=H2*wim.width/wim.height;
-       cx.save();cx.translate(x,y+13);cx.beginPath();{const lw=c==='guerrier'?H*.3:80;cx.rect(-lw,-H*(c==='guerrier'?.3:.4),lw*2,H*.6)}cx.clip();cx.scale(heroFl,1);cx.drawImage(wim,-w2*WM.cx,-H2,w2,H2);cx.restore()}
-     cx.save();cx.translate(x+Math.cos(f)*(walkL?3:6),y+13+(walkL?-Math.abs(Math.sin(ph))*2.5:Math.sin(f)*4));if(walkL){cx.beginPath();cx.rect(-140,-H*1.6,280,H*1.6-H*(c==='guerrier'?.27:.36));cx.clip()}cx.scale(-heroFl,1);cx.drawImage(fim,-Wd*M.cx,-Hd,Wd,Hd);cx.restore();var bobT=0;
-     if(c==='magicien'){P.tip=[x+heroFl*.27*w,y+13-H*.86]}else P.tip=null;return}}
+       cx.save();cx.translate(x,y+13);cx.beginPath();{const lw=c==='guerrier'?H*.3:80;cx.rect(-lw,-H*(c==='guerrier'?.3:.4),lw*2,H*.6)}cx.clip();cx.scale(-legFl,1);cx.drawImage(wim,-w2*WM.cx,-H2,w2,H2);cx.restore()}
+     cx.save();cx.translate(x+Math.cos(f)*(walkL?3:6),y+13+(walkL?-Math.abs(Math.sin(ph))*2.5:Math.sin(f)*4));if(walkL){cx.beginPath();cx.rect(-140,-H*1.6,280,H*1.6-H*(c==='guerrier'?.27:.36));cx.clip()}cx.scale(-torsoFl,1);cx.drawImage(fim,-Wd*M.cx,-Hd,Wd,Hd);cx.restore();var bobT=0;
+     if(c==='magicien'){P.tip=[x+torsoFl*.27*w,y+13-H*.86]}else P.tip=null;return}}
   if(hwReady(c)){const n=HWALK[c].length,fi=mv>.35?Math.floor(((ph/6.283/1.6)%1+1)%1*n)%n:0,fim=P.hurt>0&&HWRED[c][fi]?HWRED[c][fi]:HWALK[c][fi],WM=HWMETA[c],H2=H*1.08/WM.h0,w2=H2*fim.width/fim.height;
     cx.save();cx.translate(x+lx,y+13+ly);if(sp)cx.rotate(Math.sin(performance.now()/60)*.25);if(P.leap&&P.leap.roll){const k=P.leap.t/P.leap.d;cx.scale(1-Math.sin(k*3.14)*.25,1)}
-    cx.scale(heroFl,1);cx.rotate(-atk*.14);cx.scale(1-br*.5+atk*.03,1+br+atk*.05);cx.drawImage(fim,-w2*WM.cx,-H2,w2,H2);cx.restore();var bobT=0;
+    cx.scale(-legFl,1);cx.rotate(-atk*.14);cx.scale(1-br*.5+atk*.03,1+br+atk*.05);cx.drawImage(fim,-w2*WM.cx,-H2,w2,H2);cx.restore();var bobT=0;
   }else{
   cx.save();cx.translate(x+lx,y+13+ly);
   if(sp)cx.rotate(Math.sin(performance.now()/60)*.25);
@@ -2022,7 +2024,7 @@ function drawHeroSprite(im,c,x,y,lift){const H=c==='magicien'?74:76,w=H*im.width
   cx.restore();
   var bobT=bob;}
   if(c==='guerrier'&&P.swing>0){const k=1-P.swing/.2;cx.save();cx.globalAlpha=.8*(1-k);cx.strokeStyle='#fff3d0';cx.lineWidth=5;cx.lineCap='round';cx.beginPath();cx.arc(x,y-20,40,f-1.1+k*1.2,f+.2+k*1.2);cx.stroke();cx.restore()}
-  if(c==='magicien'){P.tip=[x+lx+heroFl*.27*w,y+13+ly-H*.86-bobT];const g=P.tip;cx.save();cx.globalCompositeOperation='lighter';cx.fillStyle='rgba(120,200,255,.35)';cx.beginPath();cx.arc(g[0],g[1],7+Math.sin(performance.now()/150)*2,0,6.283);cx.fill();cx.restore()}else P.tip=null}
+  if(c==='magicien'){P.tip=[x+lx-legFl*.27*w,y+13+ly-H*.86-bobT];const g=P.tip;cx.save();cx.globalCompositeOperation='lighter';cx.fillStyle='rgba(120,200,255,.35)';cx.beginPath();cx.arc(g[0],g[1],7+Math.sin(performance.now()/150)*2,0,6.283);cx.fill();cx.restore()}else P.tip=null}
 
 /* ========== Multijoueur (coopération 2 à 4) ========== */
 const NET={ws:null,room:null,id:0,host:0,peers:new Map(),st:'off',sendT:0,atk:0,ps:0,pc:0,goto:null};
@@ -3642,7 +3644,7 @@ async function shopReturn(){const q=new URLSearchParams(location.search),a=q.get
     openDlg('<h3>Merci, Fondateur !</h3><p>Votre Pack Fondateur est débloqué. Retrouvez vos familiers, couleurs de sorts et votre titre dans la fiche Héros, rubrique Apparence.</p>',[['Super !',closeDlg]]);return}}
   toast('Le déblocage prend plus de temps que prévu : relancez le jeu dans quelques minutes.')}
 /* ========== Réglages ========== */
-const GAMEV=53;
+const GAMEV=56;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1,fx:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
