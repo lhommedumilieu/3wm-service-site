@@ -1,4 +1,4 @@
-const V='vael-v57';
+const V='vael-v58';
 const CORE=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','confidentialite.html','cgv.html'];
 const MUS=["boss.mp3", "brumeval.mp3", "desert.mp3", "donjon.mp3", "givrecroc.mp3", "ruines.mp3", "titre.mp3", "victoire.mp3", "village.mp3"].map(f=>'musique/'+f);
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
