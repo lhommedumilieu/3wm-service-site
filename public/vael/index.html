@@ -421,7 +421,7 @@ body.lbox #hud *,body.insay #hud *{pointer-events:none!important}
 #bossTitle.act b{color:#fff0d0;text-shadow:0 0 30px #d8b062,0 0 8px #ffcf7a,0 4px 4px #000}
 #bossTitle.act small{font-size:15px;color:#ffd9a0}
 #bossTitle::after{content:"";display:block;width:min(70vw,380px);height:2px;margin:10px auto 0;background:linear-gradient(90deg,transparent,#d8b062,transparent)}
-.dql{display:flex;flex-direction:column;gap:10px;margin:10px 0}.dq{display:flex;gap:10px;align-items:center;padding:9px 10px;border:1px solid #5a3a22;border-radius:10px;background:rgba(30,16,10,.6)}.dq .ic{font-size:22px;width:28px;text-align:center}.dq>div{flex:1;min-width:0}.dq b{display:block;font-size:14px}.dq small{color:#b8a888;font-size:11.5px}.dq .bar{height:6px;border-radius:3px;background:#2a1a12;margin:5px 0 3px;overflow:hidden}.dq .bar i{display:block;height:100%;background:linear-gradient(90deg,#8a6a2a,#e9c56b)}.dq.ok{border-color:#e9c56b;box-shadow:0 0 10px #e9c56b44}.dq.done{opacity:.55}</style>
+.dql{display:flex;flex-direction:column;gap:10px;margin:10px 0}.dq{display:flex;gap:10px;align-items:center;padding:9px 10px;border:1px solid #5a3a22;border-radius:10px;background:rgba(30,16,10,.6)}.dq .ic{font-size:22px;width:28px;text-align:center}.dq>div{flex:1;min-width:0}.dq b{display:block;font-size:14px}.dq small{color:#b8a888;font-size:11.5px}.dq .bar{height:6px;border-radius:3px;background:#2a1a12;margin:5px 0 3px;overflow:hidden}.dq .bar i{display:block;height:100%;background:linear-gradient(90deg,#8a6a2a,#e9c56b)}.dq.ok{border-color:#e9c56b;box-shadow:0 0 10px #e9c56b44}.dq.done{opacity:.55}.jh{display:block;margin:8px 0 0;color:#e9c56b;font-size:14px;letter-spacing:.04em}.bst{display:grid;grid-template-columns:1fr 1fr;gap:6px}.bm{padding:6px 8px;border:1px solid #4a3020;border-radius:8px;background:rgba(30,16,10,.6)}.bm b{display:block;font-size:12.5px}.bm small{color:#e9c56b;font-size:11px}.bm.un{opacity:.45}#dCard{max-height:86vh;overflow:auto}</style>
 
 </head>
 <body>
@@ -1179,7 +1179,7 @@ function hurtP(amt,src){
 let DEADS=[],RAIN=[],lastNight=0;
 const nightness=()=>{if(MAP.kind!=='world')return 0;const p=(performance.now()/1000/600)%1;return clamp((Math.cos(p*6.283)*-1+.15)*.9,0,1)};
 function kill(e){
-  if(e.dead)return;if(typeof achAdd==='function'){achAdd('kill');if(e.elite)achAdd('elite');if(e.boss)achAdd('boss');if(NET.room&&NET.peers.size)achAdd('coopk')}if(NET.room&&!e.remote&&e.nid&&netOn())netSend({t:'die',mk:mapKey(),n:e.nid});e.dead=true;DEADS.push({e,t:0,dur:deathDur(e)});if(DEADS.length>30)DEADS.shift();
+  if(e.dead)return;if(typeof achAdd==='function'){achAdd('kill');if(e.elite)achAdd('elite');if(e.boss)achAdd('boss');if(NET.room&&NET.peers.size)achAdd('coopk')}if(NET.room&&!e.remote&&e.nid&&netOn())netSend({t:'die',mk:mapKey(),n:e.nid});e.dead=true;if(!e.remote)try{discKill(e)}catch(_){}DEADS.push({e,t:0,dur:deathDur(e)});if(DEADS.length>30)DEADS.shift();
   const boost=e.boss?40:e.elite?4:1;
   gainXP((5+e.L*2.2)*e.b.xp*boost*WT().xp);if(e.camp)e.camp.alive--;questKill(e);
   for(let i=0;i<(e.boss?50:10);i++)part(e.x,e.y,rnd(-150,150),rnd(-150,150),rnd(.3,.7),e.col,rnd(2,4));
@@ -2864,6 +2864,7 @@ function drawMini(){
   if(R.mode==='world'){const k=256/WS,rad=1000,sw=rad*2*k;g.drawImage(MAPIMG,P.x*k-sw/2,P.y*k-sw/2,sw,sw,0,0,S2,S2);
     const toM=(x,y)=>[half+(x-P.x)/rad*half,half+(y-P.y)/rad*half];
     for(const f of FEAT){if(f.type==='waypoint'&&S.wp.includes(f.id))dotM(g,toM(f.x,f.y),'#8fc8ff',3);if(f.type==='crypt')dotM(g,toM(f.x,f.y),'#c8a8ff',3.5);if(f.type==='pass')dotM(g,toM(f.x,f.y),'#ffe2a0',3.5);if(f.type==='chest'&&!S.chest.includes(f.id)&&Math.hypot(f.x-P.x,f.y-P.y)<700)dotM(g,toM(f.x,f.y),'#e8c050',2.2)}
+    if(typeof SITES!=='undefined'&&S.disc&&S.disc.s[MAP.wid])for(const i of S.disc.s[MAP.wid]){const s=SITES[i];if(s)dotM(g,toM(s.x,s.y),'#b08a6a',2.6)}
     for(const n of NPCL){const m=npcMark(n);if(m)txtM(g,toM(n.x,n.y),m)}
     const tg=questTarget();if(tg){const p=toM(tg.x,tg.y),dx=p[0]-half,dy=p[1]-half,dl=Math.hypot(dx,dy);const q=dl>half-8?[half+dx/dl*(half-8),half+dy/dl*(half-8)]:p;dotM(g,q,'#ffd34a',4.5)}}
   else{const rad=1100,sc=half/rad;for(let i=0;i<TN;i++)for(let j=0;j<TN;j++)if(SEEN[j*TN+i]){const x=half+(i*TS-P.x)*sc,y=half+(j*TS-P.y)*sc;if(x<-8||y<-8||x>S2||y>S2)continue;g.fillStyle='#5a5258';g.fillRect(x,y,TS*sc+.5,TS*sc+.5)}
@@ -3405,7 +3406,7 @@ function placeSites(wid){SITES=[];const set=SITESET[wid];if(!set)return;let n=0,
     const R0=REG[regionAt(x,y)];
     if(Math.random()<.45){const a=rnd(0,6.283);F2({type:'chest',id:'ru'+wid[0]+ci++,x:x+Math.cos(a)*(r+30),y:y+Math.sin(a)*(r+30)*.8})}
     if(R0&&R0.mobs&&Math.random()<.4)F2({type:'camp',x:x+rnd(-60,60),y:y+r+70,pack:[pick(R0.mobs),pick(R0.mobs),pick(R0.mobs)],L:R0.min||1})}}
-function siteTick(){if(MAP.kind!=='world')return;for(const s of SITES){if(s.seen)continue;if(Math.hypot(P.x-s.x,P.y-s.y)<230){s.seen=1;achAdd('site');toast('Lieu découvert : '+SITEK[s.k][1]);setTimeout(()=>{if(R&&MAP.kind==='world')siteEvent(s)},900)}}}
+function siteTick(){if(MAP.kind!=='world')return;for(const s of SITES){if(s.seen)continue;if(Math.hypot(P.x-s.x,P.y-s.y)<230){s.seen=1;if(discSite(s)){achAdd('site');toast('Lieu découvert : '+SITEK[s.k][1]+' ('+discS().s[MAP.wid].length+'/'+SITES.length+')')}setTimeout(()=>{if(R&&MAP.kind==='world')siteEvent(s)},900)}}}
 /* ========== Météo enrichie ========== */
 const WX={drops:[],flakes:[],ash:[],rip:[]};
 for(let i=0;i<70;i++)WX.flakes.push({x:Math.random(),y:Math.random(),s:rnd(1,2.6),v:rnd(.03,.07),p:rnd(0,6)});
@@ -3490,7 +3491,24 @@ function openDaily(){const D=dailyEnsure();const now=new Date(),mid=new Date(now
     h+=`<div class="dq${q.claimed?' done':ok?' ok':''}"><span class="ic">${p.ic}</span><div><b>${p.t.replace('{n}',q.goal)}</b><div class="bar"><i style="width:${q.prog/q.goal*100}%"></i></div><small>${q.prog} / ${q.goal} · ${r.gold} or + 1 ${ORBS[r.orb].n}${q.claimed?' · récupéré ✓':''}</small></div></div>`;
     if(ok&&!q.claimed)bt.push([`Réclamer ${p.ic}`,()=>dailyClaim(i)])});
   h+=`</div><p class="note">Terminez les 3 pour un bonus : de l’or, un ${ORBS.exalt.n} et +1 jour de série (le bonus grandit chaque jour d’affilée).</p>`;
-  bt.push(['Fermer',closeDlg]);if(bt.length===1)bt.unshift(['Continuer à jouer',closeDlg]);openDlg(h,bt.length>2||bt[0][0].startsWith('Réclamer')?bt:[bt[0]])}
+  bt.push(['📖 Journal',()=>openJournal()]);bt.push(['Fermer',closeDlg]);openDlg(h,bt)}
+/* ========== Journal des découvertes ========== */
+const WNAME={brumeval:'Terres de Brumeval',ruines:'Ruines de Vael',givre:'Pics du Givre',desert:'Désert d’Ashkar'};
+const BRANK=[[10,'Chassé'],[50,'Traqué'],[200,'Fléau']];
+function discS(){if(!S.disc)S.disc={s:{},k:{},b:[],t:[]};for(const w in WNAME)if(!S.disc.s[w])S.disc.s[w]=[];return S.disc}
+function discTitle(id,name,gold,orb){const D=discS();if(D.t.includes(id))return;D.t.push(id);S.gold+=gold;if(orb)S.orbs[orb]=(S.orbs[orb]||0)+1;toast(`🏅 Titre obtenu : « ${name} » · +${gold} or${orb?' · +1 '+ORBS[orb].n:''}`,'leg');sfx('legend');save()}
+function discSite(s){const D=discS(),w=MAP.wid,i=SITES.indexOf(s);if(!D.s[w]||D.s[w].includes(i))return false;D.s[w].push(i);save();
+  if(D.s[w].length>=SITES.length)discTitle('exp_'+w,'Explorateur des '+WNAME[w].replace(/^(Terres|Ruines|Pics) de[s]? /,'').replace(/^Désert d’/,'Sables d’'),800,'exalt');
+  if(Object.keys(WNAME).every(k=>D.s[k].length>=16))discTitle('exp_all','Cartographe de Vael',3000,'exalt');return true}
+function discKill(e){const D=discS();if(e.boss){if(e.name&&!D.b.includes(e.name)){D.b.push(e.name);if(D.b.length>=10)discTitle('boss10','Tueur de légendes',2000,'exalt')}return}
+  const n=D.k[e.t]=(D.k[e.t]||0)+1;for(const[r,lab]of BRANK)if(n===r){if(r===200)discTitle('fl_'+e.t,'Fléau des '+(MLAB[e.t]||e.t),600,'divin');else toast(`📖 Bestiaire : ${MLAB[e.t]||e.t} — rang « ${lab} »`)}}
+function openJournal(){const D=discS();let h='<h3>📖 Journal des découvertes</h3><div class="dql">';
+  h+='<b class="jh">Lieux en ruine</b>';for(const w in WNAME){const n=D.s[w].length,N=16;h+=`<div class="dq${n>=N?' ok':''}"><span class="ic">🗺</span><div><b>${WNAME[w]}</b><div class="bar"><i style="width:${n/N*100}%"></i></div><small>${n} / ${N} lieux découverts${n>=N?' · titre obtenu ✓':''}</small></div></div>`}
+  h+='<b class="jh">Bestiaire</b><div class="bst">';for(const t in ET){if(!MLAB[t])continue;const n=D.k[t]||0,rk=BRANK.filter(r=>n>=r[0]).length;h+=`<div class="bm${n?'':' un'}"><b>${n?(MLAB[t][0].toUpperCase()+MLAB[t].slice(1)):'???'}</b><small>${n} vaincu${n>1?'s':''} · ${'★'.repeat(rk)}${'☆'.repeat(3-rk)}</small></div>`}h+='</div>';
+  h+=`<b class="jh">Boss vaincus (${D.b.length})</b><p class="note">${D.b.length?D.b.join(' · '):'Aucun pour l’instant.'}</p>`;
+  h+=`<b class="jh">Titres (${D.t.length})</b><p class="note">${D.t.length?D.t.map(id=>'🏅 '+jTitleName(id)).join('<br>'):'Explorez toutes les ruines d’un monde ou vainquez 200 monstres d’une même espèce pour gagner des titres.'}</p></div>`;
+  openDlg(h,[['Fermer',closeDlg],['📜 Quêtes du jour',()=>openDaily()]])}
+function jTitleName(id){if(id==='exp_all')return'Cartographe de Vael';if(id==='boss10')return'Tueur de légendes';if(id.startsWith('exp_')){const w=id.slice(4);return'Explorateur des '+WNAME[w].replace(/^(Terres|Ruines|Pics) de[s]? /,'').replace(/^Désert d’/,'Sables d’')}if(id.startsWith('fl_'))return'Fléau des '+(MLAB[id.slice(3)]||id.slice(3));return id}
 function placeB(list){for(const[k,dx,dy,r]of list){const x=VIL.x+dx,y=VIL.y+dy;addOb({type:'b_'+k,x,y,r:r||46,vr:170})}}
 function genGivre(){
   const V=(dx,dy)=>[VIL.x+dx,VIL.y+dy];
@@ -3916,7 +3934,7 @@ async function shopReturn(){const q=new URLSearchParams(location.search),a=q.get
     openDlg('<h3>Merci, Fondateur !</h3><p>Votre Pack Fondateur est débloqué. Retrouvez vos familiers, couleurs de sorts et votre titre dans la fiche Héros, rubrique Apparence.</p>',[['Super !',closeDlg]]);return}}
   toast('Le déblocage prend plus de temps que prévu : relancez le jeu dans quelques minutes.')}
 /* ========== Réglages ========== */
-const GAMEV=63;
+const GAMEV=64;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1,fx:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
