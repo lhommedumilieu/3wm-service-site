@@ -421,7 +421,7 @@ body.lbox #hud *,body.insay #hud *{pointer-events:none!important}
 #bossTitle.act b{color:#fff0d0;text-shadow:0 0 30px #d8b062,0 0 8px #ffcf7a,0 4px 4px #000}
 #bossTitle.act small{font-size:15px;color:#ffd9a0}
 #bossTitle::after{content:"";display:block;width:min(70vw,380px);height:2px;margin:10px auto 0;background:linear-gradient(90deg,transparent,#d8b062,transparent)}
-</style>
+.dql{display:flex;flex-direction:column;gap:10px;margin:10px 0}.dq{display:flex;gap:10px;align-items:center;padding:9px 10px;border:1px solid #5a3a22;border-radius:10px;background:rgba(30,16,10,.6)}.dq .ic{font-size:22px;width:28px;text-align:center}.dq>div{flex:1;min-width:0}.dq b{display:block;font-size:14px}.dq small{color:#b8a888;font-size:11.5px}.dq .bar{height:6px;border-radius:3px;background:#2a1a12;margin:5px 0 3px;overflow:hidden}.dq .bar i{display:block;height:100%;background:linear-gradient(90deg,#8a6a2a,#e9c56b)}.dq.ok{border-color:#e9c56b;box-shadow:0 0 10px #e9c56b44}.dq.done{opacity:.55}</style>
 
 </head>
 <body>
@@ -452,6 +452,7 @@ body.lbox #hud *,body.insay #hud *{pointer-events:none!important}
     <button class="mbtn" id="bGrp" aria-label="Jouer à plusieurs"><svg viewBox="0 0 24 24"><path d="M8 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7zm8 0a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM1.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5zm14.5 0c0-2-.7-3.9-1.9-5.3.6-.2 1.2-.2 1.9-.2 3 0 5.5 2.5 5.5 5.5z"/></svg><small>Groupe</small></button>
     <button class="mbtn" id="bBag" aria-label="Personnage et sac"><svg viewBox="0 0 24 24"><path d="M9 3h6l1 3h3l2 15H3L5 6h3zm1.3 3h3.4l-.4-1.2h-2.6z"/></svg><small>Sac</small></button>
     <button class="mbtn" id="bTal" aria-label="Talents"><svg viewBox="0 0 24 24"><path d="M12 2l2.6 6.2L21 9l-5 4.4L17.5 20 12 16.6 6.5 20 8 13.4 3 9l6.4-.8z"/></svg><small>Talents</small><span class="dot" id="ptDot" hidden></span></button>
+    <button class="mbtn" id="bDaily" aria-label="Quêtes du jour"><svg viewBox="0 0 24 24"><path d="M6 2h11a3 3 0 0 1 3 3v2h-3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-2h3V5a3 3 0 0 1 1-3zm2 5v2h7V7zm0 4v2h7v-2zm0 4v2h5v-2z"/></svg><small>Quêtes</small><span class="dot" id="dqDot" hidden></span></button>
     <button class="mbtn" id="bCfg" aria-label="Réglages"><svg viewBox="0 0 24 24"><path d="M10.3 2h3.4l.5 2.6 1.9.8 2.2-1.5 2.4 2.4-1.5 2.2.8 1.9 2.6.5v3.4l-2.6.5-.8 1.9 1.5 2.2-2.4 2.4-2.2-1.5-1.9.8-.5 2.6h-3.4l-.5-2.6-1.9-.8-2.2 1.5-2.4-2.4 1.5-2.2-.8-1.9L2 13.7v-3.4l2.6-.5.8-1.9-1.5-2.2 2.4-2.4 2.2 1.5 1.9-.8zM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z"/></svg><small>Réglages</small></button>
     <button class="mbtn" id="bPause" aria-label="Pause"><svg viewBox="0 0 24 24"><path d="M7 5h4v14H7zm6 0h4v14h-4z"/></svg><small>Pause</small></button>
     </div>
@@ -2607,7 +2608,7 @@ document.querySelectorAll('.sk[data-s]').forEach(b=>{const i=+b.dataset.s;
   const up=()=>{IN.held[i]=0};b.addEventListener('pointerup',up);b.addEventListener('pointercancel',up);b.addEventListener('lostpointercapture',up);
   b.addEventListener('contextmenu',e=>e.preventDefault())});
 $('fl').addEventListener('pointerdown',ev=>{ev.preventDefault();useFlask()});
-$('bCfg').onclick=()=>openCfg();$('bGrp').onclick=()=>openMulti();$('tMulti').onclick=()=>openMulti();$('tAcc').onclick=()=>openAcc();$('tShop').onclick=()=>openShop('fondateur');$('bBag').onclick=()=>openSheet('sac');$('bTal').onclick=()=>openSheet('tal');
+$('bCfg').onclick=()=>openCfg();$('bGrp').onclick=()=>openMulti();$('tMulti').onclick=()=>openMulti();$('tAcc').onclick=()=>openAcc();$('tShop').onclick=()=>openShop('fondateur');$('bBag').onclick=()=>openSheet('sac');$('bTal').onclick=()=>openSheet('tal');$('bDaily').onclick=()=>{if(R&&!R.over){paused=true;clearInput();openDaily()}};setInterval(()=>{if(S&&S.cls&&R)dailyDot()},3000);
 $('bPause').onclick=()=>{if(!R||R.over)return;paused=true;clearInput();const o=$('endOv');o.hidden=false;$('eEy').textContent='Faille '+ROMAN(R.tier);$('eH').textContent='Pause';
   if(R.mode!=='rift'){$('eEy').textContent=R.mode==='dungeon'?DUNGEONS[R.did].n:(REG[R.reg||'village']||REG.village).n;$('eP').textContent=qText()[0]}else $('eP').textContent=`${R.kills} / ${R.goal} monstres abattus.`;
   $('eBtns').innerHTML=`<button class="big" data-p="resume">Reprendre</button><button class="btn" data-p="quit">${R.mode==='rift'?'Quitter la faille':'Menu principal'}</button>`};
@@ -3175,7 +3176,7 @@ function findAct(){
   return best;
 }
 function setAct(a){const b=$('act');if(!a){b.hidden=true;ACT=null;return}if(ACT&&ACT.label===a.label){ACT=a;return}ACT=a;b.textContent=a.label;b.hidden=false}
-function openChest(f){S.chest.push(f.id);save();sfx('legend',.5);shake(3);
+function openChest(f){S.chest.push(f.id);save();achAdd('chest');sfx('legend',.5);shake(3);
   const L=regionLevel(regionAt(f.x,f.y));for(let i=0;i<ri(2,3);i++){let rar=rollRarity(2.2);if(i===0&&rar<1)rar=1;addDrop(f.x,f.y+20,{kind:'item',item:makeItem(pick(SLOTS)[0],L+1,rar)})}
   for(let i=0;i<3;i++)addDrop(f.x,f.y+20,{kind:'gold',amt:Math.round(ri(4,9)*(1+L*.6))});if(Math.random()<.4)addDrop(f.x,f.y+20,{kind:'orb',orb:pick(['trans','chaos','divin'])})}
 /* --- Journal et carte --- */
@@ -3362,7 +3363,7 @@ function guardTick(dt){if(MAP.kind!=='world'||!GUARDS.length)return;const L=guar
 function hurtGuard(G,amt){G.hp-=amt;G.hit=.2;FT.push({x:G.x,y:G.y-60,v:Math.round(amt),t:0,col:'#ffb070'});if(G.hp<=0){G.dead=30;G.hp=0;FT.push({x:G.x,y:G.y-70,v:'Garde à terre !',t:0,col:'#ff8a5a'})}}
 function raidTick(dt){if(MAP.kind!=='world'||!WALLR||!WALLR.gates.length)return;guardTick(dt);
   const live=E.filter(e=>e.raid&&!e.dead);
-  if(R.raid&&!live.length){R.raid=0;const gold=Math.round(40*guardL()*(1+RAIDN*.1));S.gold+=gold;sfx('gold');toast('Le village a repoussé l’attaque ! +'+gold+' or','leg')}
+  if(R.raid&&!live.length){R.raid=0;achAdd('raid');const gold=Math.round(40*guardL()*(1+RAIDN*.1));S.gold+=gold;sfx('gold');toast('Le village a repoussé l’attaque ! +'+gold+' or','leg')}
   if(R.raid||R.boss)return;if(R.raidT==null)R.raidT=rnd(70,110);
   if(Math.hypot(P.x-VIL.x,P.y-VIL.y)>1600)return;R.raidT-=dt;if(R.raidT>0)return;R.raidT=rnd(150,240);
   const a0=pick(WALLR.gates),gx=VIL.x+Math.cos(a0)*WALLR.rx,gy=VIL.y+Math.sin(a0)*WALLR.ry;
@@ -3404,7 +3405,7 @@ function placeSites(wid){SITES=[];const set=SITESET[wid];if(!set)return;let n=0,
     const R0=REG[regionAt(x,y)];
     if(Math.random()<.45){const a=rnd(0,6.283);F2({type:'chest',id:'ru'+wid[0]+ci++,x:x+Math.cos(a)*(r+30),y:y+Math.sin(a)*(r+30)*.8})}
     if(R0&&R0.mobs&&Math.random()<.4)F2({type:'camp',x:x+rnd(-60,60),y:y+r+70,pack:[pick(R0.mobs),pick(R0.mobs),pick(R0.mobs)],L:R0.min||1})}}
-function siteTick(){if(MAP.kind!=='world')return;for(const s of SITES){if(s.seen)continue;if(Math.hypot(P.x-s.x,P.y-s.y)<230){s.seen=1;toast('Lieu découvert : '+SITEK[s.k][1]);setTimeout(()=>{if(R&&MAP.kind==='world')siteEvent(s)},900)}}}
+function siteTick(){if(MAP.kind!=='world')return;for(const s of SITES){if(s.seen)continue;if(Math.hypot(P.x-s.x,P.y-s.y)<230){s.seen=1;achAdd('site');toast('Lieu découvert : '+SITEK[s.k][1]);setTimeout(()=>{if(R&&MAP.kind==='world')siteEvent(s)},900)}}}
 /* ========== Météo enrichie ========== */
 const WX={drops:[],flakes:[],ash:[],rip:[]};
 for(let i=0;i<70;i++)WX.flakes.push({x:Math.random(),y:Math.random(),s:rnd(1,2.6),v:rnd(.03,.07),p:rnd(0,6)});
@@ -3457,6 +3458,39 @@ function siteEvent(s){const R0=REG[regionAt(s.x,s.y)],L=(R0&&R0.min||1)+1,mobs=(
   case'r_arche':ring(R0&&R0.mobs&&R0.mobs.includes('momie')?'momie':pick(mobs),ri(3,5),110);toast('Le sable tremble sous l’arche…','leg');sfx('warn');break;
   case'r_camp':case'r_charrette':case'r_squelette':{const g=Math.round(ri(15,30)*(1+L*.5));for(let i=0;i<3;i++)addDrop(s.x,s.y+50,{kind:'gold',amt:Math.round(g/3)});if(Math.random()<.4)addDrop(s.x,s.y+50,{kind:'item',item:makeItem(pick(SLOTS)[0],L,rollRarity(1.5))});toast(s.k==='r_squelette'?'Quelque chose brille entre les ossements…':'Vous fouillez les restes… il reste un peu de butin.');sfx('gold');break}
   }}
+/* ========== Quêtes du jour ========== */
+const DPOOL=[
+ {k:'kill',n:[60,100,150],t:'Abattre {n} monstres',ic:'⚔'},
+ {k:'elite',n:[2,3,5],t:'Vaincre {n} monstres d’élite',ic:'✦'},
+ {k:'raid',n:[1,2],t:'Repousser {n} attaque(s) de village',ic:'🛡'},
+ {k:'site',n:[2,3,4],t:'Découvrir {n} lieux en ruine',ic:'🗺'},
+ {k:'chest',n:[2,3],t:'Ouvrir {n} coffres',ic:'🗝'},
+ {k:'dj',n:[1,2],t:'Terminer {n} donjon(s)',ic:'🏰'},
+ {k:'dodge',n:[15,25],t:'Esquiver {n} fois',ic:'💨'},
+ {k:'fiole',n:[5,8],t:'Boire {n} fioles de soin',ic:'⚗'}];
+const dayKey=()=>{const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()};
+function dailyEnsure(){const k=dayKey();if(S.daily&&S.daily.day===k)return S.daily;
+  const prev=S.daily,yd=new Date(Date.now()-864e5),yk=yd.getFullYear()+'-'+(yd.getMonth()+1)+'-'+yd.getDate();
+  const streak=prev&&prev.allDone&&prev.day===yk?(prev.streak||0):0;
+  let h=0;for(const c of k+S.cls)h=(h*31+c.charCodeAt(0))>>>0;const pool=DPOOL.slice(),q=[];
+  while(q.length<3){h=(h*1103515245+12345)>>>0;const p=pool.splice(h%pool.length,1)[0];q.push({k:p.k,goal:p.n[(h>>8)%p.n.length],prog:0,claimed:0})}
+  S.daily={day:k,q,allDone:0,bonus:0,streak};save();return S.daily}
+function dailyAdd(k,n){if(!S||!S.cls)return;const D=dailyEnsure();for(const q of D.q){if(q.k!==k||q.prog>=q.goal)continue;q.prog=Math.min(q.goal,q.prog+n);
+    if(q.prog>=q.goal){const p=DPOOL.find(p=>p.k===q.k);toast('📜 Quête du jour accomplie : '+p.t.replace('{n}',q.goal)+' — réclamez la récompense !','leg');sfx('orb');save()}}
+  dailyDot()}
+function dReward(q){const L=Math.max(1,S.lvl||1);return {gold:Math.round((40+L*12)*(q.goal>=100||['dj','raid'].includes(q.k)?1.4:1)),orb:['dj','raid','elite'].includes(q.k)?'divin':'chaos'}}
+function dailyClaim(i){const D=dailyEnsure(),q=D.q[i];if(!q||q.claimed||q.prog<q.goal)return;q.claimed=1;const r=dReward(q);S.gold+=r.gold;S.orbs[r.orb]=(S.orbs[r.orb]||0)+1;sfx('gold');toast(`+${r.gold} or · +1 ${ORBS[r.orb].n}`,'leg');
+  if(D.q.every(q=>q.claimed)&&!D.bonus){D.bonus=1;D.allDone=1;D.streak=(D.streak||0)+1;const g=Math.round((150+S.lvl*30)*(1+Math.min(6,D.streak-1)*.15));S.gold+=g;S.orbs.exalt=(S.orbs.exalt||0)+1;
+    toast(`🏆 Les 3 quêtes du jour sont terminées ! +${g} or · +1 ${ORBS.exalt.n} · série de ${D.streak} jour${D.streak>1?'s':''}`,'leg');sfx('legend')}
+  save();dailyDot();openDaily()}
+function dailyDot(){const b=$('dqDot');if(!b)return;const D=S.daily;const n=D?D.q.filter(q=>q.prog>=q.goal&&!q.claimed).length:0;b.hidden=!n;b.textContent=n}
+function openDaily(){const D=dailyEnsure();const now=new Date(),mid=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1),hl=Math.floor((mid-now)/36e5),ml=Math.floor((mid-now)/6e4)%60;
+  let h=`<h3>📜 Quêtes du jour</h3><p class="note">Nouvelles quêtes dans ${hl} h ${ml} min${D.streak?` · série : ${D.streak} jour${D.streak>1?'s':''} 🔥`:''}</p><div class="dql">`;
+  const bt=[];D.q.forEach((q,i)=>{const p=DPOOL.find(p=>p.k===q.k),r=dReward(q),ok=q.prog>=q.goal;
+    h+=`<div class="dq${q.claimed?' done':ok?' ok':''}"><span class="ic">${p.ic}</span><div><b>${p.t.replace('{n}',q.goal)}</b><div class="bar"><i style="width:${q.prog/q.goal*100}%"></i></div><small>${q.prog} / ${q.goal} · ${r.gold} or + 1 ${ORBS[r.orb].n}${q.claimed?' · récupéré ✓':''}</small></div></div>`;
+    if(ok&&!q.claimed)bt.push([`Réclamer ${p.ic}`,()=>dailyClaim(i)])});
+  h+=`</div><p class="note">Terminez les 3 pour un bonus : de l’or, un ${ORBS.exalt.n} et +1 jour de série (le bonus grandit chaque jour d’affilée).</p>`;
+  bt.push(['Fermer',closeDlg]);if(bt.length===1)bt.unshift(['Continuer à jouer',closeDlg]);openDlg(h,bt.length>2||bt[0][0].startsWith('Réclamer')?bt:[bt[0]])}
 function placeB(list){for(const[k,dx,dy,r]of list){const x=VIL.x+dx,y=VIL.y+dy;addOb({type:'b_'+k,x,y,r:r||46,vr:170})}}
 function genGivre(){
   const V=(dx,dy)=>[VIL.x+dx,VIL.y+dy];
@@ -3537,7 +3571,7 @@ function genDesert(){
 /* ========== Succès ========== */
 const ACK='cendres_vael_ach';let ACH={c:{},done:{}};try{Object.assign(ACH,JSON.parse(localStorage.getItem(ACK)||'{}'))}catch(e){}
 const achSave=()=>{try{localStorage.setItem(ACK,JSON.stringify(ACH))}catch(e){}};
-const achAdd=(k,n=1)=>{ACH.c[k]=(ACH.c[k]||0)+n};
+const achAdd=(k,n=1)=>{ACH.c[k]=(ACH.c[k]||0)+n;if(typeof dailyAdd==='function')try{dailyAdd(k,n)}catch(e){}};
 const AC=k=>ACH.c[k]||0;
 const ACHS=[
  {id:'k1',n:'Premier sang',d:'Tuer un monstre',ok:()=>AC('kill')>=1,g:50},
@@ -3882,7 +3916,7 @@ async function shopReturn(){const q=new URLSearchParams(location.search),a=q.get
     openDlg('<h3>Merci, Fondateur !</h3><p>Votre Pack Fondateur est débloqué. Retrouvez vos familiers, couleurs de sorts et votre titre dans la fiche Héros, rubrique Apparence.</p>',[['Super !',closeDlg]]);return}}
   toast('Le déblocage prend plus de temps que prévu : relancez le jeu dans quelques minutes.')}
 /* ========== Réglages ========== */
-const GAMEV=62;
+const GAMEV=63;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1,fx:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
