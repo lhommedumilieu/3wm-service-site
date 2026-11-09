@@ -2000,7 +2000,10 @@ function drawHeroSprite(im,c,x,y,lift){const H=c==='magicien'?74:76,w=H*im.width
   const src=P.hurt>0&&HRED[c]?HRED[c]:im,K=.6,hip=H*(1-K),iw=im.width,ih=im.height;
   {const nw=performance.now()/1000;if(P.swing>hPrevSw+.05||P.castT>hPrevCt+.05)hAtkT=nw;hPrevSw=P.swing;hPrevCt=P.castT;const D=window.HADUR||HADU[c]||.38,t=nw-hAtkT;
    if(haReady(c)&&t>=0&&t<D&&!sp&&!(P.leap)){const L=HAFR[c],fi=L[Math.min(L.length-1,Math.floor(t/D*L.length))],M=HAMETA[c],fim=P.hurt>0&&HARED[c][fi]?HARED[c][fi]:HATK[c][fi],Hb=H*1.08,Hd=Hb/M.h0,Wd=Hd*fim.width/fim.height;
-     cx.save();cx.translate(x+Math.cos(f)*6,y+13+Math.sin(f)*4);cx.scale(-heroFl,1);cx.drawImage(fim,-Wd*M.cx,-Hd,Wd,Hd);cx.restore();var bobT=0;
+     const walkL=mv>.3&&hwReady(c);
+     if(walkL){/* jambes de la marche sous le buste de l'attaque */const n=HWALK[c].length,wi=Math.floor(((ph/6.283/1.6)%1+1)%1*n)%n,wim=P.hurt>0&&HWRED[c][wi]?HWRED[c][wi]:HWALK[c][wi],WM=HWMETA[c],H2=H*1.08/WM.h0,w2=H2*wim.width/wim.height;
+       cx.save();cx.translate(x,y+13);cx.beginPath();{const lw=c==='guerrier'?H*.3:80;cx.rect(-lw,-H*(c==='guerrier'?.3:.4),lw*2,H*.6)}cx.clip();cx.scale(heroFl,1);cx.drawImage(wim,-w2*WM.cx,-H2,w2,H2);cx.restore()}
+     cx.save();cx.translate(x+Math.cos(f)*(walkL?3:6),y+13+(walkL?-Math.abs(Math.sin(ph))*2.5:Math.sin(f)*4));if(walkL){cx.beginPath();cx.rect(-140,-H*1.6,280,H*1.6-H*(c==='guerrier'?.27:.36));cx.clip()}cx.scale(-heroFl,1);cx.drawImage(fim,-Wd*M.cx,-Hd,Wd,Hd);cx.restore();var bobT=0;
      if(c==='magicien'){P.tip=[x+heroFl*.27*w,y+13-H*.86]}else P.tip=null;return}}
   if(hwReady(c)){const n=HWALK[c].length,fi=mv>.35?Math.floor(((ph/6.283/1.6)%1+1)%1*n)%n:0,fim=P.hurt>0&&HWRED[c][fi]?HWRED[c][fi]:HWALK[c][fi],WM=HWMETA[c],H2=H*1.08/WM.h0,w2=H2*fim.width/fim.height;
     cx.save();cx.translate(x+lx,y+13+ly);if(sp)cx.rotate(Math.sin(performance.now()/60)*.25);if(P.leap&&P.leap.roll){const k=P.leap.t/P.leap.d;cx.scale(1-Math.sin(k*3.14)*.25,1)}
@@ -3639,7 +3642,7 @@ async function shopReturn(){const q=new URLSearchParams(location.search),a=q.get
     openDlg('<h3>Merci, Fondateur !</h3><p>Votre Pack Fondateur est débloqué. Retrouvez vos familiers, couleurs de sorts et votre titre dans la fiche Héros, rubrique Apparence.</p>',[['Super !',closeDlg]]);return}}
   toast('Le déblocage prend plus de temps que prévu : relancez le jeu dans quelques minutes.')}
 /* ========== Réglages ========== */
-const GAMEV=52;
+const GAMEV=53;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1,fx:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
