@@ -1,4 +1,4 @@
-const V='vael-v112';
+const V='vael-v126';
 const CORE=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png','apple-touch-icon.png','confidentialite.html','cgv.html'];
 const MUS=["boss.mp3", "brumeval.mp3", "desert.mp3", "donjon.mp3", "givrecroc.mp3", "ruines.mp3", "titre.mp3", "victoire.mp3", "village.mp3"].map(f=>'musique/'+f);
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()))});
@@ -8,8 +8,8 @@ async function ranged(req,res){const r=req.headers.get('range');if(!r)return res
 self.addEventListener('fetch',e=>{const q=e.request;if(q.method!=='GET'||new URL(q.url).origin!==location.origin)return;
   const isMus=q.url.includes('/musique/');
   const isPage=q.mode==='navigate'||/\/(index\.html)?$/.test(new URL(q.url).pathname);
-  if(isPage){e.respondWith(caches.open(V).then(async c=>{try{const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),6000);const r=await fetch(q,{cache:'no-store',signal:ctl.signal});clearTimeout(tm);if(r.ok)c.put('index.html',r.clone());return r}catch(err){return (await c.match('index.html'))||Response.error()}}));return}
+  if(isPage){e.respondWith(caches.open(V).then(async c=>{try{const ctl=new AbortController(),tm=setTimeout(()=>ctl.abort(),6000);const gm=/\/(index\.html)?$/.test(new URL(q.url).pathname);const r=await fetch(q,{cache:'no-store',signal:ctl.signal});clearTimeout(tm);if(r.ok)c.put(gm?'index.html':q.url.split('#')[0].split('?')[0],r.clone());return r}catch(err){return (await c.match(q.url.split('#')[0],{ignoreSearch:true}))||(await c.match('index.html'))||Response.error()}}));return}
   e.respondWith(caches.open(V).then(async c=>{const hit=await c.match(q.url.split('#')[0],{ignoreSearch:true});
     if(hit)return isMus?ranged(q,hit):hit;
     if(isMus){c.add(q.url).catch(()=>{});return fetch(q)}
-    try{const r=await fetch(q);if(r.ok&&q.mode==='navigate')c.put('index.html',r.clone());return r}catch(err){return (await c.match('index.html'))||Response.error()}}))});
+    try{const r=await fetch(q);return r}catch(err){return (await c.match('index.html'))||Response.error()}}))});
