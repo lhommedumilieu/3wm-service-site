@@ -1835,7 +1835,7 @@ function drawCore(dt){
   const inV=(x,y,m=0)=>x>x0-m&&x<x1+m&&y>y0-m&&y<y1+m;
   const VIS=visibleObs(x0-300,y0-300,x1+300,y1+300);
   drawGround(x0,y0,x1,y1,tt);
-  for(const g of grime)if(inV(g.x,g.y,g.r)){cx.globalAlpha=g.a;cx.drawImage(DSPR,g.x-g.r,g.y-g.r,g.r*2,g.r*2)}
+  if(!LITE)for(const g of grime)if(inV(g.x,g.y,g.r)){cx.globalAlpha=g.a;cx.drawImage(DSPR,g.x-g.r,g.y-g.r,g.r*2,g.r*2)}
   cx.globalAlpha=1;
   // murs d'enceinte
   if(MAP.kind==='rift'){cx.fillStyle='#120f13';cx.fillRect(0,0,WS,40);cx.fillRect(0,WS-40,WS,40);cx.fillRect(0,0,40,WS);cx.fillRect(WS-40,0,40,WS);
@@ -4943,7 +4943,7 @@ async function shopReturn(){const q=new URLSearchParams(location.search),a=q.get
     openDlg(nw==='fondateur'?'<h3>Merci, Fondateur !</h3><p>Votre Pack Fondateur est débloqué. Retrouvez vos familiers, couleurs de sorts et votre titre dans la fiche Héros, rubrique Apparence.</p>':'<h3>Merci pour votre soutien !</h3><p>Votre Pack Compagnons est débloqué : retrouvez vos 5 nouveaux familiers dans la fiche Héros, rubrique Apparence.</p>',[['Super !',closeDlg]]);return}}
   toast('Le déblocage prend plus de temps que prévu : relancez le jeu dans quelques minutes.')}
 /* ========== Réglages ========== */
-const GAMEV=132;
+const GAMEV=133;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1,fx:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
