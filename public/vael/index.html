@@ -1241,6 +1241,7 @@ function idleWander(e,dt){if(e.fixed&&MAP.kind==='dungeon'&&Math.random()<.3)ret
   const dx=e.tx-e.x,dy=e.ty-e.y,L=Math.hypot(dx,dy);if(L<4||e.wt<0){e.tx=null;e.wt=rnd(1.5,4.5);return}
   const v=e.spd*.32*dt;const ox=e.x,oy=e.y;e.x+=dx/L*v;e.y+=dy/L*v;pushOut(e);if(Math.hypot(e.x-ox,e.y-oy)<v*.3){e.tx=null;e.wt=rnd(1,3)}}
 function updEnemy(e,dt){
+  if(e.boss&&!e._cpre&&e.idle&&Math.hypot(P.x-e.x,P.y-e.y)<1500){e._cpre=1;try{const k=mobKey(e);if(k&&k.startsWith('b_'))cinePrep(k.slice(2))}catch(_){}}
   if(R.mode==='world'&&inSafe(P.x,P.y)&&!e.raid&&!P.guard){e.wind=0;e.charge=0;if(e.flash>0)e.flash-=dt;if(e.slow>0)e.slow-=dt;return}
   if(P.mnt&&!e.raid){e.wind=0;e.charge=0;if(e.flash>0)e.flash-=dt;if(e.slow>0)e.slow-=dt;if(!e.boss){e.idle=1;idleWander(e,dt)}return}
   if(e.idle){if(Math.hypot(P.x-e.x,P.y-e.y)<(MAP.kind==='dungeon'?520:600)){e.idle=0;if(e.boss&&!R.boss){R.boss=e;$('bossBar').classList.toggle('rage',!!e.ph2);if(!bossIntro(e)){$('bossBar').hidden=false;$('bossName').textContent=e.name;bossCard(e);sfx('roar');toast(e.name+' vous a repéré !','leg')}}}else{if(!e.boss)idleWander(e,dt);return}}
@@ -1820,7 +1821,7 @@ const eyeAt=(e,a,lx2,ly,rgb,s)=>EYES.push([e.x+Math.cos(a)*lx2-Math.sin(a)*ly,e.
 let MOFF=0,LOX=0,LOY=0;const MXC={t:0,r:null};
 function menuRect(){const n=performance.now();if(n-MXC.t>400){MXC.t=n;MXC.r=null;try{const m=$('menu'),h=$('hud');if(m&&h&&!h.hidden&&!m.classList.contains('closed')){const l=$('mList'),r=(l&&l.offsetParent!==null?l:m).getBoundingClientRect();if(r.width>0)MXC.r={x:r.right,t:r.top,b:r.bottom}}}catch(e){}}return MXC.r}
 function nameX(x,y,txt){const r=menuRect();if(!r)return x;const sy=y*ZM+LOY;if(sy<r.t-10||sy>r.b+10)return x;return Math.max(x,(r.x+10-LOX)/ZM+cx.measureText(txt).width/2)}
-function draw(dt){camStep(dt);if(CAM.on&&CAM.z!==1){const z0=ZM;ZM*=CAM.z;try{drawCore(dt)}finally{ZM=z0}}else drawCore(dt)}
+function draw(dt){if(window.CINE_ON&&document.getElementById('cineV')&&document.getElementById('cineV').style.opacity==='1')return;camStep(dt);if(CAM.on&&CAM.z!==1){const z0=ZM;ZM*=CAM.z;try{drawCore(dt)}finally{ZM=z0}}else drawCore(dt)}
 function drawCore(dt){
   LIGHTS.length=0;EYES.length=0;
   const tt=performance.now()/1000;
@@ -4862,10 +4863,11 @@ const BOSSLINE={
  'Sphinx':['d’Ashkar','Réponds, mortel : qu’est-ce qui marche vers sa tombe en se croyant héros ? …Toi.']};
 function bossLine(e){for(const k in BOSSLINE)if(e.name&&e.name.includes(k))return BOSSLINE[k];return null}
 const BCINE=['gardien','grishak','grokk','ignar','karvos','noye','veilleur','morwen','ossarque','isolde','vael','nyx','ashkar','vorhal','fenrel','sphinx','rampants','reinescorp','wyrm'];
+const CPRE={};function cinePrep(id){if(!BCINE.includes(id)||CPRE[id])return;const v=document.createElement('video');v.preload='auto';v.muted=true;v.playsInline=true;v.setAttribute('playsinline','');v.src='cine/'+id+'.mp4?v='+GAMEV;try{v.load()}catch(e){}CPRE[id]=v}
 function cinePlay(id,done,nm){if(!id||!BCINE.includes(id)){done(false);return}
   let fin=false,ok=false;const o=document.createElement('div');o.id='cineV';
   o.style.cssText='position:fixed;inset:0;z-index:2147482000;background:#000;opacity:0;transition:opacity .4s';
-  const v=document.createElement('video');v.src='cine/'+id+'.mp4?v='+GAMEV;v.playsInline=true;v.setAttribute('playsinline','');v.preload='auto';
+  const v=CPRE[id]||document.createElement('video');if(!CPRE[id])v.src='cine/'+id+'.mp4?v='+GAMEV;v.muted=false;delete CPRE[id];v.playsInline=true;v.setAttribute('playsinline','');v.preload='auto';
   v.poster='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
   v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+(innerWidth>innerHeight?'cover':'contain')+';background:#000;opacity:0;transition:opacity .4s';
   const sk=document.createElement('div');sk.textContent=VLANG==='fr'?'Passer ›':'Skip ›';
@@ -4876,9 +4878,9 @@ function cinePlay(id,done,nm){if(!id||!BCINE.includes(id)){done(false);return}
    +(tn[1]?'<div style="font:600 clamp(15px,2.6vw,22px) Cinzel,Georgia,serif;letter-spacing:.12em;color:#ece3d1;text-shadow:0 2px 10px #000">'+tn.slice(1).join(', ')+'</div>':'');
   tt.style.cssText='position:absolute;left:0;right:0;bottom:14%;text-align:center;opacity:0;transform:scale(1.12);transition:opacity .9s ease,transform 1.6s cubic-bezier(.2,.7,.2,1);pointer-events:none';
   o.appendChild(v);o.appendChild(tt);o.appendChild(sk);
-  v.addEventListener('timeupdate',()=>{if(v.currentTime>7.9&&!tt._on){tt._on=1;tt.style.opacity='1';tt.style.transform='scale(1)'}});document.body.appendChild(o);window.INTRO_ON=1;
+  v.addEventListener('timeupdate',()=>{if(v.currentTime>7.9&&!tt._on){tt._on=1;tt.style.opacity='1';tt.style.transform='scale(1)'}});document.body.appendChild(o);window.INTRO_ON=1;window.CINE_ON=1;
   requestAnimationFrame(()=>o.style.opacity='1');
-  const end=()=>{if(fin)return;fin=true;o.style.opacity='0';setTimeout(()=>{window.INTRO_ON=0;try{v.pause()}catch(e){}o.remove();done(ok)},400)};
+  const end=()=>{if(fin)return;fin=true;o.style.opacity='0';window.CINE_ON=0;setTimeout(()=>{window.INTRO_ON=0;try{v.pause()}catch(e){}o.remove();done(ok)},400)};
   v.addEventListener('playing',()=>{ok=true;v.style.opacity='1'});v.addEventListener('ended',end);v.addEventListener('error',end);
   setTimeout(()=>{if(!ok)end()},6000);setTimeout(end,16000);setTimeout(()=>sk.style.opacity='1',800);
   o.addEventListener('pointerdown',ev=>{ev.stopPropagation();ev.preventDefault();if(ok||performance.now()-t0>1500)end()});const t0=performance.now();
@@ -4973,7 +4975,7 @@ async function shopReturn(){const q=new URLSearchParams(location.search),a=q.get
     openDlg(nw==='fondateur'?'<h3>Merci, Fondateur !</h3><p>Votre Pack Fondateur est débloqué. Retrouvez vos familiers, couleurs de sorts et votre titre dans la fiche Héros, rubrique Apparence.</p>':'<h3>Merci pour votre soutien !</h3><p>Votre Pack Compagnons est débloqué : retrouvez vos 5 nouveaux familiers dans la fiche Héros, rubrique Apparence.</p>',[['Super !',closeDlg]]);return}}
   toast('Le déblocage prend plus de temps que prévu : relancez le jeu dans quelques minutes.')}
 /* ========== Réglages ========== */
-const GAMEV=134;
+const GAMEV=135;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1,fx:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
