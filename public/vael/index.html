@@ -1835,7 +1835,7 @@ function drawCore(dt){
   const inV=(x,y,m=0)=>x>x0-m&&x<x1+m&&y>y0-m&&y<y1+m;
   const VIS=visibleObs(x0-300,y0-300,x1+300,y1+300);
   drawGround(x0,y0,x1,y1,tt);
-  if(!LITE)for(const g of grime)if(inV(g.x,g.y,g.r)){cx.globalAlpha=g.a;cx.drawImage(DSPR,g.x-g.r,g.y-g.r,g.r*2,g.r*2)}
+  for(const g of grime)if(inV(g.x,g.y,g.r)){cx.globalAlpha=g.a;cx.drawImage(DSPR,g.x-g.r,g.y-g.r,g.r*2,g.r*2)}
   cx.globalAlpha=1;
   // murs d'enceinte
   if(MAP.kind==='rift'){cx.fillStyle='#120f13';cx.fillRect(0,0,WS,40);cx.fillRect(0,WS-40,WS,40);cx.fillRect(0,0,40,WS);cx.fillRect(WS-40,0,40,WS);
@@ -3158,10 +3158,17 @@ function npcWalk(n,tt){if(n.amb||MAP.kind!=='world')return 0;if(n.hx==null){n.hx
   if(n.tx==null){if(tt>n.wt){for(let k=0;k<6;k++){const a=rnd(0,6.283),r=rnd(25,85),x=n.hx+Math.cos(a)*r,y=n.hy+Math.sin(a)*r*.7;if(!blockedAt(x,y,14)){n.tx=x;n.ty=y;break}}if(n.tx==null)n.wt=tt+2}return 0}
   const dx=n.tx-n.x,dy=n.ty-n.y,L=Math.hypot(dx,dy);if(L<3){n.tx=null;n.wt=tt+rnd(2.5,7);return 0}
   const v=Math.min(L,24*dt);n.x+=dx/L*v;n.y+=dy/L*v;n.wf=Math.atan2(dy,dx);return 1}
+const N3M={"mira":{"cw":118,"ch":210,"fh":0.812},"tomas":{"cw":158,"ch":210,"fh":0.763},"bran":{"cw":124,"ch":210,"fh":0.806},"lysa":{"cw":105,"ch":210,"fh":0.888},"ysolde":{"cw":143,"ch":210,"fh":0.841},"aldric":{"cw":99,"ch":210,"fh":0.888},"oriane":{"cw":127,"ch":210,"fh":0.886},"brunhild":{"cw":123,"ch":210,"fh":0.815},"elin":{"cw":103,"ch":210,"fh":0.891},"torvald":{"cw":143,"ch":210,"fh":0.846},"kasim":{"cw":125,"ch":210,"fh":0.891},"nadira":{"cw":84,"ch":210,"fh":0.913},"yusuf":{"cw":142,"ch":210,"fh":0.861},"ambulant":{"cw":140,"ch":210,"fh":0.849}},N3I={};
+function n3sheet(id){let im=N3I[id];if(!im){if(!N3M[id])return null;im=new Image();im.src='npc/'+id+'.webp?v='+GAMEV;N3I[id]=im}return im.complete&&im.naturalWidth?im:null}
 function drawNPC(n,tt){
   const wk=npcWalk(n,tt);
   const d=Math.hypot(P.x-n.x,P.y-n.y),tg=wk?n.wf:d<240?Math.atan2(P.y-n.y,P.x-n.x):n.face0+Math.sin(tt*.3+n.x)*.4;
   n.face=n.face==null?tg:n.face+angDiff(tg,n.face)*.08;
+  {const sh=N3M[n.id]&&n3sheet(n.id);if(sh){const m=N3M[n.id],Hp=n.id==='bran'||n.id==='brunhild'||n.id==='ysolde'?80:76,H=Hp/m.fh,W=H*m.cw/m.ch;
+    const d=[1,1,2,3,3,5,6,7][((Math.round(n.face/(Math.PI/4))%8)+8)%8];
+    const dt=Math.min(.05,tt-(n._t3||tt));n._t3=tt;n._f3=(n._f3||0)+(wk?dt*7:0);const col=wk?Math.floor(n._f3)%8:8+Math.floor(tt*1.1+n.x*.013)%4;
+    cx.fillStyle='rgba(0,0,0,.25)';cx.beginPath();cx.ellipse(n.x+2,n.y+9,17,7,0,0,6.283);cx.fill();
+    cx.drawImage(sh,col*m.cw,d*m.ch,m.cw,m.ch,n.x-W/2,n.y+11-H,W,H);return}}
   {const im=typeof NIMG!=='undefined'&&NIMG[n.id];if(im&&im.complete&&im.naturalWidth){const H=n.id==='bran'||n.id==='brunhild'||n.id==='ysolde'?80:76,W=H*im.width/im.height,br=Math.sin(tt*1.8+n.x*.01)*.012;
     cx.fillStyle='rgba(0,0,0,.25)';cx.beginPath();cx.ellipse(n.x+2,n.y+9,17,7,0,0,6.283);cx.fill();
     cx.save();cx.translate(n.x,n.y+11-(wk?Math.abs(Math.sin(tt*9+n.hx))*2.5:0));if(wk)cx.rotate(Math.sin(tt*9+n.hx)*.04);if((Math.cos(n.face)>0)!==!!NFR[n.id])cx.scale(-1,1);cx.scale(1-br*.4,1+br);cx.drawImage(im,-W/2,-H,W,H);cx.restore();return}}
@@ -4854,14 +4861,37 @@ const BOSSLINE={
  'Reine Scorpion':['des Sables','Mes enfants sont nombreux et affamés. Tu seras leur festin.'],
  'Sphinx':['d’Ashkar','Réponds, mortel : qu’est-ce qui marche vers sa tombe en se croyant héros ? …Toi.']};
 function bossLine(e){for(const k in BOSSLINE)if(e.name&&e.name.includes(k))return BOSSLINE[k];return null}
+const BCINE=['gardien','grishak','grokk','ignar','karvos','noye','veilleur','morwen','ossarque','isolde','vael','nyx','ashkar','vorhal','fenrel','sphinx','rampants','reinescorp','wyrm'];
+function cinePlay(id,done,nm){if(!id||!BCINE.includes(id)){done(false);return}
+  let fin=false,ok=false;const o=document.createElement('div');o.id='cineV';
+  o.style.cssText='position:fixed;inset:0;z-index:2147482000;background:#000;opacity:0;transition:opacity .4s';
+  const v=document.createElement('video');v.src='cine/'+id+'.mp4?v='+GAMEV;v.playsInline=true;v.setAttribute('playsinline','');v.preload='auto';
+  v.poster='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+  v.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+(innerWidth>innerHeight?'cover':'contain')+';background:#000;opacity:0;transition:opacity .4s';
+  const sk=document.createElement('div');sk.textContent=VLANG==='fr'?'Passer ›':'Skip ›';
+  sk.style.cssText='position:absolute;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));padding:8px 14px;border:1px solid #e8692c88;border-radius:10px;font:600 13px system-ui;color:#ece3d1;background:#0008;opacity:0;transition:opacity .5s';
+  const tn=(typeof vt==='function'?vt(nm||''):(nm||'')).split(/,\s*/),tt=document.createElement('div');
+  tt.innerHTML='<div style="font:700 clamp(34px,7.5vw,64px) Cinzel,Georgia,serif;letter-spacing:.18em;color:#f3d48a;text-shadow:0 0 22px rgba(255,140,50,.55),0 3px 14px #000">'+(tn[0]||'').toUpperCase()+'</div>'
+   +'<div style="width:min(60vw,420px);height:1px;margin:8px auto;background:linear-gradient(90deg,transparent,#e8a050,transparent)"></div>'
+   +(tn[1]?'<div style="font:600 clamp(15px,2.6vw,22px) Cinzel,Georgia,serif;letter-spacing:.12em;color:#ece3d1;text-shadow:0 2px 10px #000">'+tn.slice(1).join(', ')+'</div>':'');
+  tt.style.cssText='position:absolute;left:0;right:0;bottom:14%;text-align:center;opacity:0;transform:scale(1.12);transition:opacity .9s ease,transform 1.6s cubic-bezier(.2,.7,.2,1);pointer-events:none';
+  o.appendChild(v);o.appendChild(tt);o.appendChild(sk);
+  v.addEventListener('timeupdate',()=>{if(v.currentTime>7.9&&!tt._on){tt._on=1;tt.style.opacity='1';tt.style.transform='scale(1)'}});document.body.appendChild(o);window.INTRO_ON=1;
+  requestAnimationFrame(()=>o.style.opacity='1');
+  const end=()=>{if(fin)return;fin=true;o.style.opacity='0';setTimeout(()=>{window.INTRO_ON=0;try{v.pause()}catch(e){}o.remove();done(ok)},400)};
+  v.addEventListener('playing',()=>{ok=true;v.style.opacity='1'});v.addEventListener('ended',end);v.addEventListener('error',end);
+  setTimeout(()=>{if(!ok)end()},6000);setTimeout(end,16000);setTimeout(()=>sk.style.opacity='1',800);
+  o.addEventListener('pointerdown',ev=>{ev.stopPropagation();ev.preventDefault();if(ok||performance.now()-t0>1500)end()});const t0=performance.now();
+  const p=v.play();if(p&&p.catch)p.catch(()=>{v.muted=true;v.play().catch(end)})}
 function bossIntro(e){
   if(!e||!R||R.mode==='rift'||(typeof NET!=='undefined'&&NET.room&&NET.peers&&NET.peers.size))return false;
   const bl=bossLine(e);if(!bl)return false;S.seenB=S.seenB||{};const key=e.name+'|'+(S.wt||0);if(S.seenB[key])return false;S.seenB[key]=1;save();
-  paused=true;clearInput&&clearInput();letterbox(true);camTo(e.x,e.y-20,1.3,2.2);
+  paused=true;clearInput&&clearInput();const _go=(_pl)=>{letterbox(true);camTo(e.x,e.y-20,1.3,2.2);
   const tc=$('bossTitle');tc.querySelector('b').textContent=e.name.split(',')[0];tc.querySelector('small').textContent=bl[0];
-  setTimeout(()=>{tc.classList.add('on');sfx('roar');shake(8)},750);
+  if(!_pl)setTimeout(()=>{tc.classList.add('on');sfx('roar');shake(8)},750);
   setTimeout(()=>{tc.classList.remove('on');const mk=typeof mobKey==='function'?mobKey(e):null,scn=BOSSIMG.some(([n,v])=>e.name&&e.name.includes(n)&&v.startsWith('sc_')),spr=!scn&&mk&&mk.startsWith('b_');$('say').classList.toggle('spr',!!spr);
-    say([{who:{n:e.name,img:spr?MSRC[mk]:bossImgOf(e)},t:bl[1]}],()=>{camRelease();setTimeout(()=>{letterbox(false);paused=false;$('bossBar').hidden=false;$('bossName').textContent=e.name},500)},{boss:1})},2600);
+    say([{who:{n:e.name,img:spr?MSRC[mk]:bossImgOf(e)},t:bl[1]}],()=>{camRelease();setTimeout(()=>{letterbox(false);paused=false;$('bossBar').hidden=false;$('bossName').textContent=e.name},500)},{boss:1})},_pl?500:2600);};
+  {const _k=typeof mobKey==='function'?mobKey(e):null;cinePlay(_k&&_k.startsWith('b_')?_k.slice(2):null,_go,e.name)}
   return true}
 
 /* ----- Scènes d'arrivée ----- */
@@ -4943,7 +4973,7 @@ async function shopReturn(){const q=new URLSearchParams(location.search),a=q.get
     openDlg(nw==='fondateur'?'<h3>Merci, Fondateur !</h3><p>Votre Pack Fondateur est débloqué. Retrouvez vos familiers, couleurs de sorts et votre titre dans la fiche Héros, rubrique Apparence.</p>':'<h3>Merci pour votre soutien !</h3><p>Votre Pack Compagnons est débloqué : retrouvez vos 5 nouveaux familiers dans la fiche Héros, rubrique Apparence.</p>',[['Super !',closeDlg]]);return}}
   toast('Le déblocage prend plus de temps que prévu : relancez le jeu dans quelques minutes.')}
 /* ========== Réglages ========== */
-const GAMEV=133;
+const GAMEV=134;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1,fx:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
