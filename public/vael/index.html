@@ -983,7 +983,7 @@ function startRun(tier,mods){
 /* ========== Cartes : monde ouvert, donjons, failles ========== */
 let WS=2600,MAP={kind:'rift',amb:.86},OBS=[],GRID=new Map(),TILES=null,SEEN=null,TN=0,NPCL=[],FEAT=[],BIO=null,ROADS=[],MAPIMG=null,frameId=0;
 const GCS=256,TS=80,BC=64;let VIL={x:3200,y:3300},SAFE=600,BCODE=['plaine','foret','marais','village','col'],biomeCalc=()=>0;
-const inSafe=(x,y)=>MAP.kind==='world'&&!(R&&R.siege)&&Math.hypot(x-VIL.x,y-VIL.y)<SAFE;
+const inSafe=(x,y)=>MAP.kind==='world'&&!(R&&R.siege)&&(Math.hypot(x-VIL.x,y-VIL.y)<SAFE||HAMS.some(h=>Math.hypot(x-h.x,y-h.y)<360));
 const gkey=(i,j)=>i*8192+j;
 function resetMap(kind,size){XOB=[];MAP={kind,amb:.86};WS=size;OBS=[];pillars=OBS;GRID=new Map();TILES=null;SEEN=null;TN=0;NPCL=[];FEAT=[];decals=[];grime=[];BL=[];runes=[];ROADS=[];BIO=null}
 function addOb(o){OBS.push(o);const e=o.vr||o.r||Math.max(o.rw||0,o.rh||0);
@@ -1001,7 +1001,8 @@ function pushOut(o){
       else{const dx=o.x-p.x,dy=o.y-p.y,d=Math.hypot(dx,dy),m=p.r+o.r;if(d<m&&d>.01)v=[dx/d*(m-d),dy/d*(m-d)]}
       if(v){o.x+=v[0];o.y+=v[1]}}}
   if(TILES){const ti=Math.floor(o.x/TS),tj=Math.floor(o.y/TS);for(let i=ti-1;i<=ti+1;i++)for(let j=tj-1;j<=tj+1;j++)if(!tileOk(i,j)){const v=rectPush(o.x,o.y,o.r,i*TS,j*TS,TS,TS);if(v){o.x+=v[0];o.y+=v[1]}}}
-  o.x=clamp(o.x,40+o.r,WS-40-o.r);o.y=clamp(o.y,40+o.r,WS-40-o.r);
+  if(MAP.kind==='world'&&MAP.ny&&o.y<MAP.ny+o.r)o.y=MAP.ny+o.r;
+  o.x=clamp(o.x,90+o.r,WS-90-o.r);o.y=clamp(o.y,90+o.r,WS-90-o.r);
 }
 function blockedAt(x,y,r,proj){
   if(TILES&&!tileOk(Math.floor(x/TS),Math.floor(y/TS)))return true;
@@ -1068,7 +1069,7 @@ function scatter(feats,cfg){
   const occ=new Map(),ok=(x,y,m)=>{const i=Math.floor(x/60),j=Math.floor(y/60);for(let a=i-1;a<=i+1;a++)for(let b=j-1;b<=j+1;b++){const o=occ.get(a*9000+b);if(o&&Math.hypot(o[0]-x,o[1]-y)<m)return false}return true};
   const mark=(x,y)=>occ.set(Math.floor(x/60)*9000+Math.floor(y/60),[x,y]);
   for(let n=0;n<cfg.tries;n++){const x=rnd(80,WS-80),y=rnd(cfg.y0||80,WS-80),b=biomeCalc(x,y);
-    if(b===3||nearRoad(x,y,95)||feats.some(f=>Math.hypot(f.x-x,f.y-y)<(f.type==='camp'||f.type==='shrine'?300:150)))continue;
+    if(b===3||nearRoad(x,y,95)||feats.some(f=>Math.hypot(f.x-x,f.y-y)<(f.type==='camp'||f.type==='shrine'?300:f.type==='hamlet'?420:150)))continue;
     const fn=cfg.by[b];if(fn&&fn(x,y,ok))mark(x,y)}
 }
 function rockAt(x,y,r){const p={type:'rock',x,y,r,k:Math.random()};p.spr=pillarSprite(p);p.vr=p.r*2;addOb(p)}
@@ -1076,7 +1077,7 @@ function colAt(x,y,r){const p={type:'col',x,y,r,k:Math.random()};p.spr=pillarSpr
 function genBrumeval(){
   const V=(dx,dy)=>[VIL.x+dx,VIL.y+dy];
   ROADS=[[V(-40,-30),[2600,3250],[1900,3050],[1300,2700],[950,1700],[820,1350]],[[1900,3050],[1720,3800],[1500,4600],[1450,4760]],
-    [V(30,40),[3800,3360],[4600,3520],[5250,3050],[5500,2700]],[V(10,-60),[3220,2000],[3280,900]],[V(-30,60),[3150,4400],[3000,5600],[3000,6150]]];
+    [V(30,40),[3800,3360],[4600,3520],[5250,3050],[5500,2700]],[V(10,-60),[3220,2000],[3280,900]],[V(-30,60),[3150,4400],[3000,5600],[3000,6150]]];hamPre();
   const feats=[];const F=o=>{FEAT.push(o);feats.push(o);return o};
   const houses=[[-390,-290,150,110],[150,-330,170,120],[330,-210,140,100],[200,150,160,120],[370,280,130,100],[-370,150,150,110],[-220,300,130,100]];
   houses.forEach(([dx,dy,w,h],i)=>{const o={type:'house',rx:VIL.x+dx,ry:VIL.y+dy,rw:w,rh:h,k:Math.random(),forge:i===2};o.x=o.rx+w/2;o.y=o.ry+h/2;o.sy=o.ry+h;o.vr=Math.max(w,h)+60;o.spr=houseSprite(o);addOb(o)});
@@ -1105,11 +1106,11 @@ function genBrumeval(){
   F({type:'sign',x:3360,y:1000,txt:'Col du Nord — au-delà : les Ruines de Vael et Fort-Cendre.'});
   F({type:'sign',x:2560,y:3150,txt:'À l’ouest : Forêt des Murmures. Au sud-ouest : la vieille crypte.'});
   F({type:'sign',x:3900,y:3300,txt:'À l’est : Marais Putride. Ne quittez pas la route.'});
-  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,760+rnd(-40,40),rnd(40,62));
+  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,760+rnd(-40,40),rnd(40,62));MAP.ny=835;
   let hid=0,cid=0;const okPos=(x,y,m)=>!nearRoad(x,y,70)&&!blockedAt(x,y,m)&&feats.every(f=>Math.hypot(f.x-x,f.y-y)>200);
   while(hid<14){const x=rnd(300,2300),y=rnd(1200,5800);if(biomeCalc(x,y)===1&&okPos(x,y,30))F({type:'herb',id:'h'+hid++,x,y})}
   for(const[b,n]of[[1,6],[0,4],[2,5]]){let k=0,t=0;while(k<n&&t<4000){t++;const x=rnd(200,WS-200),y=rnd(1000,WS-200);if(biomeCalc(x,y)===b&&okPos(x,y,40)){F({type:'chest',id:'c'+cid++,x,y});k++}}}
-  scatter(feats,{tries:2600,y0:880,by:{
+  scatter(feats,{tries:LITE?3000:4200,y0:880,by:{
     1:(x,y,ok)=>{if(!ok(x,y,85))return;addOb({type:'tree',v:Math.random()<.45?'pine':'oak',var:ri(0,5),x,y,r:13,vr:80,sc:rnd(.85,1.2)});return 1},
     0:(x,y,ok)=>{if(Math.random()>=.12||!ok(x,y,120))return;addOb({type:'tree',v:Math.random()<.7?'oak':'pine',var:ri(0,5),x,y,r:13,vr:80,sc:rnd(.8,1.15)});return 1},
     2:(x,y,ok)=>{if(!ok(x,y,100))return;if(Math.random()<.32){const r=rnd(55,150);if(nearRoad(x,y,r+60)||!feats.every(f=>Math.hypot(f.x-x,f.y-y)>r+160))return;addOb({type:'water',x,y,r:r*.82,vr:r+10,wr:r,np:1,ground:1,k:Math.random()});return 1}
@@ -1125,7 +1126,7 @@ function genBrumeval(){
 }
 function genRuines(){
   const V=(dx,dy)=>[VIL.x+dx,VIL.y+dy];
-  ROADS=[[V(0,-40),[3150,3800],[3250,2400],[3200,1000]],[V(-40,0),[2400,5000],[1500,4200],[1050,2950]],[V(40,0),[4200,5100],[5000,4300],[5400,3150]],[V(0,40),[3200,6200]],[[3200,1000],[4400,960],[5600,900]]];
+  ROADS=[[V(0,-40),[3150,3800],[3250,2400],[3200,1000]],[V(-40,0),[2400,5000],[1500,4200],[1050,2950]],[V(40,0),[4200,5100],[5000,4300],[5400,3150]],[V(0,40),[3200,6200]],[[3200,1000],[4400,960],[5600,900]]];hamPre();
   const feats=[];const F=o=>{FEAT.push(o);feats.push(o);return o};
   placeB([['tourpierre',-310,-260,48],['tourpierre',300,-270,48],['caserne',-320,210,60],['caserne',320,240,60]]);
   placeD([['brasero',-110,-395],['brasero',60,-395],['tonneau',-240,-190],['caisses',-215,-210],['tonneau',240,-200],['caisses',-245,270],['tonneau',-225,290,.9],['caisses',250,300],['jarre',230,320],['coffre',-380,250],['puits',120,-280]]);
@@ -1149,11 +1150,11 @@ function genRuines(){
   F({type:'camp',x:3800,y:2000,pack:['squelette','squelette','spectre','brute'],L:14});
   F({type:'camp',x:2500,y:2300,pack:['gargouille','gargouille','gargouille'],L:13});
   F({type:'sign',x:3290,y:5000,txt:'Nord : la Citadelle de Vael. Ouest : les Catacombes. Est : la Plaine de Cendres.'});
-  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,640+rnd(-50,50),rnd(42,64));
+  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,640+rnd(-50,50),rnd(42,64));MAP.ny=725;
   let sid=0,cid=0;const okPos=(x,y,m)=>!nearRoad(x,y,70)&&!blockedAt(x,y,m)&&feats.every(f=>Math.hypot(f.x-x,f.y-y)>200);
   while(sid<12){const x=rnd(2300,4100),y=rnd(1200,4600);if(biomeCalc(x,y)===0&&okPos(x,y,30))F({type:'shard',id:'s'+sid++,x,y})}
   for(const[b,n]of[[0,5],[1,4],[2,4]]){let k=0,t=0;while(k<n&&t<4000){t++;const x=rnd(200,WS-200),y=rnd(900,WS-200);if(biomeCalc(x,y)===b&&okPos(x,y,40)){F({type:'chest',id:'r'+cid++,x,y});k++}}}
-  scatter(feats,{tries:2600,y0:760,by:{
+  scatter(feats,{tries:LITE?3000:4200,y0:760,by:{
     0:(x,y,ok)=>{const r=Math.random();if(r<.16&&ok(x,y,170)){const h=Math.random()<.5,l=rnd(110,260),t=34;const o=h?{rx:x-l/2,ry:y-t/2,rw:l,rh:t}:{rx:x-t/2,ry:y-l/2,rw:t,rh:l};
         if(nearRoad(x,y,l/2+60))return;addOb({type:'wall',...o,x,y,sy:o.ry+o.rh,vr:l,k:Math.random()});return 1}
       if(r<.3&&ok(x,y,110)){colAt(x,y,rnd(18,28));return 1}if(r<.34&&ok(x,y,120)){addOb({type:'statue',x,y,r:18,vr:60,k:Math.random()});return 1}
@@ -3159,17 +3160,17 @@ function npcWalk(n,tt){if(n.amb||MAP.kind!=='world')return 0;if(n.hx==null){n.hx
   if(n.tx==null){if(tt>n.wt){for(let k=0;k<6;k++){const a=rnd(0,6.283),r=rnd(25,85),x=n.hx+Math.cos(a)*r,y=n.hy+Math.sin(a)*r*.7;if(!blockedAt(x,y,14)){n.tx=x;n.ty=y;break}}if(n.tx==null)n.wt=tt+2}return 0}
   const dx=n.tx-n.x,dy=n.ty-n.y,L=Math.hypot(dx,dy);if(L<3){n.tx=null;n.wt=tt+rnd(2.5,7);return 0}
   const v=Math.min(L,24*dt);n.x+=dx/L*v;n.y+=dy/L*v;n.wf=Math.atan2(dy,dx);return 1}
-const N3M={"mira":{"cw":118,"ch":210,"fh":0.812},"tomas":{"cw":158,"ch":210,"fh":0.763},"bran":{"cw":124,"ch":210,"fh":0.806},"lysa":{"cw":105,"ch":210,"fh":0.888},"ysolde":{"cw":143,"ch":210,"fh":0.841},"aldric":{"cw":99,"ch":210,"fh":0.888},"oriane":{"cw":127,"ch":210,"fh":0.886},"brunhild":{"cw":123,"ch":210,"fh":0.815},"elin":{"cw":103,"ch":210,"fh":0.891},"torvald":{"cw":143,"ch":210,"fh":0.846},"kasim":{"cw":125,"ch":210,"fh":0.891},"nadira":{"cw":84,"ch":210,"fh":0.913},"yusuf":{"cw":142,"ch":210,"fh":0.861},"ambulant":{"cw":140,"ch":210,"fh":0.849}},N3I={};
+const N3M={"mira":{"cw":118,"ch":210,"fh":0.812},"tomas":{"cw":158,"ch":210,"fh":0.763},"bran":{"cw":124,"ch":210,"fh":0.806},"lysa":{"cw":105,"ch":210,"fh":0.888},"ysolde":{"cw":143,"ch":210,"fh":0.841},"aldric":{"cw":99,"ch":210,"fh":0.888},"oriane":{"cw":127,"ch":210,"fh":0.886},"brunhild":{"cw":123,"ch":210,"fh":0.815},"elin":{"cw":103,"ch":210,"fh":0.891},"torvald":{"cw":143,"ch":210,"fh":0.846},"kasim":{"cw":125,"ch":210,"fh":0.891},"nadira":{"cw":84,"ch":210,"fh":0.913},"yusuf":{"cw":142,"ch":210,"fh":0.861},"ambulant":{"cw":140,"ch":210,"fh":0.849},"v_maelle":{"cw":162,"ch":212,"fh":0.942},"v_gaspard":{"cw":156,"ch":248,"fh":0.766},"v_ondine":{"cw":163,"ch":213,"fh":0.938},"v_mathurin":{"cw":131,"ch":257,"fh":0.712},"v_berthe":{"cw":139,"ch":234,"fh":0.888},"v_anselme":{"cw":156,"ch":248,"fh":0.736},"v_clemence":{"cw":162,"ch":213,"fh":0.938},"v_hugues":{"cw":195,"ch":202,"fh":0.89},"v_sabine":{"cw":141,"ch":230,"fh":0.936},"v_gontran":{"cw":195,"ch":203,"fh":0.903},"v_agathe":{"cw":157,"ch":216,"fh":0.951},"v_ambroise":{"cw":138,"ch":255,"fh":0.736},"v_ilse":{"cw":163,"ch":214,"fh":0.935},"v_corvin":{"cw":125,"ch":259,"fh":0.718},"v_ylva":{"cw":156,"ch":218,"fh":0.936},"v_haldor":{"cw":187,"ch":206,"fh":0.912},"v_sigrid":{"cw":162,"ch":212,"fh":0.942},"v_eskil":{"cw":189,"ch":207,"fh":0.901},"v_samira":{"cw":162,"ch":213,"fh":0.942},"v_qadir":{"cw":156,"ch":217,"fh":0.928},"v_leila":{"cw":139,"ch":230,"fh":0.94},"v_tarek":{"cw":138,"ch":256,"fh":0.756},"v_yasmina":{"cw":156,"ch":216,"fh":0.939},"v_malik":{"cw":149,"ch":226,"fh":0.931}},N3I={};
 function n3sheet(id){let im=N3I[id];if(!im){if(!N3M[id])return null;im=new Image();im.src='npc/'+id+'.webp?v='+GAMEV;N3I[id]=im}return im.complete&&im.naturalWidth?im:null}
 function drawNPC(n,tt){
   const wk=npcWalk(n,tt);
   const d=Math.hypot(P.x-n.x,P.y-n.y),tg=wk?n.wf:d<240?Math.atan2(P.y-n.y,P.x-n.x):n.face0+Math.sin(tt*.3+n.x)*.4;
   n.face=n.face==null?tg:n.face+angDiff(tg,n.face)*.08;
-  {const sh=N3M[n.id]&&n3sheet(n.id);if(sh){const m=N3M[n.id],Hp=n.id==='bran'||n.id==='brunhild'||n.id==='ysolde'?80:76,H=Hp/m.fh,W=H*m.cw/m.ch;
+  {const sh=N3M[n.sk||n.id]&&n3sheet(n.sk||n.id);if(sh){const m=N3M[n.sk||n.id],Hp=n.id==='bran'||n.id==='brunhild'||n.id==='ysolde'?80:76,H=Hp/m.fh,W=H*m.cw/m.ch;
     const d=[1,1,2,3,3,5,6,7][((Math.round(n.face/(Math.PI/4))%8)+8)%8];
     const dt=Math.min(.05,tt-(n._t3||tt));n._t3=tt;n._f3=(n._f3||0)+(wk?dt*7:0);const col=wk?Math.floor(n._f3)%8:8+Math.floor(tt*1.1+n.x*.013)%4;
     cx.fillStyle='rgba(0,0,0,.25)';cx.beginPath();cx.ellipse(n.x+2,n.y+9,17,7,0,0,6.283);cx.fill();
-    cx.drawImage(sh,col*m.cw,d*m.ch,m.cw,m.ch,n.x-W/2,n.y+11-H,W,H);return}}
+    if(n.tint)cx.filter=n.tint;cx.drawImage(sh,col*m.cw,d*m.ch,m.cw,m.ch,n.x-W/2,n.y+11-H,W,H);if(n.tint)cx.filter='none';return}}
   {const im=typeof NIMG!=='undefined'&&NIMG[n.id];if(im&&im.complete&&im.naturalWidth){const H=n.id==='bran'||n.id==='brunhild'||n.id==='ysolde'?80:76,W=H*im.width/im.height,br=Math.sin(tt*1.8+n.x*.01)*.012;
     cx.fillStyle='rgba(0,0,0,.25)';cx.beginPath();cx.ellipse(n.x+2,n.y+9,17,7,0,0,6.283);cx.fill();
     cx.save();cx.translate(n.x,n.y+11-(wk?Math.abs(Math.sin(tt*9+n.hx))*2.5:0));if(wk)cx.rotate(Math.sin(tt*9+n.hx)*.04);if((Math.cos(n.face)>0)!==!!NFR[n.id])cx.scale(-1,1);cx.scale(1-br*.4,1+br);cx.drawImage(im,-W/2,-H,W,H);cx.restore();return}}
@@ -3303,24 +3304,24 @@ const bossActive=b=>{const id=Object.keys(QUESTS).find(k=>QUESTS[k].boss===b);re
 function npcMark(n){if(Object.keys(QUESTS).some(id=>qTo(QUESTS[id])===n.id&&qs(id)==='r'))return'?';if(Object.keys(QUESTS).some(id=>QUESTS[id].giver===n.id&&qs(id)==='dispo'))return'!';return null}
 function trackQ(){let id=S.track;if(!id||!S.q[id]||S.q[id].s==='d')id=Object.keys(S.q).find(k=>S.q[k].s==='a'||S.q[k].s==='r')||null;S.track=id;return id}
 function toward(m,x,y){if(!R||R.mode!=='world')return null;if(m===MAP.wid)return{x,y};const h=nextHop(MAP.wid,m);return h?FEAT.find(f=>f.type==='pass'&&f.to===h)||null:null}
-function npcPos(id){const d=NPCDEF.find(n=>n.id===id),c=WORLDS[d.m].vil;return toward(d.m,c.x+d.dx,c.y+d.dy)}
+function npcPos(id){if(id&&id.startsWith('hv_')){const w=Object.keys(HAMDEF).find(k=>id.startsWith('hv_'+k)),i=+id[3+w.length],h=HAMDEF[w][i];return toward(w,h.x+(id.endsWith('a')?-60:95),h.y+(id.endsWith('a')?70:-70))}const d=NPCDEF.find(n=>n.id===id),c=WORLDS[d.m].vil;return toward(d.m,c.x+d.dx,c.y+d.dy)}
 function questTarget(){
   if(!R||R.mode!=='world')return null;
   const id=trackQ();
-  if(!id){const av=Object.keys(QUESTS).find(k=>qs(k)==='dispo');return av?npcPos(QUESTS[av].giver):null}
+  if(!id){const av=Object.keys(QUESTS).find(k=>!QUESTS[k].hv&&qs(k)==='dispo');return av?npcPos(QUESTS[av].giver):null}
   const q=QUESTS[id];
   if(S.q[id].s==='r')return npcPos(qTo(q));
   if(q.m!==MAP.wid)return toward(q.m,0,0);
   if(q.type==='gather'){let best=null,bd=1e9;for(const f of FEAT)if((f.type===q.node||(f.type==='node'&&f.q===id))&&!S.herb.includes(f.id)){const d=Math.hypot(f.x-P.x,f.y-P.y);if(d<bd){bd=d;best=f}}return best}
   if(q.type==='boss')return FEAT.find(f=>f.boss===q.boss);
   if(q.type==='dungeon')return FEAT.find(f=>f.type==='crypt'&&f.did===q.dungeon);
-  if(q.type==='reach')return{x:VIL.x,y:VIL.y};
-  const RC={foret:[1500,3000],marais:[5000,3300],ruines:[3200,3500],cendres:[5000,4000],neiges:[3200,3000],glacier:[1300,3000],dunes:[3200,3200],necropole:[5000,3300],canyon:[1500,3500]},TC={spectre:[1500,3500],elemglace:[1300,3000],yeti:[3200,3000],diablotin:[5000,4000]};
+  if(q.type==='reach')return q.ham?{x:HAMDEF[q.ham[0]][q.ham[1]].x,y:HAMDEF[q.ham[0]][q.ham[1]].y}:{x:VIL.x,y:VIL.y};
+  const RC={lande:[3400,1800],carriere:[4700,3700],bois:[1700,4300],foret:[1500,3000],marais:[5000,3300],ruines:[3200,3500],cendres:[5000,4000],neiges:[3200,3000],glacier:[1300,3000],dunes:[3200,3200],necropole:[5000,3300],canyon:[1500,3500]},TC={spectre:[1500,3500],elemglace:[1300,3000],yeti:[3200,3000],diablotin:[5000,4000]};
   const p=RC[q.region]||TC[q.target];return p?{x:p[0],y:p[1]}:null;
 }
 function qText(){
   const id=trackQ();
-  if(!id){const av=Object.keys(QUESTS).find(k=>qs(k)==='dispo');if(av){const n=NPCDEF.find(x=>x.id===QUESTS[av].giver);return['Parlez à '+n.short+' '+CAMPN[n.m],0]}
+  if(!id){const av=Object.keys(QUESTS).find(k=>!QUESTS[k].hv&&qs(k)==='dispo');if(av){const n=NPCDEF.find(x=>x.id===QUESTS[av].giver);return['Parlez à '+n.short+' '+CAMPN[n.m],0]}
     if(S.bounty){const b=S.bounty;return[`Prime : ${Math.min(b.c,b.n)}/${b.n} ${MLAB[b.target]}`,b.c/b.n]}return['Explorez le monde, les primes ou les failles',0]}
   const q=QUESTS[id],st=S.q[id];
   if(st.s==='r')return[q.t+' — retournez voir '+NPCDEF.find(x=>x.id===qTo(q)).short,1];
@@ -3406,7 +3407,7 @@ function talk(n){
   if(MERCH.includes(n.id))bt.push(['Boutique',()=>{closeDlg();openShop(n)}]);
   if(MERCH.includes(n.id))bt.push(['Coffre',()=>{closeDlg();openStash()}]);
   if(['bran','oriane','torvald','yusuf'].includes(n.id))bt.push(['Forge et orbes',()=>{closeDlg();openSheet('sac')}]);
-  if(['lysa','oriane','torvald','yusuf'].includes(n.id))bt.push(['Se faire soigner',()=>{P.hp=ST.maxHp;P.mp=ST.maxMana;P.flask=FLMAX();P.mflask=FLMAX();sfx('flask');toast('Vie, mana et fioles restaurés');closeDlg()}]);
+  if(['lysa','oriane','torvald','yusuf'].includes(n.id)||n.heal)bt.push(['Se faire soigner',()=>{P.hp=ST.maxHp;P.mp=ST.maxMana;P.flask=FLMAX();P.mflask=FLMAX();sfx('flask');toast('Vie, mana et fioles restaurés');closeDlg()}]);
   bt.push(['Au revoir',closeDlg]);openDlg(h,bt);
 }
 $('dlg').addEventListener('click',ev=>{const sh=ev.target.closest('[data-shop]');if(sh&&DLG){openPack(sh.dataset.shop);return}const b=ev.target.closest('[data-d]');if(b&&DLG)DLG.buttons[+b.dataset.d][1]()});
@@ -3462,21 +3463,22 @@ function worldTick(dt){
   regT-=dt;
   if(regT<=0){regT=.5;const rg=regionAt(P.x,P.y);if(rg!==R.reg){R.reg=rg;const g=REG[rg];toast(g.safe?g.n+' · zone sûre':`${g.n} · niveau ${regionLevel(rg)}`)}
     S.pos={m:MAP.wid,x:P.x,y:P.y};
-    for(const id in S.q){const q=QUESTS[id];if(q.type==='reach'&&S.q[id].s==='a'&&q.m===MAP.wid&&Math.hypot(P.x-VIL.x,P.y-VIL.y)<350)qProgress(id,1)}
+    for(const id in S.q){const q=QUESTS[id];if(q.type==='reach'&&S.q[id].s==='a'&&q.m===MAP.wid&&(q.ham?Math.hypot(P.x-HAMDEF[q.ham[0]][q.ham[1]].x,P.y-HAMDEF[q.ham[0]][q.ham[1]].y)<380:Math.hypot(P.x-VIL.x,P.y-VIL.y)<350))qProgress(id,1)}
     for(const f of FEAT){const d=Math.hypot(f.x-P.x,f.y-P.y);
       if(f.type==='waypoint'&&d<160&&!S.wp.includes(f.id)){S.wp.push(f.id);toast('Point de passage découvert : '+WP[f.id].n,'leg');sfx('orb');save()}
       if((f.type==='camp'||f.type==='shrine')&&!f.spawned&&d<900){campSpawn(f);netFeat(f,'camp')}
       if(f.boss&&!f.bossOn&&bossActive(f.boss)&&d<900){campBoss(f);netFeat(f,'boss')}
       if(f.type==='secret'&&!f.on&&d<650&&!R.boss&&!S.secret.includes((S.wt||0)+':'+f.id)&&(!f.night||nightness()>.55)){secretBoss(f);netFeat(f,'secret')}
       if((f.type==='camp'||f.type==='shrine')&&f.spawned&&f.alive<=0&&d>1800)f.spawned=0}}
+  {const hm=HAMS.find(h=>Math.hypot(P.x-h.x,P.y-h.y)<380)||null;if(hm!==HAMIN){HAMIN=hm;if(hm)toast(hm.n+' · zone sûre')}}
   const reg=regionAt(P.x,P.y);MAP.ambT=REG[reg].amb;
   if(R.rain){R.rain-=dt;if(Math.random()<dt*.06&&MAP.wid!=='givre'&&MAP.wid!=='desert'){R.flashT=.35;setTimeout(()=>sfx('boom',.35),400)}if(R.rain<=0){R.rain=0;toast(MAP.wid==='givre'?'La neige cesse':MAP.wid==='desert'?'La tempête retombe':'La pluie cesse')}}
   else if(Math.random()<dt*.006&&reg!=='cendres'&&!REG[reg].safe&&MAP.wid!=='ruines'){R.rain=rnd(60,120);toast(MAP.wid==='givre'?'La neige se met à tomber…':MAP.wid==='desert'?'Une tempête de sable se lève…':'Il commence à pleuvoir…')}
   eventTick(dt);
   R.spawnT-=dt;const free=E.filter(e=>!e.fixed&&Math.hypot(e.x-P.x,e.y-P.y)<1100).length;
-  if(R.spawnT<=0&&free<10&&REG[reg].mobs){R.spawnT=rnd(1.4,2.8);
+  if(R.spawnT<=0&&free<(LITE?12:16)&&REG[reg].mobs){R.spawnT=rnd(.9,1.9);
     for(let t=0;t<6;t++){const a=rnd(0,6.28),d=rnd(560,760),x=P.x+Math.cos(a)*d,y=P.y+Math.sin(a)*d;if(x<120||y<120||x>WS-120||y>WS-120)continue;
-      const rg=regionAt(x,y);if(!REG[rg].mobs||blockedAt(x,y,24)||Math.hypot(x-VIL.x,y-VIL.y)<SAFE+200)continue;
+      const rg=regionAt(x,y);if(!REG[rg].mobs||blockedAt(x,y,24)||Math.hypot(x-VIL.x,y-VIL.y)<SAFE+200||HAMS.some(h=>Math.hypot(x-h.x,y-h.y)<720))continue;
       const typ=pick(REG[rg].mobs),L=clamp(S.lvl+(Math.random()<.2?1:0),REG[rg].min+WT().lv,REG[rg].max+WT().lv);let n=Math.round((typ==='essaim'?ri(4,6):typ==='brute'?1:ri(2,4))*(DF().pack||1));
       if(Math.random()<.08*(DF().elite||1))makeEnemy(pick(REG[rg].mobs.filter(x=>x!=='essaim')),x,y,{L,elite:pick(ELITE_AFF)});
       for(let i=0;i<n;i++)makeEnemy(typ,x+rnd(-60,60),y+rnd(-60,60),{L});break}}
@@ -3539,15 +3541,115 @@ function htmlMap(){
   return h+'</section>';
 }
 
+
+Object.assign(N3M,{"v_maelle": {"cw": 162, "ch": 212, "fh": 0.942}, "v_gaspard": {"cw": 156, "ch": 248, "fh": 0.766}, "v_ondine": {"cw": 163, "ch": 213, "fh": 0.938}, "v_mathurin": {"cw": 131, "ch": 257, "fh": 0.712}, "v_berthe": {"cw": 139, "ch": 234, "fh": 0.888}, "v_anselme": {"cw": 156, "ch": 248, "fh": 0.736}, "v_clemence": {"cw": 162, "ch": 213, "fh": 0.938}, "v_hugues": {"cw": 195, "ch": 202, "fh": 0.89}, "v_sabine": {"cw": 141, "ch": 230, "fh": 0.936}, "v_gontran": {"cw": 195, "ch": 203, "fh": 0.903}, "v_agathe": {"cw": 157, "ch": 216, "fh": 0.951}, "v_ambroise": {"cw": 138, "ch": 255, "fh": 0.736}, "v_ilse": {"cw": 163, "ch": 214, "fh": 0.935}, "v_corvin": {"cw": 125, "ch": 259, "fh": 0.718}, "v_ylva": {"cw": 156, "ch": 218, "fh": 0.936}, "v_haldor": {"cw": 187, "ch": 206, "fh": 0.912}, "v_sigrid": {"cw": 162, "ch": 212, "fh": 0.942}, "v_eskil": {"cw": 189, "ch": 207, "fh": 0.901}, "v_samira": {"cw": 162, "ch": 213, "fh": 0.942}, "v_qadir": {"cw": 156, "ch": 217, "fh": 0.928}, "v_leila": {"cw": 139, "ch": 230, "fh": 0.94}, "v_tarek": {"cw": 138, "ch": 256, "fh": 0.756}, "v_yasmina": {"cw": 156, "ch": 216, "fh": 0.939}, "v_malik": {"cw": 149, "ch": 226, "fh": 0.931}});const HV3={"brumeval": [["v_maelle", "v_gaspard"], ["v_ondine", "v_mathurin"], ["v_berthe", "v_anselme"]], "domaine": [["v_clemence", "v_hugues"], ["v_sabine", "v_gontran"]], "ruines": [["v_agathe", "v_ambroise"], ["v_ilse", "v_corvin"]], "givre": [["v_ylva", "v_haldor"], ["v_sigrid", "v_eskil"]], "desert": [["v_samira", "v_qadir"], ["v_leila", "v_tarek"], ["v_yasmina", "v_malik"]]};const HPORT={};
+const HAMDEF={
+ brumeval:[{n:'Hameau des Saules',pre:'au',g:'Maëlle la Guérisseuse',h:'Gaspard le Vacher',x:1908,y:4061,rx:1667,ry:3994},{n:'Fermes du Nord',pre:'aux',g:'Ondine la Guérisseuse',h:'Mathurin le Fermier',x:3472,y:1966,rx:3223,ry:1952},{n:'Gué-aux-Bergers',pre:'à',g:'Berthe la Guérisseuse',h:'Anselme le Berger',x:3353,y:4788,rx:3105,ry:4757}],
+ ruines:[{n:'Camp des Pèlerins',pre:'au',g:'Sœur Agathe',h:'Frère Ambroise',x:2175,y:4466,rx:2009,ry:4653},{n:'Avant-poste des Cendres',pre:'à l’',g:'Ilse la Rebouteuse',h:'Sergent Corvin',x:4049,y:1222,rx:4040,ry:972}],
+ domaine:[{n:'Ferme de la Lande',pre:'à la',g:'Clémence la Guérisseuse',h:'Hugues le Métayer',x:3450,y:2016,rx:3200,ry:2016},{n:'Hameau de la Carrière',pre:'au',g:'Sabine la Guérisseuse',h:'Gontran le Tailleur',x:4415,y:3586,rx:4378,ry:3338}],
+ givre:[{n:'Refuge des Trappeurs',pre:'au',g:'Ylva la Guérisseuse',h:'Haldor le Trappeur',x:3462,y:2979,rx:3213,ry:2962},{n:'Hameau des Sapins',pre:'au',g:'Sigrid la Guérisseuse',h:'Eskil le Bûcheron',x:4981,y:4328,rx:4765,ry:4202}],
+ desert:[{n:'Oasis de Qadir',pre:'à l’',g:'Samira la Guérisseuse',h:'Qadir le Puisatier',x:2935,y:2934,rx:3184,ry:2917},{n:'Halte du Canyon',pre:'à la',g:'Leïla la Guérisseuse',h:'Tarek le Guide',x:2205,y:4344,rx:2003,ry:4491},{n:'Comptoir des Tombes',pre:'au',g:'Yasmina la Guérisseuse',h:'Malik le Marchand',x:4817,y:4526,rx:4593,ry:4414}]};
+const HAMSK={brumeval:['elin','aldric'],domaine:['elin','aldric'],ruines:['tomas','lysa'],givre:['tomas','oriane'],desert:['aldric','lysa']};
+const HAMLN={
+ brumeval:['Les loups rôdent plus près chaque nuit. On garde le feu allumé jusqu’à l’aube.','Mon frère est parti vers le marais il y a trois lunes. Si vous le croisez…','La route mène à Brumeval. Là-bas, ils ont un forgeron, un vrai.'],
+ domaine:['Depuis que le château se relève, les marchands reviennent sur la route.','On taille la pierre de la carrière pour les remparts du domaine.','Il paraît que le seigneur paie bien ceux qui chassent les bêtes de la lande.'],
+ ruines:['On campe ici avant de prier au sanctuaire. La cendre ne tombe pas sur ce coin-là.','Les murs du Fort-Cendre tiennent encore. Ici, on n’a que des torches et du courage.','Ne vous fiez pas aux braises qui bougent la nuit. Ce ne sont pas des braises.'],
+ givre:['Le froid tue plus que les loups. Approchez-vous du feu, étranger.','On piège le renard blanc pour sa fourrure. Les marchands de Givrecroc la paient bien.','Quand le vent hurle trop fort, on dit que c’est Fenrel qui appelle sa meute.'],
+ desert:['L’eau du puits est fraîche. Buvez avant de repartir, le soleil ne pardonne pas.','Les caravanes s’arrêtent ici depuis mille ans. Les tombes aussi, d’ailleurs.','Un scorpion grand comme une charrette a été vu près du canyon. Restez sur la route.']};
+let HAMS=[],HAMIN=null;
+const HAMREG=[];const _sh=s=>s.replace(/^(Sœur|Frère|Sergent) /,'').split(' ')[0];
+for(const w in HAMDEF)HAMDEF[w].forEach((h,i)=>{WP['h_'+w+i]={m:w,n:h.n,x:h.x+40,y:h.y+150};const m='hv'+w+i;HAMREG.push(()=>{CAMPN[m]=h.pre+(h.pre.endsWith('’')?'':' ')+h.n});
+  NPCDEF.push({m,id:'hv_'+w+i+'a',n:h.g,short:_sh(h.g),role:h.n,dx:0,dy:0},{m,id:'hv_'+w+i+'b',n:h.h,short:_sh(h.h),role:h.n,dx:0,dy:0})});
+function hamPre(){const L=HAMDEF[MAP.wid]||[];HAMS=L;for(const h of L){ROADS.push([[h.rx,h.ry],[h.x,h.y+60]]);FEAT.push({type:'hamlet',x:h.x,y:h.y,big:1,n:h.n})}}
+function hamBuild(wid){const L=HAMDEF[wid];if(!L)return;
+  const nat=new Set(['tree','rock','col','statue','crystal','cactus','snowfir','xtree','res','animal','icelake']);
+  const keep=OBS.filter(o=>!(nat.has(o.type)&&L.some(h=>Math.hypot(o.x-h.x,o.y-h.y)<370+(o.r||0))));OBS.length=0;GRID.clear();keep.forEach(addOb);
+  try{if(RESL)RESL=RESL.filter(o=>OBS.includes(o))}catch(e){}
+  const V0=VIL;
+  for(const h of L){VIL={x:h.x,y:h.y};
+    if(wid==='brumeval'||wid==='domaine'){
+      [[-260,-220,140,100],[60,-250,150,105],[170,20,130,95]].forEach(([dx,dy,w,hh])=>{const o={type:'house',rx:h.x+dx,ry:h.y+dy,rw:w,rh:hh,k:Math.random()};o.x=o.rx+w/2;o.y=o.ry+hh/2;o.sy=o.ry+hh;o.vr=Math.max(w,hh)+60;o.spr=houseSprite(o);addOb(o)});
+      addOb({type:'well',x:h.x-150,y:h.y+40,r:24,vr:50});
+      placeD([['tonneau',-90,-110],['caisses',-62,-100,.9],['d_charrette',120,-110],['jarre',300,-60],['d_enclos',-230,175]]);
+      placeA([['a_poule',-200,190,50],['a_poule',-250,160,50],['a_chien',60,110,90]]);
+    }else if(wid==='ruines'){
+      placeB([['caserne',-200,-170,60],['tourpierre',220,-190,48]]);
+      placeD([['puits',-150,60],['brasero',-70,-95],['brasero',90,-95],['tonneau',200,30],['caisses',225,50],['d_charrette',230,150],['jarre',-230,120]]);
+    }else if(wid==='givre'){
+      placeB([['longere',-210,-180,62],['cabane',220,-150,50],['tourguet',230,190,30]]);
+      placeD([['puits',-150,70],['d_billot',120,60],['tonneau',-80,-80],['brasero',60,-110],['caisses',190,-30]]);
+      placeA([['a_husky',-60,180,70],['a_renne',-250,170,80]]);
+    }else if(wid==='desert'){
+      placeB([['maisonterre',-210,-170,56],['maisonterre',220,-140,56],['palmiers',-240,180,22],['palmiers',250,170,22]]);
+      placeD([['jarre',-120,-90],['jarre',-100,-72,.85],['d_tapis',100,60],['caisses',160,-40],['puits',-150,70],['brasero',30,-110]]);
+      placeA([['a_chameau',-60,200,70]]);
+    }
+    addOb({type:'campfire',x:h.x,y:h.y-20,r:20,vr:60});
+    for(let i=0;i<6;i++){const a=i/6*6.283+.5,x=h.x+Math.cos(a)*290,y=h.y+Math.sin(a)*240;if(!blockedAt(x,y,12)&&!nearRoad(x,y,30))addOb({type:'lantern',x,y,r:6,vr:30})}
+  }
+  VIL=V0;
+  MAP.labels=(MAP.labels||[]).concat(L.map(h=>[h.n,h.x,h.y-300]));
+}
+
+const HQ=(w,i,o)=>Object.assign({side:1,hv:1,m:w,giver:'hv_'+w+i+'b'},o);
+Object.assign(QUESTS,{
+ hq_brum0:HQ('brumeval',0,{t:'Les loups du saule',type:'kill',target:'loup',region:'foret',n:10,xp:400,gold:160,orbs:{trans:2},goal:'loups abattus',
+   intro:'Chaque nuit, les loups de la forêt viennent gratter à nos portes. Ils ont déjà emporté deux brebis. Abattez-en dix dans la Forêt des Murmures, je vous en prie.',
+   wait:'Dix loups. La forêt commence juste derrière nos maisons.',done:'Le hameau va enfin dormir. Prenez ça, c’est tout ce qu’on a de précieux.'}),
+ hq_brum1:HQ('brumeval',1,{t:'Les récoltes volées',type:'gather',node:'crate',n:4,xp:450,gold:180,orbs:{chaos:1},goal:'caisses de grain retrouvées',
+   intro:'Des goules ont traîné nos caisses de grain dans les champs autour des fermes. Sans elles, l’hiver sera long. Retrouvez-en quatre.',
+   wait:'Les caisses ne sont pas loin des fermes. Cherchez la lueur dorée dans les herbes.',done:'Quatre caisses ! Les enfants mangeront cet hiver. Merci, voyageur.'}),
+ hq_brum2:HQ('brumeval',2,{t:'Une lettre pour les Saules',type:'reach',to:'hv_brumeval0a',ham:['brumeval',0],xp:350,gold:200,gems:{rubis:1},goal:'Porter la lettre au Hameau des Saules',
+   intro:'Ma fille vit au Hameau des Saules, à l’ouest, au bord de la forêt. Je n’ose plus prendre la route. Portez-lui cette lettre, et dites-lui que tout va bien ici.',
+   wait:'Le Hameau des Saules est au sud-ouest, sur la route qui longe la forêt.',done:'Une lettre de mon père ! Il va bien… Merci, merci mille fois. Prenez cette pierre, elle est à vous.'}),
+ hq_dom0:HQ('domaine',0,{t:'Les goules de la lande',type:'kill',target:'goule',region:'lande',n:8,xp:600,gold:250,orbs:{chaos:1},goal:'goules abattues',
+   intro:'Les goules déterrent nos morts et dévorent les bêtes. Le seigneur est occupé avec son château. Abattez-en huit dans la lande.',
+   wait:'Huit goules. Elles rôdent partout dans la lande.',done:'La lande respire mieux. Le seigneur devrait vous engager.'}),
+ hq_dom1:HQ('domaine',1,{t:'Les outils perdus',type:'gather',node:'crate',n:5,xp:700,gold:300,gems:{saphir:1},goal:'caisses d’outils retrouvées',
+   intro:'Une brute a renversé notre charrette. Nos caisses d’outils ont roulé dans toute la carrière. Sans elles, plus de pierre pour le domaine. Rapportez-en cinq.',
+   wait:'Cinq caisses, quelque part dans la carrière. Attention aux brutes.',done:'Nos outils ! Le chantier peut reprendre. Gardez cette pierre, elle brillera mieux sur vous.'}),
+ hq_rui0:HQ('ruines',0,{req:['col'],t:'Les âmes des pèlerins',type:'kill',target:'spectre',region:'bois',n:12,xp:1800,gold:600,orbs:{chaos:2},goal:'spectres apaisés',
+   intro:'Nos pèlerins morts en route errent dans les Bois Calcinés, changés en spectres. Libérez douze de ces âmes, qu’elles trouvent enfin le repos.',
+   wait:'Les spectres hantent les Bois Calcinés, tout autour du camp.',done:'Je les entends plus. Ils reposent enfin. Que la lumière vous garde.'}),
+ hq_rui1:HQ('ruines',1,{req:['col'],t:'Les diablotins de cendre',type:'kill',target:'diablotin',region:'cendres',n:15,xp:2200,gold:700,orbs:{exalt:1},goal:'diablotins tués',
+   intro:'Les diablotins attaquent nos sentinelles à chaque relève. Nous ne sommes plus que six. Tuez-en quinze dans la Plaine de Cendres.',
+   wait:'La Plaine de Cendres commence aux portes de l’avant-poste.',done:'Quinze ! Les gars vont pouvoir souffler. Tenez, cet orbe vient de l’armurerie.'}),
+ hq_giv0:HQ('givre',0,{req:['nord'],t:'Fourrures de loup',type:'kill',target:'loupgivre',region:'neiges',n:12,xp:3500,gold:1000,orbs:{exalt:1},goal:'loups des glaces abattus',
+   intro:'Les loups des glaces ont pillé tous nos pièges. Chassez-en douze sur le Plateau des Neiges : on a besoin de leurs fourrures pour passer l’hiver.',
+   wait:'Douze loups des glaces. Le plateau est tout autour du refuge.',done:'De quoi tenir jusqu’au dégel ! Vous chassez mieux que nous, étranger.'}),
+ hq_giv1:HQ('givre',1,{req:['nord'],t:'Des nouvelles du refuge',type:'reach',to:'hv_givre0a',ham:['givre',0],xp:2500,gold:900,gems:{diamant:1},goal:'Rejoindre le Refuge des Trappeurs',
+   intro:'Mon frère tient le Refuge des Trappeurs, plus à l’ouest. Personne n’en est revenu depuis la tempête. Allez voir s’ils sont encore en vie.',
+   wait:'Le Refuge des Trappeurs est sur la route du nord, à l’ouest d’ici.',done:'Les gens des Sapins s’inquiétaient ? Nous allons bien, grâce au feu. Merci d’être venu jusqu’ici.'}),
+ hq_des0:HQ('desert',0,{req:['desert'],t:'Scarabées dans le puits',type:'kill',target:'scarabee',region:'dunes',n:14,xp:5500,gold:1500,orbs:{exalt:1},goal:'scarabées écrasés',
+   intro:'Les scarabées pondent près de notre puits. Si l’eau est souillée, l’oasis mourra. Écrasez-en quatorze dans les dunes.',
+   wait:'Quatorze scarabées, dans les dunes autour de l’oasis.',done:'L’eau restera pure. Qadir n’oublie jamais un ami.'}),
+ hq_des1:HQ('desert',1,{req:['desert'],t:'Les cultistes du canyon',type:'kill',target:'cultiste',region:'canyon',n:10,xp:6000,gold:1700,orbs:{exalt:1},goal:'cultistes vaincus',
+   intro:'Des cultistes enlèvent les voyageurs qui s’arrêtent ici. Ils prient une chose sous le sable. Mettez fin à ça : dix d’entre eux.',
+   wait:'Les cultistes se cachent dans le Canyon Écarlate.',done:'La halte est de nouveau sûre. Les caravanes vont revenir.'}),
+ hq_des2:HQ('desert',2,{req:['desert'],t:'Les urnes du comptoir',type:'gather',node:'jar',n:5,xp:6000,gold:1600,gems:{emeraude:1},goal:'urnes retrouvées',
+   intro:'Des pillards ont volé nos urnes funéraires et les ont jetées dans la nécropole. Les morts ne reposeront pas tant qu’elles ne seront pas revenues. Rapportez-en cinq.',
+   wait:'Les urnes sont éparpillées dans la nécropole, autour du comptoir.',done:'Les urnes sont rentrées. Les anciens dormiront en paix… et nous aussi.'}),
+});
+const HQID={brumeval:['hq_brum0','hq_brum1','hq_brum2'],domaine:['hq_dom0','hq_dom1'],ruines:['hq_rui0','hq_rui1'],givre:['hq_giv0','hq_giv1'],desert:['hq_des0','hq_des1','hq_des2']};
+function hamNodes(wid){const L=HAMDEF[wid];if(!L)return;L.forEach((h,i)=>{const q=QUESTS[HQID[wid][i]];if(!q||q.type!=='gather')return;let k=0,t=0;
+  while(k<q.n+2&&t<800){t++;const a=rnd(0,6.283),d=rnd(480,1150),x=h.x+Math.cos(a)*d,y=h.y+Math.sin(a)*d;if(x<200||y<MAP.ny+80||x>WS-200||y>WS-200)continue;const b=biomeAt(x,y);if(b===3||b===4||blockedAt(x,y,30)||nearRoad(x,y,40))continue;
+    FEAT.push({type:'node',kind:q.node,q:HQID[wid][i],id:'h'+wid+i+'_'+k,x,y});k++}})}
+
+function hamNpc(wid){const L=HAMDEF[wid];if(!L)return;const sk=HAMSK[wid],ln=HAMLN[wid];
+  L.forEach((h,i)=>{
+    NPCL.push({id:'hv_'+wid+i+'a',sk:HV3[wid][i][0],n:h.g,short:_sh(h.g),role:h.n,heal:1,idle:'Reposez-vous un peu, voyageur. Je peux soigner vos blessures et remplir vos fioles.',x:h.x-60,y:h.y+70,face:null,face0:0,body:['#6a5a4a','#2a2018'],hair:'#5a3a2a'});
+    NPCL.push({id:'hv_'+wid+i+'b',sk:HV3[wid][i][1],n:h.h,short:_sh(h.h),role:h.n,idle:ln[i%ln.length],x:h.x+95,y:h.y-70,face:null,face0:3.1,body:['#5a5040','#2a2018'],hair:'#3a2a1a'});
+  })}
+
 function genWorldMap(wid){
-  resetMap('world',6400);MAP.wid=wid;WALLR=null;WAP=null;TARR=[];MAP.amb=.45;MAP.ambT=.45;const C=WORLDS[wid];
+  resetMap('world',6400);MAP.wid=wid;MAP.ny=0;WALLR=null;WAP=null;TARR=[];MAP.amb=.45;MAP.ambT=.45;const C=WORLDS[wid];
   VIL={...C.vil};SAFE=C.safe;BCODE=C.bcode;biomeCalc=C.bfn;
-  Object.assign(MAP,{base:C.base,blobs:C.blobs,plaza:C.plaza,lc:C.lc,mcol:C.mcol,labels:C.labels,nb:C.nb});
+  Object.assign(MAP,{base:C.base,blobs:C.blobs,plaza:C.plaza,lc:C.lc,mcol:C.mcol,labels:(C.labels||[]).slice(),nb:C.nb});HAMS=[];
   withSeed(C.seed,()=>{
     BIO=new Uint8Array(10000);for(let j=0;j<100;j++)for(let i=0;i<100;i++)BIO[j*100+i]=biomeCalc((i+.5)*BC,(j+.5)*BC);
-    C.gen();placeSites(wid);placeFeats(wid);if(wid==='domaine')kNpcs();else KNL=[];
+    C.gen();hamBuild(wid);hamNodes(wid);placeSites(wid);placeFeats(wid);if(wid==='domaine')kNpcs();else KNL=[];
     NPCL=NPCDEF.filter(n=>n.m===wid).map(n=>({...n,x:VIL.x+n.dx,y:VIL.y+n.dy,face:null,face0:Math.atan2(-n.dy,-n.dx)}));
-    for(const id in WP)if(WP[id].m===wid)FEAT.push({type:'waypoint',id,x:WP[id].x,y:WP[id].y});
+    hamNpc(wid);for(const id in WP)if(WP[id].m===wid)FEAT.push({type:'waypoint',id,x:WP[id].x,y:WP[id].y});
     for(let i=0;i<16;i++){const a=i/16*6.283+.1;addOb({type:'ward',x:VIL.x+Math.cos(a)*SAFE,y:VIL.y+Math.sin(a)*SAFE,r:8,vr:40,nc:1,np:1})}
     wallClean();decoClean();
   });
@@ -3584,7 +3686,7 @@ Object.assign(MLAB,{loupgivre:'loups des glaces',yeti:'yétis',elemglace:'élém
 Object.assign(WP,{halte:{m:'givre',n:'Givrecroc',x:3260,y:5510},lac:{m:'givre',n:'Lac gelé',x:1500,y:3400},sommet:{m:'givre',n:'Col des Sapins',x:4700,y:3300},
   zahra:{m:'desert',n:'Oasis de Zahra',x:3260,y:5410},gorge:{m:'desert',n:'Gorge rouge',x:1500,y:3600},tombes:{m:'desert',n:'Allée des Tombes',x:5000,y:3300}});
 Object.assign(WP,{domaine:{m:'domaine',n:'Château de Vael',x:3260,y:3560}});Object.assign(HOME,{givre:'halte',desert:'zahra'});HOME.domaine='domaine';
-const CAMPN={domaine:'au château',brumeval:'au village',ruines:'à Fort-Cendre',givre:'à Givrecroc',desert:'à l’oasis de Zahra'};
+const CAMPN={domaine:'au château',brumeval:'au village',ruines:'à Fort-Cendre',givre:'à Givrecroc',desert:'à l’oasis de Zahra'};HAMREG.forEach(f=>f());
 const LINKS={domaine:['brumeval'],brumeval:['ruines','desert','domaine'],ruines:['brumeval','givre'],givre:['ruines'],desert:['brumeval']};
 function nextHop(a,b){const prev={[a]:null},q=[a];while(q.length){const c=q.shift();if(c===b)break;for(const n of LINKS[c]||[])if(!(n in prev)){prev[n]=c;q.push(n)}}
   if(!(b in prev))return null;let c=b;while(prev[c]&&prev[c]!==a)c=prev[c];return c}
@@ -4456,7 +4558,7 @@ const KDECO=[['fontaine','porte',-110,60,48],['banniere','donjon',-185,-215,8],[
 const KDN={fontaine:'Fontaine',banniere:'Bannières du donjon',parterre:'Parterres fleuris',banc:'Bancs de pierre',monument:'Monument de Vael'};
 function kdSync(){for(const o of OBS)if(o.type==='kd')o.nc=o.solid&&kDone(o.req)?0:1}
 function genDomaine(){kS();const V=(dx,dy)=>[VIL.x+dx,VIL.y+dy];
-  ROADS=[[V(0,40),[3200,4600],[3150,6200]],[V(-40,0),[2300,3300],[1200,3200]],[V(40,0),[4300,3350],[5300,3200]],[V(0,-40),[3200,2000],[3250,1000]]];
+  ROADS=[[V(0,40),[3200,4600],[3150,6200]],[V(-40,0),[2300,3300],[1200,3200]],[V(40,0),[4300,3350],[5300,3200]],[V(0,-40),[3200,2000],[3250,1000]]];hamPre();
   const F=o=>{FEAT.push(o);return o};
   for(const id in CB){const b=CB[id];addOb({type:'kb',id,x:VIL.x+b.dx,y:VIL.y+b.dy,r:b.r,vr:300})}
   for(const d of KDECO)addOb({type:'kd',img:'kd_'+d[0],req:d[1],x:VIL.x+d[2],y:VIL.y+d[3],r:d[4],solid:d[4]>20,vr:220,nc:1,np:1});kdSync();
@@ -4464,7 +4566,7 @@ function genDomaine(){kS();const V=(dx,dy)=>[VIL.x+dx,VIL.y+dy];
   for(let i=0;i<10;i++){const a=i/10*6.283;addOb({type:'lantern',x:VIL.x+Math.cos(a)*250,y:VIL.y+80+Math.sin(a)*190,r:6,vr:30})}
   F({type:'pass',to:'brumeval',x:3200,y:6150,ax:420,ay:3300,label:'Retour vers Brumeval',arrow:'▼'});
   F({type:'camp',x:1400,y:2400,pack:['loup','loup','loup','goule'],L:6});F({type:'camp',x:4900,y:2500,pack:['brute','squelette','squelette'],L:8});F({type:'camp',x:1800,y:4800,pack:['goule','goule','archer'],L:5});F({type:'camp',x:4700,y:4700,pack:['squelette','archer','archer'],L:7});
-  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,660+rnd(-50,50),rnd(42,64));
+  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,660+rnd(-50,50),rnd(42,64));MAP.ny=745;
   RESL=[];let t=0;const want={1:['bois',18],2:['pierre',10],0:['bois',6]};const cnt={bois:0,pierre:0,fer:0,cristal:0};
   while(t<7000&&RESL.length<72){t++;const x=rnd(250,WS-250),y=rnd(950,WS-250),b=biomeCalc(x,y);if(b===3||b===4||nearRoad(x,y,80)||blockedAt(x,y,60))continue;
     let k=b===1?'bois':b===2?(Math.random()<.5?'fer':'pierre'):pick(['bois','bois','pierre','fer','cristal']);if(Math.random()<.1)k='cristal';
@@ -4519,7 +4621,7 @@ function kEnter(){const C=kS();kNpcs();kTick();if(!C.met){C.met=1;save();setTime
 function placeB(list){for(const[k,dx,dy,r]of list){const x=VIL.x+dx,y=VIL.y+dy;addOb({type:'b_'+k,x,y,r:r||46,vr:170})}}
 function genGivre(){
   const V=(dx,dy)=>[VIL.x+dx,VIL.y+dy];
-  ROADS=[[V(0,-40),[3150,3900],[3250,2400],[3200,1000]],[V(-40,0),[2200,5000],[1400,3700],[1200,2700]],[V(40,0),[4300,5000],[5000,3800],[5200,2600]],[V(0,40),[3200,6200]]];
+  ROADS=[[V(0,-40),[3150,3900],[3250,2400],[3200,1000]],[V(-40,0),[2200,5000],[1400,3700],[1200,2700]],[V(40,0),[4300,5000],[5000,3800],[5200,2600]],[V(0,40),[3200,6200]]];hamPre();
   const feats=[];const F=o=>{FEAT.push(o);feats.push(o);return o};
   placeB([['longere',-300,-230,62],['forge',290,-210,52],['cabane',-330,200,50],['cabane',330,230,50],['tourguet',-140,-330,30],['tourguet',190,330,30]]);
   placeD([['tonneau',-215,-185],['tonneau',-200,-160,.9],['caisses',215,-150],['brasero',235,-120],['caisses',-260,250],['tonneau',255,280],['jarre',-375,-150],['coffre',-230,-140,.9],['brasero',-90,-300],['puits',110,-250]]);
@@ -4536,10 +4638,10 @@ function genGivre(){
   F({type:'camp',x:2400,y:2000,pack:['elemglace','elemglace','elemglace','yeti'],L:20});F({type:'camp',x:4800,y:3600,pack:['loupgivre','loupgivre','loupgivre','loupgivre','yeti'],L:20});
   F({type:'camp',x:5200,y:2400,pack:['yeti','yeti','elemglace'],L:22});
   F({type:'sign',x:3290,y:5000,txt:'Nord : le Palais de Glace. Ouest : le Glacier Hurlant. Est : la Forêt Givrée.'});
-  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,640+rnd(-50,50),rnd(42,64));
+  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,640+rnd(-50,50),rnd(42,64));MAP.ny=725;
   let cid=0;const okPos=(x,y,m)=>!nearRoad(x,y,70)&&!blockedAt(x,y,m)&&feats.every(f=>Math.hypot(f.x-x,f.y-y)>200);
   for(const[b,n]of[[0,5],[1,4],[2,4]]){let k=0,t=0;while(k<n&&t<4000){t++;const x=rnd(200,WS-200),y=rnd(900,WS-200);if(biomeCalc(x,y)===b&&okPos(x,y,40)){F({type:'chest',id:'g'+cid++,x,y});k++}}}
-  scatter(feats,{tries:2600,y0:760,by:{
+  scatter(feats,{tries:LITE?3000:4200,y0:760,by:{
     0:(x,y,ok)=>{const r=Math.random();if(r<.12&&ok(x,y,120)){addOb({type:'tree',v:'snow',var:ri(0,5),x,y,r:13,vr:80,sc:rnd(.8,1.15)});return 1}if(r<.24&&ok(x,y,110)){rockAt(x,y,rnd(20,40));return 1}if(r<.29&&ok(x,y,110)){addOb({type:'crystal',x,y,r:16,vr:50,k:Math.random()});return 1}},
     1:(x,y,ok)=>{const r=Math.random();if(r<.22&&ok(x,y,100)){addOb({type:'crystal',x,y,r:16,vr:50,k:Math.random()});return 1}if(r<.34&&ok(x,y,110)){rockAt(x,y,rnd(22,44));return 1}
       if(r<.38&&ok(x,y,200)){const rr=rnd(80,160);if(!nearRoad(x,y,rr+40)&&feats.every(f=>Math.hypot(f.x-x,f.y-y)>rr+150)){addOb({type:'icelake',x,y,r:1,wr:rr,vr:rr+10,nc:1,np:1,ground:1,k:Math.random()});return 1}}},
@@ -4553,7 +4655,7 @@ function genGivre(){
 }
 function genDesert(){
   const V=(dx,dy)=>[VIL.x+dx,VIL.y+dy];
-  ROADS=[[V(0,-40),[3250,3900],[3150,2400],[3200,1000]],[V(-40,0),[2300,4900],[1500,3800],[1300,2900]],[V(40,0),[4300,5000],[5000,3600],[5300,2400]],[V(0,40),[3200,6200]]];
+  ROADS=[[V(0,-40),[3250,3900],[3150,2400],[3200,1000]],[V(-40,0),[2300,4900],[1500,3800],[1300,2900]],[V(40,0),[4300,5000],[5000,3600],[5300,2400]],[V(0,40),[3200,6200]]];hamPre();
   const feats=[];const F=o=>{FEAT.push(o);feats.push(o);return o};
   addOb({type:'water',x:VIL.x-170,y:VIL.y+120,r:70*.82,vr:80,wr:70,np:1,ground:1,k:.3});addOb({type:'water',x:VIL.x+190,y:VIL.y-150,r:55*.82,vr:65,wr:55,np:1,ground:1,k:.6});
   for(let i=0;i<12;i++){const a=i/12*6.283,d=rnd(240,400),x=VIL.x+Math.cos(a)*d,y=VIL.y+Math.sin(a)*d*.85;if(!nearRoad(x,y,70)&&!blockedAt(x,y,30))addOb({type:'tree',v:'palm',var:ri(0,4),x,y,r:12,vr:80,sc:rnd(.9,1.2)})}
@@ -4573,10 +4675,10 @@ function genDesert(){
   F({type:'camp',x:2300,y:2200,pack:['cultiste','cultiste','cultiste','scorpion'],L:26});F({type:'camp',x:4800,y:3500,pack:['momie','momie','momie','cultiste'],L:27});
   F({type:'camp',x:5300,y:2300,pack:['momie','momie','scorpion','scorpion'],L:29});
   F({type:'sign',x:3290,y:5000,txt:'Nord : le Temple d’Ashkar. Ouest : le Canyon Écarlate. Est : la Nécropole.'});
-  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,640+rnd(-50,50),rnd(42,64));
+  for(let x=60;x<WS-60;x+=rnd(70,110))rockAt(x,640+rnd(-50,50),rnd(42,64));MAP.ny=725;
   let cid=0;const okPos=(x,y,m)=>!nearRoad(x,y,70)&&!blockedAt(x,y,m)&&feats.every(f=>Math.hypot(f.x-x,f.y-y)>200);
   for(const[b,n]of[[0,5],[1,4],[2,4]]){let k=0,t=0;while(k<n&&t<4000){t++;const x=rnd(200,WS-200),y=rnd(900,WS-200);if(biomeCalc(x,y)===b&&okPos(x,y,40)){F({type:'chest',id:'d'+cid++,x,y});k++}}}
-  scatter(feats,{tries:2600,y0:760,by:{
+  scatter(feats,{tries:LITE?3000:4200,y0:760,by:{
     0:(x,y,ok)=>{const r=Math.random();if(r<.07&&ok(x,y,120)){addOb({type:'cactus',x,y,r:10,vr:40,k:Math.random()});return 1}if(r<.13&&ok(x,y,120)){rockAt(x,y,rnd(18,36));return 1}if(r<.15&&ok(x,y,130)){addOb({type:'tree',v:'dead',var:ri(0,3),x,y,r:11,vr:70,sc:rnd(.8,1.1)});return 1}},
     1:(x,y,ok)=>{const r=Math.random();if(r<.28&&ok(x,y,100)){rockAt(x,y,rnd(24,52));return 1}if(r<.33&&ok(x,y,110)){addOb({type:'cactus',x,y,r:10,vr:40,k:Math.random()});return 1}},
     2:(x,y,ok)=>{const r=Math.random();if(r<.14&&ok(x,y,170)){const h=Math.random()<.5,l=rnd(110,240),t=34;const o=h?{rx:x-l/2,ry:y-t/2,rw:l,rh:t}:{rx:x-t/2,ry:y-l/2,rw:t,rh:l};
@@ -4942,7 +5044,7 @@ for(const k in NSRC){const im=new Image();im.onload=()=>{try{const c=document.cr
   const d=g.getImageData(0,0,w,Math.max(1,Math.floor(h*.16))).data;let sx=0,n=0;for(let y=0;y<Math.floor(h*.16);y+=2)for(let x=0;x<w;x+=2)if(d[(y*w+x)*4+3]>40){sx+=x;n++}
   const hx=n?sx/n:w/2,S=h*.27,o=document.createElement('canvas');o.width=o.height=160;const q=o.getContext('2d');const gr=q.createRadialGradient(80,70,10,80,80,110);gr.addColorStop(0,'#3a2a24');gr.addColorStop(1,'#0c0909');q.fillStyle=gr;q.fillRect(0,0,160,160);
   q.drawImage(im,hx-S/2,-h*.01,S,S,0,4,160,160);NPORT[k]=o.toDataURL('image/webp',.85)}catch(e){}};im.src=NSRC[k];NIMG[k]=im}
-const npcPort=id=>NPORT[id]||IMG2[NPCIMG[id]];
+const npcPort=id=>NPORT[id]||(typeof HPORT!=='undefined'&&HPORT[id])||IMG2[NPCIMG[id]];
 /* ========== Boutique (Stripe) ========== */
 const SHOP={compagnons:{n:'Pack Compagnons',prix:'4,99 €',pets:['louveteau','golem','corbeau','lanterne','scarabee'],inc:['5 nouveaux familiers illustrés : Louveteau spectral, Golem de cristal, Corbeau de braise, Lanterne-esprit, Scarabée doré','Votre soutien direct au développement du jeu']},fondateur:{pets:['dragon','renard','hibou','chat','phenix'],tints:1,n:'Pack Fondateur',prix:'4,99 €',inc:['5 familiers illustrés : Bébé dragon, Renard spectral, Hibou céleste, Chat sorcier, Phénix','2 couleurs de sorts : Ombre du Vide et Aube sacrée','Le titre « Fondateur », visible en multijoueur','Votre soutien direct au développement du jeu']}};
 const shopOwn=k=>typeof ACC!=='undefined'&&(ACC.owned||[]).includes(k);
@@ -4975,7 +5077,7 @@ async function shopReturn(){const q=new URLSearchParams(location.search),a=q.get
     openDlg(nw==='fondateur'?'<h3>Merci, Fondateur !</h3><p>Votre Pack Fondateur est débloqué. Retrouvez vos familiers, couleurs de sorts et votre titre dans la fiche Héros, rubrique Apparence.</p>':'<h3>Merci pour votre soutien !</h3><p>Votre Pack Compagnons est débloqué : retrouvez vos 5 nouveaux familiers dans la fiche Héros, rubrique Apparence.</p>',[['Super !',closeDlg]]);return}}
   toast('Le déblocage prend plus de temps que prévu : relancez le jeu dans quelques minutes.')}
 /* ========== Réglages ========== */
-const GAMEV=135;
+const GAMEV=138;
 const CFG={master:.9,music:.55,sfx:.6,shake:1,dmg:1,flash:1,fx:1};
 try{Object.assign(CFG,JSON.parse(localStorage.getItem('cendres_vael_cfg')||'{}'))}catch(e){}
 function cfgSave(){try{localStorage.setItem('cendres_vael_cfg',JSON.stringify(CFG))}catch(e){}}
