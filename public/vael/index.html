@@ -1785,7 +1785,7 @@ function update(dt){
     if(R.kills>=R.goal)spawnBoss()}
   extraTick(dt);{const pr0=PR.length,z0=Z.length;for(const e of E)if(!e.dead){if(e.remote)netProxy(e,dt);else if(e.raid)raidUpd(e,dt);else if(e.escort)escortUpd(e,dt);else netUpd(e,dt)}netEmit(pr0,z0)}
   separate();
-  if(R.mode==='world'&&!R.siege)for(const e of E){if(e.dead)continue;const dx=e.x-VIL.x,dy=e.y-VIL.y,d=Math.hypot(dx,dy)||1,m=SAFE+e.r;const near=d<m+40||HAMS.some(h=>Math.hypot(e.x-h.x,e.y-h.y)<360);
+  if(R.mode==='world'&&!R.siege)for(const e of E){if(e.dead)continue;const dx=e.x-VIL.x,dy=e.y-VIL.y,d=Math.hypot(dx,dy)||1,m=SAFE+e.r,pin=inSafe(P.x,P.y),hd=HAMS.length?Math.min(...HAMS.map(h=>Math.hypot(e.x-h.x,e.y-h.y))):1e9;const near=d<m+40||hd<360||(pin&&!e.idle&&(d<m+320||hd<680));
     if(near&&!e.raid&&!e.boss&&!e.escort&&!e.remote&&!e.qboss){e.dead=1;e.vanish=1;if(e.camp&&e.camp.alive>0)e.camp.alive--;for(let i=0;i<10;i++)part(e.x+rnd(-e.r,e.r),e.y-rnd(0,e.r*1.5),rnd(-30,30),rnd(-60,-15),.6,'#8a8090',3);continue}
     if(d<m){e.x=VIL.x+dx/d*m;e.y=VIL.y+dy/d*m;e.charge=0}}
   for(const e of E)if(!e.boss&&!e.elite&&!e.fixed&&!e.remote&&netFar(e))e.dead=1;
